@@ -1,0 +1,103 @@
+subroutine massfunction(z)
+  use mpi
+  use mpitools
+  use common_vars
+  use conversiontools
+  use io_tools
+  use ifport
+  implicit none
+  integer, parameter :: maxNforXi = 500000
+  real(kind=8) :: BinSize
+  real(kind=8) :: Max_mass, Min_mass
+  integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
+  integer(kind=4) :: block1,command
+
+  integer(kind=8),allocatable :: histogram(:)
+  character(len=100) :: z_s
+  real(kind=8) :: z,mass
+  integer(kind=4) :: halonumber,n_elements
+  real(kind=4), allocatable :: halodata(:,:)
+  logical :: element_flag(1:17)
+
+  write(z_s,'(f10.3)') z
+  z_s = adjustl(z_s)
+
+
+
+  if(rank ==0) then
+     print*,'Start Making Mass Function'
+  endif
+
+
+  element_flag(1:17) = .FALSE.
+  element_flag(1:3) = .TRUE.
+  element_flag(15) = .TRUE. ! 15 => gridmass
+
+  halonumber = get_halo_number(real(z,4))
+  n_elements = get_n_elements(element_flag)
+
+  if(rank == 0) then
+     allocate(halodata(1:n_elements,1:halonumber))
+  end if
+
+  call mpi_read_halo(real(z,4),element_flag,n_elements,halonumber, halodata)
+
+  if(rank == 0) then
+     Max_mass = 1.d20
+     Min_mass = 1.d4
+     binsize = 0.1
+     totalbin = ceiling((log10(Max_mass) - log10(Min_mass))/BinSize)
+     print*, "Allocate histogram"
+     allocate(histogram(1:totalbin))
+     histogram(1:totalbin) = 0
+     command =  system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s)))
+     command = system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/box_massfunction.dat')
+     command = system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/box_quasar_position.dat')
+     command = system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/halo_sample.dat')
+     open(11,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/box_quasar_position.dat',STATUS = 'NEW')
+     !open(12,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/halo_sample.dat',STATUS = 'NEW')
+     print*, "Start making histogram"
+     do i=1,halonumber
+        !if(log10(convert_mass2physical(real(halodata(4,i),8))/M_sol) > 5. .and. log10(convert_mass2physical(real(halodata(4,i),8))/M_sol) < 8.) then
+        block1 = ceiling(log10(convert_mass2physical(real(halodata(4,i),8))/M_sol)/BinSize)
+        histogram(block1) = histogram(block1)+1
+        !end if
+#ifdef BOYD
+        !if(modulo(i,100) == 0) then
+           !if(convert_mass2physical(real(halodata(4,i),8))/M_sol < 1.d8) then
+        !   write(12,*) halodata(1,i), halodata(2,i), halodata(3,i)
+           !end if
+        !end if
+        if(convert_mass2physical(real(halodata(4,i),8))/M_sol > 1.d10) then
+           write(11,*) convert_length2physical(real(halodata(1,i),8),0.d0)/Mpc*h, &
+                convert_length2physical(real(halodata(2,i),8),0.d0)/Mpc*h, &
+                convert_length2physical(real(halodata(3,i),8),0.d0)/Mpc*h
+        end if
+#endif
+     end do
+     close(11)
+     !close(12)
+     open(12,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/halo_sample.dat',STATUS = 'NEW')
+     write(12,*) maxNforXi, particle_per_dim*2
+     do i=1,maxNforXi
+        j = int(rand(0)*(halonumber))+1
+        write(12,*) halodata(1,j), halodata(2,j), halodata(3,j)
+     end do
+     close(12)
+     print*, "print out histogram"
+     open(11,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/box_massfunction.dat',STATUS = 'NEW')
+     totalpoint = 0
+     do i=1,totalbin
+        totalpoint = totalpoint + histogram(i)
+     end do
+     do i=1,totalbin
+        write(11,*),10.**(i*BinSize-Binsize/2.),real(histogram(i))/real(totalpoint),histogram(i)
+     end do
+     close(11)
+     deallocate(histogram)
+     deallocate(halodata)
+  end if
+
+
+
+end subroutine massfunction

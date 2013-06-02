@@ -1,0 +1,1085 @@
+@ARTICLE{onions_2012,
+   author = {{Onions}, J. and {Pearce}, F and {Lux}, H and {Muldrew}, S and 
+	{Knebe}, A and {Knollmann} S.},
+   title = {SubHaloes going Notts: The SubHalo Comparision Project},
+ keywords = {methods: N-body simulations, methods: numerical, galaxies: formation, galaxies: haloes},
+   journal = {submitted to MNRAS},
+   year = 2012
+}
+
+@ARTICLE{freeman_2002,
+   author = {{Freeman}, K. and {Bland-Hawthorn}, J.},
+    title = "{The New Galaxy: Signatures of Its Formation}",
+  journal = araa,
+   eprint = {arXiv:astro-ph/0208106},
+ keywords = {cosmology, local group, stellar populations, stellar kinematics},
+     year = 2002,
+   volume = 40,
+    pages = {487-537},
+      doi = {10.1146/annurev.astro.40.060401.093840},
+   adsurl = {http://adsabs.harvard.edu/abs/2002ARA%26A..40..487F},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{knebe_2005,
+   author = {{Knebe}, A. and {Gill}, S.~P.~D. and {Kawata}, D. and {Gibson}, B.~K.
+	},
+    title = "{Mapping substructures in dark matter haloes}",
+  journal = mn,
+   eprint = {arXiv:astro-ph/0407418},
+ keywords = {methods: N-body simulations, galaxies: clusters: general, galaxies: evolution, galaxies: formation},
+     year = 2005,
+    month = feb,
+   volume = 357,
+    pages = {L35-L39},
+      doi = {10.1111/j.1745-3933.2005.08666.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2005MNRAS.357L..35K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{cooper_2010,
+   author = {{Cooper}, A.~P. and {Cole}, S. and {Frenk}, C.~S. and {White}, S.~D.~M. and 
+	{Helly}, J. and {Benson}, A.~J. and {De Lucia}, G. and {Helmi}, A. and 
+	{Jenkins}, A. and {Navarro}, J.~F. and {Springel}, V. and {Wang}, J.
+	},
+    title = "{Galactic stellar haloes in the CDM model}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0910.3211},
+ primaryClass = "astro-ph.GA",
+ keywords = {methods: numerical, Galaxy: halo, galaxies: dwarf, galaxies: formation, galaxies: haloes, galaxies: structure},
+     year = 2010,
+    month = aug,
+   volume = 406,
+    pages = {744-766},
+      doi = {10.1111/j.1365-2966.2010.16740.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2010MNRAS.406..744C},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{gill_2004b,
+   author = {{Gill}, S.~P.~D. and {Knebe}, A. and {Gibson}, B.~K. and {Dopita}, M.~A.
+	},
+    title = "{The evolution of substructure - II. Linking dynamics to environment}",
+  journal = mn,
+   eprint = {arXiv:astro-ph/0404255},
+ keywords = {methods: N-body simulations, methods: numerical, galaxies: formation, galaxies: haloes},
+     year = 2004,
+    month = jun,
+   volume = 351,
+    pages = {410-422},
+      doi = {10.1111/j.1365-2966.2004.07913.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2004MNRAS.351..410G},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{warnick_2008,
+   author = {{Warnick}, K. and {Knebe}, A. and {Power}, C.},
+    title = "{The tidal streams of disrupting subhaloes in cosmological dark matter haloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0801.3241},
+ keywords = {methods: N-body simulations , galaxies: evolution , galaxies: haloes , cosmology: theory , dark matter},
+     year = 2008,
+    month = apr,
+   volume = 385,
+    pages = {1859-1883},
+      doi = {10.1111/j.1365-2966.2008.12992.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2008MNRAS.385.1859W},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{libeskind_2011,
+   author = {{Libeskind}, N.~I. and {Knebe}, A. and {Hoffman}, Y. and {Gottl{\"o}ber}, S. and 
+	{Yepes}, G.},
+    title = "{Disentangling the dark matter halo from the stellar halo}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {1107.4366},
+ primaryClass = "astro-ph.CO",
+ keywords = {galaxies: haloes, cosmology: theory, dark matter},
+     year = 2011,
+    month = nov,
+   volume = 418,
+    pages = {336-345},
+      doi = {10.1111/j.1365-2966.2011.19487.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2011MNRAS.418..336L},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{dicintio_2011,
+   author = {{di Cintio}, A. and {Knebe}, A. and {Libeskind}, N.~I. and {Yepes}, G. and 
+	{Gottl{\"o}ber}, S. and {Hoffman}, Y.},
+    title = "{Too small to succeed? Lighting up massive dark matter subhaloes of the Milky Way}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {1107.5045},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: numerical, galaxies: formation, galaxies: haloes, Local Group},
+     year = 2011,
+    month = oct,
+   volume = 417,
+    pages = {L74-L78},
+      doi = {10.1111/j.1745-3933.2011.01123.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2011MNRAS.417L..74D},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{klypin_overmerging_1999,
+   author = {{Klypin}, A. and {Gottl{\"o}ber}, S. and {Kravtsov}, A.~V. and 
+	{Khokhlov}, A.~M.},
+    title = "{Galaxies in N-Body Simulations: Overcoming the Overmerging Problem}",
+  journal = apj,
+   eprint = {arXiv:astro-ph/9708191},
+ keywords = {COSMOLOGY: THEORY, GALAXIES: FORMATION, GALAXIES: HALOS, COSMOLOGY: LARGE-SCALE STRUCTURE OF UNIVERSE, METHODS: NUMERICAL},
+     year = 1999,
+    month = may,
+   volume = 516,
+    pages = {530-551},
+      doi = {10.1086/307122},
+   adsurl = {http://adsabs.harvard.edu/abs/1999ApJ...516..530K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{maciejewski_2011,
+   author = {{Maciejewski}, M. and {Vogelsberger}, M. and {White}, S.~D.~M. and 
+	{Springel}, V.},
+    title = "{Bound and unbound substructures in Galaxy-scale dark matter haloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {1010.2491},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: numerical, dark matter},
+     year = 2011,
+    month = aug,
+   volume = 415,
+    pages = {2475-2484},
+      doi = {10.1111/j.1365-2966.2011.18871.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2011MNRAS.415.2475M},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{klypin_bolshoi_2011,
+   author = {{Klypin}, A.~A. and {Trujillo-Gomez}, S. and {Primack}, J.},
+    title = "{Dark Matter Halos in the Standard Cosmological Model: Results from the Bolshoi Simulation}",
+  journal = apj,
+archivePrefix = "arXiv",
+   eprint = {1002.3660},
+ primaryClass = "astro-ph.CO",
+ keywords = {cosmology: theory, large-scale structure of universe, methods: numerical},
+     year = 2011,
+    month = oct,
+   volume = 740,
+      eid = {102},
+    pages = {102},
+      doi = {10.1088/0004-637X/740/2/102},
+   adsurl = {http://adsabs.harvard.edu/abs/2011ApJ...740..102K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{boylan_mill2_2009,
+   author = {{Boylan-Kolchin}, M. and {Springel}, V. and {White}, S.~D.~M. and 
+	{Jenkins}, A. and {Lemson}, G.},
+    title = "{Resolving cosmic structure formation with the Millennium-II Simulation}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0903.3041},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: N-body simulations , galaxies: haloes , cosmology: theory},
+     year = 2009,
+    month = sep,
+   volume = 398,
+    pages = {1150-1164},
+      doi = {10.1111/j.1365-2966.2009.15191.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2009MNRAS.398.1150B},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{angulo_2009,
+   author = {{Angulo}, R.~E. and {Lacey}, C.~G. and {Baugh}, C.~M. and {Frenk}, C.~S.
+	},
+    title = "{The fate of substructures in cold dark matter haloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0810.2177},
+ keywords = {galaxies: haloes , galaxies: interactions , cosmology: theory , dark matter},
+     year = 2009,
+    month = oct,
+   volume = 399,
+    pages = {983-995},
+      doi = {10.1111/j.1365-2966.2009.15333.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2009MNRAS.399..983A},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{stadel_ghalo_2009,
+   author = {{Stadel}, J. and {Potter}, D. and {Moore}, B. and {Diemand}, J. and 
+	{Madau}, P. and {Zemp}, M. and {Kuhlen}, M. and {Quilis}, V.
+	},
+    title = "{Quantifying the heart of darkness with GHALO - a multibillion particle simulation of a galactic halo}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0808.2981},
+ keywords = {methods: N-body simulations, methods: numerical, galaxies: clusters: general, galaxies: haloes, dark matter},
+     year = 2009,
+    month = sep,
+   volume = 398,
+    pages = {L21-L25},
+      doi = {10.1111/j.1745-3933.2009.00699.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2009MNRAS.398L..21S},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{diemand_vl2_2008,
+   author = {{Diemand}, J. and {Kuhlen}, M. and {Madau}, P. and {Zemp}, M. and 
+	{Moore}, B. and {Potter}, D. and {Stadel}, J.},
+    title = "{Clumps and streams in the local dark matter distribution}",
+  journal = nat,
+archivePrefix = "arXiv",
+   eprint = {0805.1244},
+     year = 2008,
+    month = aug,
+   volume = 454,
+    pages = {735-738},
+      doi = {10.1038/nature07153},
+   adsurl = {http://adsabs.harvard.edu/abs/2008Natur.454..735D},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{elahi_peaks_2011,
+	author = {Elahi, Pascal J. and Thacker, Robert J. and Widrow, Lawrence M.},
+	title = {Peaks above the Maxwellian Sea: a new approach to finding substructures in $N$-body haloes},
+	journal = mn,
+	volume = {418},
+	number = {1},
+	publisher = {Blackwell Publishing Ltd},
+	issn = {1365-2966},
+	url = {http://dx.doi.org/10.1111/j.1365-2966.2011.19485.x},
+	doi = {10.1111/j.1365-2966.2011.19485.x},
+	pages = {320--335},
+	keywords = {methods: data analysis, methods: numerical, galaxies: haloes, galaxies: structure, dark matter},
+	shorttitle = {Peaks above the Maxwellian Sea},
+	abstract = {We describe a new algorithm for finding substructures within dark matter haloes from N-body simulations. The algorithm relies upon the fact that dynamically distinct substructures in a halo will have a {{\textbackslash}em local} velocity distribution that differs significantly from the mean, i.e. smooth background halo. We characterize the large-scale mean field using a coarsely grained cell-based approach, while a kernel smoothing process is used to determined the local velocity distribution. Comparing the ratio of these two estimates allows us to identify particles which are strongly cluster in velocity space relative to the background and thus resident in substructure. From this population of outliers, groups are identified using a {Friends-of-Friends-like} approach. False positives are rejected using Poisson noise arguments. This approach does not require a search of the full phase-space structure of a halo, a non-trivial task, and is thus computationally advantageous. We apply our algorithm to several test cases and show that it identifies not only subhaloes, bound overdensities in phase-space, but can recover tidal streams with a high purity. Our method can even find streams which do not appear significantly overdense in either physical or phase-space.},
+	month = nov,
+	year = {2011},
+},
+
+@article{pearce_hydra-resolving_1995,
+	title = {Hydra-resolving a parallel nightmare},
+	journal = {Dynamic Load Balancing on {MPP} systems},
+	author = {Pearce, F. R. and Couchman, H. M. P. and Jenkins, A. R. and Thomas, P. A.},
+	year = {1995}
+},
+
+@article{springel_cosmological_2005,
+	title = {The cosmological simulation code gadget‐2},
+	volume = {364},
+	issn = {1365-2966},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2966.2005.09655.x/abstract},
+	doi = {10.1111/j.1365-2966.2005.09655.x},
+	abstract = {We discuss the cosmological simulation code gadget-2, a new massively parallel {TreeSPH} code, capable of following a collisionless fluid with the N-body method, and an ideal gas by means of smoothed particle hydrodynamics {(SPH).} Our implementation of {SPH} manifestly conserves energy and entropy in regions free of dissipation, while allowing for fully adaptive smoothing lengths. Gravitational forces are computed with a hierarchical multipole expansion, which can optionally be applied in the form of a {TreePM} algorithm, where only short-range forces are computed with the ‘tree’ method while long-range forces are determined with Fourier techniques. Time integration is based on a quasi-symplectic scheme where long-range and short-range forces can be integrated with different time-steps. Individual and adaptive short-range time-steps may also be employed. The domain decomposition used in the parallelization algorithm is based on a space-filling curve, resulting in high flexibility and tree force errors that do not depend on the way the domains are cut. The code is efficient in terms of memory consumption and required communication bandwidth. It has been used to compute the first cosmological N-body simulation with more than 1010 dark matter particles, reaching a homogeneous spatial dynamic range of 105 per dimension in a three-dimensional box. It has also been used to carry out very large cosmological {SPH} simulations that account for radiative cooling and star formation, reaching total particle numbers of more than 250 million. We present the algorithms used by the code and discuss their accuracy and performance using a number of test problems. gadget-2 is publicly released to the research community.},
+	number = {4},
+	journal = mn,
+	author = {Springel, Volker},
+	month = dec,
+	year = {2005},
+	keywords = {dark matter, galaxies: interactions, methods: numerical},
+	pages = {1105--1134}
+},
+
+@ARTICLE{springel_millenium_2005,
+   author = {{Springel}, V. and {White}, S.~D.~M. and {Jenkins}, A. and {Frenk}, C.~S. and 
+	{Yoshida}, N. and {Gao}, L. and {Navarro}, J. and {Thacker}, R. and 
+	{Croton}, D. and {Helly}, J. and {Peacock}, J.~A. and {Cole}, S. and 
+	{Thomas}, P. and {Couchman}, H. and {Evrard}, A. and {Colberg}, J. and 
+	{Pearce}, F.},
+    title = "{Simulations of the formation, evolution and clustering of galaxies and quasars}",
+  journal = nat,
+   eprint = {arXiv:astro-ph/0504097},
+     year = 2005,
+    month = jun,
+   volume = 435,
+    pages = {629-636},
+      doi = {10.1038/nature03597},
+   adsurl = {http://adsabs.harvard.edu/abs/2005Natur.435..629S},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{springel_e_2010,
+	title = {E pur si muove: Galilean‐invariant cosmological hydrodynamical simulations on a moving mesh},
+	volume = {401},
+	issn = {1365-2966},
+	shorttitle = {E pur si muove},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2966.2009.15715.x/abstract},
+	doi = {10.1111/j.1365-2966.2009.15715.x},
+	abstract = {Hydrodynamic cosmological simulations at present usually employ either the Lagrangian smoothed particle hydrodynamics {(SPH)} technique or Eulerian hydrodynamics on a Cartesian mesh with (optional) adaptive mesh refinement {(AMR).} Both of these methods have disadvantages that negatively impact their accuracy in certain situations, for example the suppression of fluid instabilities in the case of {SPH}, and the lack of Galilean invariance and the presence of overmixing in the case of {AMR.} We here propose a novel scheme which largely eliminates these weaknesses. It is based on a moving unstructured mesh defined by the Voronoi tessellation of a set of discrete points. The mesh is used to solve the hyperbolic conservation laws of ideal hydrodynamics with a finite-volume approach, based on a second-order unsplit Godunov scheme with an exact Riemann solver. The mesh-generating points can in principle be moved arbitrarily. If they are chosen to be stationary, the scheme is equivalent to an ordinary Eulerian method with second-order accuracy. If they instead move with the velocity of the local flow, one obtains a Lagrangian formulation of continuum hydrodynamics that does not suffer from the mesh distortion limitations inherent in other mesh-based Lagrangian schemes. In this mode, our new method is fully Galilean invariant, unlike ordinary Eulerian codes, a property that is of significant importance for cosmological simulations where highly supersonic bulk flows are common. In addition, the new scheme can adjust its spatial resolution automatically and continuously, and hence inherits the principal advantage of {SPH} for simulations of cosmological structure growth. The high accuracy of Eulerian methods in the treatment of shocks is also retained, while the treatment of contact discontinuities improves. We discuss how this approach is implemented in our new code arepo, both in {2D} and in {3D}, and is parallelized for distributed memory computers. We also discuss techniques for adaptive refinement or de-refinement of the unstructured mesh. We introduce an individual time-step approach for finite-volume hydrodynamics, and present a high-accuracy treatment of self-gravity for the gas that allows the new method to be seamlessly combined with a high-resolution treatment of collisionless dark matter. We use a suite of test problems to examine the performance of the new code and argue that the hydrodynamic moving-mesh scheme proposed here provides an attractive and competitive alternative to current {SPH} and Eulerian techniques.},
+	number = {2},
+	journal = mn,
+	author = {Springel, Volker},
+	month = jan,
+	year = {2010},
+	keywords = {cosmology: dark matter, galaxies: interactions, methods: numerical},
+	pages = {791--851}
+},
+
+@article{muldrew_accuracy_2011,
+	title = {The accuracy of subhalo detection},
+	volume = {410},
+	issn = {1365-2966},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2966.2010.17636.x/abstract},
+	doi = {10.1111/j.1365-2966.2010.17636.x},
+	abstract = {With the ever increasing resolution of N-body simulations, accurate subhalo detection is becoming essential in the study of the formation of structure, the production of merger trees and the seeding of semi-analytic models. To investigate the state of halo finders, we compare two different approaches to detecting subhaloes; the first based on overdensities in a halo and the second being adaptive mesh refinement. A set of stable mock {Navarro–Frenk–White} {(NFW)} dark matter haloes was produced and a subhalo was placed at different radii within a larger halo. subfind (a friends-of-friends based finder) and ahf (an adaptive mesh based finder) were employed to recover the subhalo. As expected, we found that the mass of the subhalo recovered by subfind has a strong dependence on the radial position and that neither halo finder can accurately recover the subhalo when it is very near the centre of the halo. This radial dependence is shown to be related to the subhalo being truncated by the background density of the halo and originates due to the subhalo being defined as an overdensity. If the subhalo size is instead determined using the peak of the circular velocity profile, a much more stable value is recovered. The downside to this is that the maximum circular velocity is a poor measure of stripping and is affected by resolution. For future halo finders to recover all the particles in a subhalo, a search of phase space will need to be introduced.},
+	number = {4},
+	journal = mn,
+	author = {Muldrew, Stuart I and Pearce, Frazer R and Power, Chris},
+	month = feb,
+	year = {2011},
+	keywords = {cosmology: theory, dark matter, galaxies: formation, galaxies: haloes, methods: numerical},
+	pages = {2617--2624}
+},
+
+@article{navarro_structure_1995,
+	title = {The Structure of Cold Dark Matter Halos},
+	url = {http://arxiv.org/abs/astro-ph/9508025},
+	doi = {doi:10.1086/177173},
+	abstract = {We use N-body simulations to investigate the structure of dark halos in the standard Cold Dark Matter cosmogony. Halos are excised from simulations of cosmologically representative regions and are resimulated individually at high resolution. We study objects with masses ranging from those of dwarf galaxy halos to those of rich galaxy clusters. The spherically averaged density profiles of all our halos can be fit over two decades in radius by scaling a simple ``universal'' profile. The characteristic overdensity of a halo, or equivalently its concentration, correlates strongly with halo mass in a way which reflects the mass dependence of the epoch of halo formation. Halo profiles are approximately isothermal over a large range in radii, but are significantly shallower than \$r{\textasciicircum}{-2}\$ near the center and steeper than \$r{\textasciicircum}{-2}\$ near the virial radius. Matching the observed rotation curves of disk galaxies requires disk mass-to-light ratios to increase systematically with luminosity. Further, it suggests that the halos of bright galaxies depend only weakly on galaxy luminosity and have circular velocities significantly lower than the disk rotation speed. This may explain why luminosity and dynamics are uncorrelated in observed samples of binary galaxies and of satellite/spiral systems. For galaxy clusters, our halo models are consistent both with the presence of giant arcs and with the observed structure of the intracluster medium, and they suggest a simple explanation for the disparate estimates of cluster core radii found by previous authors. Our results also highlight two shortcomings of the {CDM} model. {CDM} halos are too concentrated to be consistent with the halo parameters inferred for dwarf irregulars, and the predicted abundance of galaxy halos is larger than the observed abundance of galaxies.},
+	journal = apj,
+	author = {Navarro, Julio F and Frenk, Carlos S and White, Simon D. M},
+	month = may,
+	pages = {563},
+	year = {1996},
+	volume = 462,
+	note = {{Astrophys.J.462:563-575},1996},
+	keywords = {Astrophysics}
+},
+
+@ARTICLE{ascasibar_2005,
+	author = {Ascasibar, Y. and Binney, J.},
+	title = {Numerical estimation of densities},
+	journal = mn,
+	volume = {356},
+	number = {3},
+	publisher = {Blackwell Science Ltd},
+	issn = {1365-2966},
+	url = {http://dx.doi.org/10.1111/j.1365-2966.2004.08480.x},
+	doi = {10.1111/j.1365-2966.2004.08480.x},
+	pages = {872--882},
+	keywords = {methods: data analysis, methods: numerical, galaxies: haloes, galaxies: kinematics and dynamics, dark matter},
+	year = {2005},
+}
+
+@ARTICLE{ascasibar_2010,
+   author = {{Ascasibar}, Y.},
+    title = "{Estimating multidimensional probability fields using the Field Estimator for Arbitrary Spaces (FiEstAS) with applications to astrophysics}",
+  journal = compcom,
+archivePrefix = "arXiv",
+   eprint = {1006.1296},
+ primaryClass = "astro-ph.IM",
+     year = 2010,
+    month = aug,
+   volume = 181,
+    pages = {1438-1443},
+      doi = {10.1016/j.cpc.2010.04.011},
+   adsurl = {http://adsabs.harvard.edu/abs/2010CoPhC.181.1438A},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{hernquist_1990,
+  title={An analytical model for spherical galaxies and bulges},
+  author={Hernquist, L.},
+  journal=apj,
+  volume={356},
+  pages={359--364},
+  year={1990}
+}
+
+@ARTICLE{Ascasibar_and_Gottloeber_2008,
+   author = {{Ascasibar}, Y. and {Gottl{\"o}ber}, S.},
+    title = "{The dynamical structure of dark matter haloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0802.4348},
+ keywords = {galaxies: haloes , galaxies: structure},
+     year = 2008,
+    month = jun,
+   volume = 386,
+    pages = {2022-2030},
+      doi = {10.1111/j.1365-2966.2008.13160.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2008MNRAS.386.2022A},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{nfw_1997,
+  author={Julio F. Navarro and Carlos S. Frenk and Simon D. M. White},
+  title={A Universal Density Profile from Hierarchical Clustering},
+  journal=apj,
+  volume={490},
+  number={2},
+  pages={493},
+  url={http://stacks.iop.org/0004-637X/490/i=2/a=493},
+  year={1997},
+  abstract={We use high-resolution N -body simulations to study the equilibrium density profiles of dark matter halos in hierarchically clustering universes. We find that all such profiles have the same shape, independent of the halo mass, the initial density fluctuation spectrum, and the values of the cosmological parameters. Spherically averaged equilibrium profiles are well fitted over two decades in radius by a simple formula originally proposed to describe the structure of galaxy clusters in a cold dark matter universe. In any particular cosmology, the two scale parameters of the fit, the halo mass and its characteristic density, are strongly correlated. Low-mass halos are significantly denser than more massive systems, a correlation that reflects the higher collapse redshift of small halos. The characteristic density of an equilibrium halo is proportional to the density of the universe at the time it was assembled. A suitable definition of this assembly time allows the same proportionality constant to be used for all the cosmologies that we have tested. We compare our results with previous work on halo density profiles and show that there is good agreement. We also provide a step-by-step analytic procedure, based on the Press-Schechter formalism, that allows accurate equilibrium profiles to be calculated as a function of mass in any hierarchical model.}
+}
+	
+@article{springel_blueprint_2008,
+	title = {A blueprint for detecting supersymmetric dark matter in the Galactic halo},
+	url = {http://arxiv.org/abs/0809.0894},
+	doi = {doi:10.1038/nature07411},
+	abstract = {Dark matter is the dominant form of matter in the universe, but its nature is unknown. It is plausibly an elementary particle, perhaps the lightest supersymmetric partner of known particle species. In this case, annihilation of dark matter in the halo of the Milky Way should produce gamma-rays at a level which may soon be observable. Previous work has argued that the annihilation signal will be dominated by emission from very small clumps (perhaps smaller even than the Earth) which would be most easily detected where they cluster together in the dark matter halos of dwarf satellite galaxies. Here we show, using the largest ever simulation of the formation of a galactic halo, that such small-scale structure will, in fact, have a negligible impact on dark matter detectability. Rather, the dominant and likely most easily detectable signal will be produced by diffuse dark matter in the main halo of the Milky Way. If the main halo is strongly detected, then small dark matter clumps should also be visible, but may well contain no stars, thereby confirming a key prediction of the Cold Dark Matter {(CDM)} model.},
+	journal = {0809.0894},
+	author = {Springel, Volker and White, Simon D. M and Frenk, Carlos S and Navarro, Julio F and Jenkins, Adrian and Vogelsberger, Mark and Wang, Jie and Ludlow, Aaron and Helmi, Amina},
+	month = sep,
+	year = {2008},
+	keywords = {Astrophysics}
+},
+
+@article{knebe_haloes_2011,
+	title = {Haloes gone {MAD★:} The {Halo-Finder} Comparison Project},
+	issn = {00358711},
+	shorttitle = {Haloes gone {MAD★}},
+	url = {http://adsabs.harvard.edu/abs/2011MNRAS.tmp..819K},
+	doi = {10.1111/j.1365-2966.2011.18858.x},
+	journal = mn,
+	author = {Knebe, Alexander and Knollmann, Steffen R. and Muldrew, Stuart I. and Pearce, Frazer R. and {Aragon-Calvo}, Miguel Angel and Ascasibar, Yago and Behroozi, Peter S. and Ceverino, Daniel and Colombi, Stephane and Diemand, Juerg},
+	month = may,
+	year = {2011},
+	pages = {819--}
+},
+
+@article{knebe_haloes_2011full,
+	title = {Haloes gone {MAD★:} The {Halo-Finder} Comparison Project},
+	issn = {00358711},
+	shorttitle = {Haloes gone {MAD★}},
+	url = {http://adsabs.harvard.edu/abs/2011MNRAS.tmp..819K},
+	doi = {10.1111/j.1365-2966.2011.18858.x},
+	journal = mn,
+	author = {Knebe, Alexander and Knollmann, Steffen R. and Muldrew, Stuart I. and Pearce, Frazer R. and {Aragon-Calvo}, Miguel Angel and Ascasibar, Yago and Behroozi, Peter S. and Ceverino, Daniel and Colombi, Stephane and Diemand, Juerg and Dolag, Klaus and Falck, Bridget L. and Fasel, Patricia and Gardner, Jeff and Gottlöber, Stefan and Hsu, {Chung-Hsing} and Iannuzzi, Francesca and Klypin, Anatoly and Lukić, Zarija and Maciejewski, Michal and {McBride}, Cameron and Neyrinck, Mark C. and Planelles, Susana and Potter, Doug and Quilis, Vicent and Rasera, Yann and Read, Justin I. and Ricker, Paul M. and Roy, Fabrice and Springel, Volker and Stadel, Joachim and Stinson, Greg and Sutter, P. M. and Turchaninov, Victor and Tweed, Dylan and Yepes, Gustavo and Zemp, Marcel},
+	month = may,
+	year = {2011},
+	pages = {819--}
+},
+
+@article{knollmann_ahf:_2009,
+	title = {{AHF:} Amiga's Halo Finder},
+	volume = {182},
+	journal = apjss,
+	author = {Knollmann, S. R and Knebe, A.},
+	year = {2009},
+	pages = {608}
+},
+
+@article{planelles_asohf:_2010,
+	title = {{ASOHF:} a new adaptive spherical overdensity halo finder},
+	journal = {Arxiv preprint {arXiv:1006.3205}},
+	author = {Planelles, S. and Quilis, V.},
+	year = {2010}
+},
+
+@article{skory_parallel_2010,
+	title = {Parallel {HOP:} A Scalable Halo Finder for Massive Cosmological Data Sets},
+	volume = {191},
+	journal = apjss,
+	author = {Skory, S. and Turk, M. J and Norman, M. L and Coil, A. L},
+	year = {2010},
+	pages = {43}
+},
+
+@article{gill_evolution_2004,
+	title = {The evolution of {substructure–I.} A new identification method},
+	volume = {351},
+	number = {2},
+	journal = mn,
+	author = {Gill, S. {P.D} and Knebe, A. and Gibson, B. K},
+	year = {2004},
+	pages = {399--409}
+},
+
+@article{springel_aquarius_2008,
+	title = {The Aquarius Project: the subhaloes of galactic haloes},
+	volume = {391},
+	number = {4},
+	journal = mn,
+	author = {Springel, V. and Wang, J. and Vogelsberger, M. and Ludlow, A. and Jenkins, A. and Helmi, A. and Navarro, J. F and Frenk, C. S and White, S. {D.M}},
+	year = {2008},
+	pages = {1685--1711}
+},
+
+@article{springel_prospects_2008,
+	title = {Prospects for detecting supersymmetric dark matter in the Galactic halo},
+	volume = {456},
+	issn = {0028-0836},
+	url = {http://dx.doi.org/10.1038/nature07411},
+	doi = {10.1038/nature07411},
+	number = {7218},
+	journal = nat,
+	author = {Springel, V. and White, S. D. M. and Frenk, C. S. and Navarro, J. F. and Jenkins, A. and Vogelsberger, M. and Wang, J. and Ludlow, A. and Helmi, A.},
+	month = nov,
+	year = {2008},
+	pages = {73--76},
+	annote = {10.1038/nature07411}
+},
+
+@article{neyrinck_voboz:_2005,
+	title = {voboz: an almost‐parameter‐free halo‐finding algorithm},
+	volume = {356},
+	issn = {1365-2966},
+	shorttitle = {voboz},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2966.2004.08505.x/abstract},
+	doi = {10.1111/j.1365-2966.2004.08505.x},
+	abstract = {We have developed an algorithm, called voboz {(VOronoi} {BOund} Zones), to find haloes in an N-body dark matter simulation; it has as little dependence on free parameters as we can manage. By using the Voronoi diagram, we achieve non-parametric, ‘natural’ measurements of each particle's density and set of neighbours. We then eliminate much of the ambiguity in merging sets of particles together by identifying every possible density peak, and measuring the probability that each does not arise from Poisson noise. The main halo in a cluster tends to have a high probability, while its subhaloes tend to have lower probabilities. The first parameter in voboz controls the subtlety of particle unbinding, and may be eliminated if one is cavalier with processor time; even if one is not, the results saturate to the parameter-free answer when the parameter is sufficiently small. The only parameter that remains, an outer density cut-off, does not influence whether or not haloes are identified, nor does it have any effect on subhaloes; it only affects the masses returned for supercluster haloes.},
+	number = {4},
+	journal = mn,
+	author = {Neyrinck, Mark C and Gnedin, Nickolay Y and Hamilton, Andrew J. S},
+	month = feb,
+	year = {2005},
+	keywords = {cosmology: theory, galaxies: formation, galaxies: haloes, large‐scale structure of Universe., methods: data analysis, methods: N‐body simulations},
+	pages = {1222--1232}
+},
+
+@article{m._a._sgro_hierarchical_2010,
+	title = {Hierarchical {Friend-of-Friend} algorithm to extract substructures from dark matter halos},
+	volume = {53},
+	abstract = {We present a substructures identification algorithm able to
+extract local overdensities from dark matter halos in a cosmological N-
+body simulation. We start with a standard {Friend-of-Friend} {(FoF)} algo-
+rithm to obtain the dark matter halos from a given simulation output.
+The subsequent peaks of increasing density are then disjoined by decrea-
+sing recursively the linking lenght parameter, decomposing each halo into
+a principal subhalo plus minor overdensities within. In every identifica-
+tion level we analize each subhalo to remove all unbounded particles by
+applying an energy criterion. In this work we describe our algorithm and
+show some preliminary results.},
+	journal = {BAAA},
+	author = {M. A. Sgró and A. N. Ruiz and M. E. Merchán},
+	year = {2010},
+	pages = {43--46}
+},
+
+@article{han_resolving_2011,
+	title = {Resolving Subhalos' Lives with the Hierarchical {Bound-Tracing} Algorithm},
+	url = {http://arxiv.org/abs/1103.2099},
+	abstract = {We introduce a new code based on the merger hierarchy of dark matter halos to find and trace dark matter subhalos in simulations. Here dark matter subhalos are defined as self-bound remnant of dark matter halos. We keep full record of the merger hierarchy of subhalos and allow growth of satellite subhalos through accretion from its subordinate subhalos in the merger hierarchy hence allowing mergers among satellites. Local accretion of background mass is omitted while re-accretion of stripped mass is allowed. The justification of these treatments is provided by case study of the life of individual subhalos and by the success in finding the complete subhalo catalogue. Dependence of the result of this tracing algorithm on the time resolution of simulation output has also been examined. We compare our result to the popular subhalo finder {SUBFIND} and show that this Hierarchical {Bound-Tracing} {(HBT)} code is able to well resolve subhalos in high density environment and keep strict physical track of subhalos' merger history. {HBT} also features fast speed as it does not need density interpolation or spatial searching when constructing source subhalos, and because it is fully parallelized. This code is available upon request with the author.},
+	journal = {Arxiv preprint arXiv:1103.2099},
+	author = {Han, Jiaxin and Jing, Y. P and Wang, Huiyuan and Wang, Wenting},
+	month = mar,
+	year = {2011},
+	keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics}
+},
+
+@article{maciejewski_phasespace_2009,
+	title = {Phase‐space structures – {II.} Hierarchical Structure Finder},
+	volume = {396},
+	issn = {1365-2966},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2966.2009.14825.x/abstract},
+	doi = {10.1111/j.1365-2966.2009.14825.x},
+	abstract = {A new multidimensional Hierarchical Structure Finder (hsf) to study the phase-space structure of dark matter in N-body cosmological simulations is presented. The algorithm depends mainly on two parameters, which control the level of connectivity of the detected structures and their significance compared to Poisson noise. By working in six-dimensional phase space, where contrasts are much more pronounced than in three-dimensional {(3D)} position space, our hsf algorithm is capable of detecting subhaloes including their tidal tails, and can recognize other phase-space structures such as pure streams and candidate caustics.},
+	number = {3},
+	journal = mn,
+	author = {Maciejewski, M. and Colombi, S. and Springel, V. and Alard, C. and Bouchet, F. R},
+	month = jul,
+	year = {2009},
+	keywords = {dark matter, galaxies: haloes, galaxies: structure, methods: data analysis, methods: numerical},
+	pages = {1329--1348}
+},
+
+@article{diemand_early_2006,
+	title = {Early Supersymmetric Cold Dark Matter Substructure},
+	volume = {649},
+	issn = {{0004-637X}},
+	url = {http://iopscience.iop.org/0004-637X/649/1/1},
+	doi = {10.1086/506377},
+	number = {1},
+	journal = apj,
+	author = {Diemand, Jurg and Kuhlen, Michael and Madau, Piero},
+	month = sep,
+	year = {2006},
+	pages = {1--13}
+}
+
+@ARTICLE{contini_2011,
+   author = {{Contini}, E. and {De Lucia}, G. and {Borgani}, S.},
+    title = "{Statistics of Substructures in Dark Matter Haloes}",
+  journal = {ArXiv preprint arXiv:1111.1911},
+archivePrefix = "arXiv",
+   eprint = {1111.1911},
+ primaryClass = "astro-ph.CO",
+ keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics},
+     year = 2011,
+    month = nov,
+   adsurl = {http://adsabs.harvard.edu/abs/2011arXiv1111.1911C},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+  	
+@article{moore_1999,
+  author={Ben Moore and Sebastiano Ghigna and Fabio Governato and George Lake and Thomas Quinn and Joachim Stadel and Paolo Tozzi},
+  title={Dark Matter Substructure within Galactic Halos},
+  journal=apjl,
+  volume={524},
+  number={1},
+  pages={L19},
+  url={http://stacks.iop.org/1538-4357/524/i=1/a=L19},
+  year={1999},
+  abstract={We use numerical simulations to examine the substructure within galactic and cluster mass halos that form within a hierarchical universe. Clusters are easily reproduced with a steep mass spectrum of thousands of substructure clumps that closely matches the observations. However, the survival of dark matter substructure also occurs on galactic scales, leading to the remarkable result that galaxy halos appear as scaled versions of galaxy clusters. The model predicts that the virialized extent of the Milky Way's halo should contain about 500 satellites with circular velocities larger than the Draco and Ursa Minor systems, i.e., bound masses ##IMG## [http://ej.iop.org/icons/Entities/gtrsim.gif] {gtrsim} 10 8 M ##IMG## [http://ej.iop.org/icons/Entities/sun.gif] {sun} and tidally limited sizes ##IMG## [http://ej.iop.org/icons/Entities/gtrsim.gif] {gtrsim} 1 kpc. The substructure clumps are on orbits that take a large fraction of them through the stellar disk, leading to significant resonant and impulsive heating. Their abundance and singular density profiles have important implications for the existence of old thin disks, cold stellar streams, gravitational lensing, and indirect/direct detection experiments.}
+}
+
+@article{wmap_2011,
+  author={N. Jarosik and C. L. Bennett and J. Dunkley and B. Gold and M. R. Greason and M. Halpern and R. S. Hill and G. Hinshaw and A.
+Kogut and E. Komatsu and D. Larson and M. Limon and S. S. Meyer and M. R. Nolta and N. Odegard and L. Page and K. M. Smith and D. N.
+Spergel and G. S. Tucker and J. L. Weiland and E. Wollack and E. L. Wright},
+  title={Seven-year Wilkinson Microwave Anisotropy Probe (WMAP) Observations: Sky Maps, Systematic Errors, and Basic Results},
+  journal=apjss,
+  volume={192},
+  number={2},
+  pages={14},
+  url={http://stacks.iop.org/0067-0049/192/i=2/a=14},
+  year={2011},
+  abstract={New full-sky temperature and polarization maps based on seven years of data from WMAP are presented. The new results are consistent with previous results, but have improved due to reduced noise from the additional integration time, improved knowledge of the instrument performance, and improved data analysis procedures. The improvements are described in detail. The seven-year data set is well fit by a minimal six-parameter flat ΛCDM model. The parameters for this model, using the WMAP data in conjunction with baryon acoustic oscillation data from the Sloan Digital Sky Survey and priors on H 0 from Hubble Space Telescope observations, are Ω b h 2 = 0.02260 ± 0.00053, Ω c h 2 = 0.1123 ± 0.0035, Ω Λ = 0.728 +0.015 –0.016 , n s = 0.963 ± 0.012, τ = 0.087 ± 0.014, and σ 8 = 0.809 ± 0.024 (68% CL uncertainties). The temperature power spectrum signal-to-noise ratio per multipole is greater that unity for multipoles ℓ ##IMG## [http://ej.iop.org/icons/Entities/lsim.gif] {lsim} 919, allowing a robust measurement of the third acoustic peak. This measurement results in improved constraints on the matter density, Ω m h 2 = 0.1334 +0.0056 –0.0055 , and the epoch of matter-radiation equality, z eq = 3196 +134 –133 , using WMAP data alone. The new WMAP data, when combined with smaller angular scale microwave background anisotropy data, result in a 3σ detection of the abundance of primordial helium, Y He = 0.326 ± 0.075. When combined with additional external data sets, the WMAP data also yield better determinations of the total mass of neutrinos, ∑ m ν ≤ 0.58 eV(95%CL), and the effective number of neutrino species, N eff = 4.34 +0.86 –0.88 . The power-law index of the primordial power spectrum is now determined to be n s = 0.963 ± 0.012, excluding the Harrison-Zel'dovich-Peebles spectrum by >3σ. These new WMAP measurements provide important tests of big bang cosmology.}
+}
+		
+@ARTICLE{wmap_2009,
+   author = {{Hinshaw}, G. and {Weiland}, J.~L. and {Hill}, R.~S. and {Odegard}, N. and 
+	{Larson}, D. and {Bennett}, C.~L. and {Dunkley}, J. and {Gold}, B. and 
+	{Greason}, M.~R. and {Jarosik}, N. and {Komatsu}, E. and {Nolta}, M.~R. and 
+	{Page}, L. and {Spergel}, D.~N. and {Wollack}, E. and {Halpern}, M. and 
+	{Kogut}, A. and {Limon}, M. and {Meyer}, S.~S. and {Tucker}, G.~S. and 
+	{Wright}, E.~L.},
+    title = "{Five-Year Wilkinson Microwave Anisotropy Probe (WMAP) Observations: Data Processing, Sky Maps, and Basic Results}",
+  journal = apjss,
+   eprint = {0803.0732},
+ keywords = {Astrophysics},
+     year = 2009,
+    month = Feb,
+   volume = 180,
+    pages = {225-245},
+   adsurl = {http://adsabs.harvard.edu/abs/2008arXiv0803.0732H},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+@ARTICLE{adaptahop_2009,
+   author = {{Tweed}, D. and {Devriendt}, J. and {Blaizot}, J. and {Colombi}, S. and 
+	{Slyz}, A.},
+    title = {Building merger trees from cosmological $N$-body simulations. Towards improving galaxy formation models using subhaloes},
+  journal = aa,
+archivePrefix = "arXiv",
+   eprint = {0902.0679},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: numerical, methods: N-body simulations, cosmology: large-scale structure of Universe},
+     year = 2009,
+    month = nov,
+   volume = 506,
+    pages = {647-660},
+      doi = {10.1051/0004-6361/200911787},
+   adsurl = {http://adsabs.harvard.edu/abs/2009A%26A...506..647T},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{adaptahop_2004,
+author = {Aubert, D. and Pichon, C. and Colombi, S.},
+title = {The origin and implications of dark matter anisotropic cosmic infall on ?L? haloes},
+journal = mn,
+volume = {352},
+number = {2},
+publisher = {Blackwell Science Ltd},
+issn = {1365-2966},
+url = {http://dx.doi.org/10.1111/j.1365-2966.2004.07883.x},
+doi = {10.1111/j.1365-2966.2004.07883.x},
+pages = {376--398},
+keywords = {galaxies: formation, galaxies: haloes, dark matter},
+year = {2004},
+}
+
+@article {subfind_2001,
+author = {Springel, Volker and White, Simon D. M. and Tormen, Giuseppe and Kauffmann, Guinevere},
+title = {Populating a cluster of galaxies – I. Results at},
+journal = mn,
+volume = {328},
+number = {3},
+publisher = {Blackwell Science Ltd},
+issn = {1365-2966},
+url = {http://dx.doi.org/10.1046/j.1365-8711.2001.04912.x},
+doi = {10.1046/j.1365-8711.2001.04912.x},
+pages = {726--750},
+keywords = {galaxies: clusters: general, galaxies: formation, dark matter},
+year = {2001},
+}
+
+@ARTICLE{white_1978,
+   author = {{White}, S.~D.~M. and {Rees}, M.~J.},
+    title = "{Core condensation in heavy halos - A two-stage theory for galaxy formation and clustering}",
+  journal = mn,
+ keywords = {ASTRONOMICAL MODELS, GALACTIC CLUSTERS, GALACTIC EVOLUTION, GALACTIC NUCLEI, GRAVITATIONAL EFFECTS, HALOS, CRITICAL MASS, DARK MATTER, DYNAMIC MODELS, INTERSTELLAR GAS, LUMINOSITY, MANY BODY PROBLEM, RED SHIFT},
+     year = 1978,
+    month = may,
+   volume = 183,
+    pages = {341-358},
+   adsurl = {http://adsabs.harvard.edu/abs/1978MNRAS.183..341W},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{zavala_2010,
+author = {Zavala, Jesús and Springel, Volker and Boylan-Kolchin, Michael},
+title = {Extragalactic gamma-ray background radiation from dark matter annihilation},
+journal = mn,
+volume = {405},
+number = {1},
+publisher = {Blackwell Publishing Ltd},
+issn = {1365-2966},
+url = {http://dx.doi.org/10.1111/j.1365-2966.2010.16482.x},
+doi = {10.1111/j.1365-2966.2010.16482.x},
+pages = {593--612},
+keywords = {methods: numerical, dark matter},
+year = {2010},
+}
+
+
+@ARTICLE{trenti_2010,
+   author = {{Trenti}, M. and {Smith}, B.~D. and {Hallman}, E.~J. and {Skillman}, S.~W. and 
+	{Shull}, J.~M.},
+    title = "{How Well do Cosmological Simulations Reproduce Individual Halo Properties?}",
+  journal = apj,
+archivePrefix = "arXiv",
+   eprint = {1001.5037},
+ primaryClass = "astro-ph.CO",
+ keywords = {galaxies: formation, methods: numerical},
+     year = 2010,
+    month = mar,
+   volume = 711,
+    pages = {1198-1207},
+      doi = {10.1088/0004-637X/711/2/1198},
+   adsurl = {http://adsabs.harvard.edu/abs/2010ApJ...711.1198T},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+  	
+@article{klypin_1999,
+  author={Anatoly Klypin and Andrey V. Kravtsov and Octavio Valenzuela and Francisco Prada},
+  title={Where Are the Missing Galactic Satellites?},
+  journal=apj,
+  volume={522},
+  number={1},
+  pages={82},
+  url={http://stacks.iop.org/0004-637X/522/i=1/a=82},
+  year={1999},
+  abstract={According to the hierarchical clustering scenario, galaxies are assembled by merging and accretion of numerous satellites of different sizes and masses. This ongoing process is not 100% efficient in destroying all of the accreted satellites, as evidenced by the satellites of our Galaxy and of M31. Using published data, we have compiled the circular velocity ( V circ ) distribution function (VDF) of galaxy satellites in the Local Group. We find that within the volumes of radius of 570 kpc (400 h -1 kpc assuming the Hubble constant h = 0.7) centered on the Milky Way and Andromeda, the average VDF is roughly approximated as n (> V circ ) ≈ 55 ± 11( V circ /10 km s -1 ) -1.4±0.4 h 3 Mpc -3 for V circ in the range ≈10-70 km s -1 . The observed VDF is compared with results of high-resolution cosmological simulations. We find that the VDF in models is very different from the observed one: n (> V circ ) ≈ 1200( V circ /10 km s -1 ) -2.75 h 3 Mpc -3 . Cosmological models thus predict that a halo the size of our Galaxy should have about 50 dark matter satellites with circular velocity greater than 20 km s -1 and mass greater than 3 × 10 8 M ##IMG## [http://ej.iop.org/icons/Entities/sun.gif] {sun} within a 570 kpc radius. This number is significantly higher than the approximately dozen satellites actually observed around our Galaxy. The difference is even larger if we consider the abundance of satellites in simulated galaxy groups similar to the Local Group. The models predict ~300 satellites inside a 1.5 Mpc radius, while only ~40 satellites are observed in the Local Group. The observed and predicted VDFs cross at ≈50 km s -1 , indicating that the predicted abundance of satellites with V circ ##IMG## [http://ej.iop.org/icons/Entities/gtrsim.gif] {gtrsim} 50 km s -1 is in reasonably good agreement with observations. We conclude, therefore, that unless a large fraction of the Local Group satellites has been missed in observations, there is a dramatic discrepancy between observations and hierarchical models, regardless of the model parameters. We discuss several possible explanations for this discrepancy including identification of some satellites with the high-velocity clouds observed in the Local Group and the existence of dark satellites that failed to accrete gas and form stars either because of the expulsion of gas in the supernovae-driven winds or because of gas heating by the intergalactic ionizing background.}
+}
+	
+@article {pilipenko_2009,
+   author = {Pilipenko, S. and Doroshkevich, A. and Gottl\"ober, S.},
+   affiliation = {Russian Academy of Sciences Astro Space Center, Lebedev Physical Institute Moscow Russia},
+   title = {Evolution of dark-matter halos in numerical models},
+   journal = {Astronomy Reports},
+   publisher = {MAIK Nauka/Interperiodica distributed exclusively by Springer Science+Business Media LLC.},
+   issn = {1063-7729},
+   keyword = {Physics and Astronomy},
+   pages = {976-987},
+   volume = {53},
+   issue = {11},
+   url = {http://dx.doi.org/10.1134/S106377290911002X},
+   note = {10.1134/S106377290911002X},
+   year = {2009}
+}
+
+@ARTICLE{kase_2007,
+   author = {{Kase}, H. and {Makino}, J. and {Funato}, Y.},
+    title = "{Missing Dwarf Problem in Galaxy Clusters}",
+  journal = pasj,
+   eprint = {arXiv:astro-ph/0603074},
+ keywords = {cosmology: dark matter, cosmology: theory, galaxies:clusters: general, galaxies: dwarf, methods:n-body simulations},
+     year = 2007,
+    month = dec,
+   volume = 59,
+    pages = {1071-},
+   adsurl = {http://adsabs.harvard.edu/abs/2007PASJ...59.1071K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+@ARTICLE{boylan_toobig_2011,
+   author = {{Boylan-Kolchin}, M. and {Bullock}, J.~S. and {Kaplinghat}, M.},
+    title = "{Too big to fail? The puzzling darkness of massive Milky Way subhaloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {1103.0007},
+ primaryClass = "astro-ph.CO",
+ keywords = {Galaxy: halo, galaxies: abundances, cosmology: theory, dark matter},
+     year = 2011,
+    month = jul,
+   volume = 415,
+    pages = {L40-L44},
+      doi = {10.1111/j.1745-3933.2011.01074.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2011MNRAS.415L..40B},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{boylan_mwlcdm_2011,
+   author = {{Boylan-Kolchin}, M. and {Bullock}, J.~S. and {Kaplinghat}, M.
+	},
+    title = "{The Milky Way's bright satellites as an apparent failure of LCDM}",
+  journal = {ArXiv preprint arXiv:1111.2048},
+archivePrefix = "arXiv",
+   eprint = {1111.2048},
+ primaryClass = "astro-ph.CO",
+ keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics},
+     year = 2011,
+    month = nov,
+   adsurl = {http://adsabs.harvard.edu/abs/2011arXiv1111.2048B},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{ferrero_2011,
+   author = {{Ferrero}, I. and {Abadi}, M.~G. and {Navarro}, J.~F. and {Sales}, L.~V. and 
+	{Gurovich}, S.},
+    title = "{The dark matter halos of dwarf galaxies: a challenge for the LCDM paradigm?}",
+  journal = {ArXiv preprint arXiv:1111.6609},
+archivePrefix = "arXiv",
+   eprint = {1111.6609},
+ primaryClass = "astro-ph.CO",
+ keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics},
+     year = 2011,
+    month = nov,
+   adsurl = {http://adsabs.harvard.edu/abs/2011arXiv1111.6609F},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{2009MNRAS.393L..50E,
+   author = {{Evans}, N.~W. and {An}, J. and {Walker}, M.~G.},
+    title = "{Cores and cusps in the dwarf spheroidals}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {0811.1488},
+ keywords = {galaxies: kinematics and dynamics, galaxies: structure},
+     year = 2009,
+    month = feb,
+   volume = 393,
+    pages = {L50-L54},
+      doi = {10.1111/j.1745-3933.2008.00596.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2009MNRAS.393L..50E},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{pontzen_2011,
+   author = {{Pontzen}, A. and {Governato}, F.},
+    title = "{How supernova feedback turns dark matter cusps into cores}",
+  journal = {ArXiv preprint arXiv:1106.0499},
+archivePrefix = "arXiv",
+   eprint = {1106.0499},
+ primaryClass = "astro-ph.CO",
+ keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics, Astrophysics - Galaxy Astrophysics},
+     year = 2011,
+    month = jun,
+   adsurl = {http://adsabs.harvard.edu/abs/2011arXiv1106.0499P},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{Oh_2011,
+   author = {{Oh}, S.-H. and {Brook}, C. and {Governato}, F. and {Brinks}, E. and 
+	{Mayer}, L. and {de Blok}, W.~J.~G. and {Brooks}, A. and {Walter}, F.
+	},
+    title = "{The Central Slope of Dark Matter Cores in Dwarf Galaxies: Simulations versus THINGS}",
+  journal = apj,
+archivePrefix = "arXiv",
+   eprint = {1011.2777},
+ primaryClass = "astro-ph.CO",
+ keywords = {dark matter, galaxies: dwarf, galaxies: halos, galaxies: kinematics and dynamics},
+     year = 2011,
+    month = jul,
+   volume = 142,
+      eid = {24},
+    pages = {24},
+      doi = {10.1088/0004-6256/142/1/24},
+   adsurl = {http://adsabs.harvard.edu/abs/2011AJ....142...24O},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+                                                                        
+@article{diemand2007formation,                                                 
+  title={Formation and evolution of galaxy dark matter halos and their substructure},                                                                          
+  author={Diemand, J. and Kuhlen, M. and Madau, P.},                           
+  journal=apj,                                                                 
+  volume={667},                                                                
+  pages={859},                                                                 
+  year={2007},                                                                 
+  publisher={IOP Publishing}                                                   
+}                                                                              
+                                                                                
+@article{klypin2011dark,                                                       
+  title={Dark Matter Halos in the Standard Cosmological Model: Results from the Bolshoi Simulation},                                                           
+  author={Klypin, A.A. and Trujillo-Gomez, S. and Primack, J.},                
+  journal=apj,                                                                 
+  volume={740},                                                                
+  pages={102},                                                                 
+  year={2011},                                                                 
+  publisher={IOP Publishing}                                                   
+}
+                                                                  
+@article{xu2010substructure,                                                   
+  title={Substructure lensing: effects of galaxies, globular clusters and satellite streams},                                                                  
+  author={Xu, DD and Mao, S. and Cooper, A.P. and Wang, J. and Gao, L. and Frenk, C.S. and Springel, V.},                                                      
+  journal=mn,                                                                  
+  volume={408},                                                                
+  number={3},                                                                  
+  pages={1721--1729},                                                          
+  year={2010},                                                                 
+  publisher={Wiley Online Library}                                             
+}                                                                              
+                                                                               
+@article{boylan2010there,                                                      
+  title={There's no place like home? Statistics of Milky Way-mass dark matter haloes},                                                                         
+  author={Boylan-Kolchin, M. and Springel, V. and White, S.D.M. and Jenkins, A.},                                                                              
+  journal=mn,                                                                  
+  volume={406},                                                                
+  number={2},                                                                  
+  pages={896--912},                                                            
+  year={2010},                                                                 
+  publisher={Wiley Online Library}                                             
+}                                                                              
+                                                                               
+@article{angulo2009fate,                                                       
+  title={The fate of substructures in cold dark matter haloes},                
+  author={Angulo, RE and Lacey, CG and Baugh, CM and Frenk, CS},               
+  journal=mn,                                                                  
+  volume={399},                                                                
+  number={2},                                                                  
+  pages={983--995},                                                            
+  year={2009},                                                                 
+  publisher={Wiley Online Library}                                             
+}                                                                              
+                                                                               
+@article{stadel2009quantifying,                                                
+  title={Quantifying the heart of darkness with GHALO--a multibillion particle simulation of a galactic halo},
+  author={Stadel, J. and Potter, D. and Moore, B. and Diemand, J. and Madau, P. and Zemp, M. and Kuhlen, M. and Quilis, V.},
+  journal=mn,
+  volume={398},
+  number={1},
+  pages={L21--L25},
+  year={2009},
+  publisher={Wiley Online Library}
+}
+
+@article{boylan2009resolving,
+  title={Resolving cosmic structure formation with the Millennium-II Simulation},
+  author={Boylan-Kolchin, M. and Springel, V. and White, S.D.M. and Jenkins, A. and Lemson, G.},
+  journal=mn,
+  volume={398},
+  number={3},
+  pages={1150--1164},
+  year={2009},
+  publisher={Wiley Online Library}
+}
+
+@article{diemand2008clumps,
+  title={Clumps and streams in the local dark matter distribution},
+  author={Diemand, J. and Kuhlen, M. and Madau, P. and Zemp, M. and Moore, B. and Potter, D. and Stadel, J.},
+  journal=nat,
+  volume={454},
+  number={7205},
+  pages={735--738},
+  year={2008},
+  publisher={Nature Publishing Group}
+}
+
+
+@ARTICLE{behroozi_2011,
+   author = {{Behroozi}, P.~S. and {Wechsler}, R.~H. and {Wu}, H.-Y.},
+    title = "{The Rockstar Phase-Space Temporal Halo Finder and the Velocity Offsets of Cluster Cores}",
+  journal = {ArXiv preprint arXiv:1110.4372},
+archivePrefix = "arXiv",
+   eprint = {1110.4372},
+ primaryClass = "astro-ph.CO",
+ keywords = {Astrophysics - Cosmology and Extragalactic Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+     year = 2011,
+    month = oct,
+   adsurl = {http://adsabs.harvard.edu/abs/2011arXiv1110.4372B},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{kuhlen2008dark,
+  title={The dark matter annihilation signal from galactic substructure: predictions for GLAST},
+  author={Kuhlen, M. and Diemand, J. and Madau, P.},
+  journal=apj,
+  volume={686},
+  pages={262},
+  year={2008},
+  publisher={IOP Publishing}
+}
+@article{vogelsberger2009phase,
+  title={Phase-space structure in the local dark matter distribution and its signature in direct detection experiments},
+  author={Vogelsberger, M. and Helmi, A. and Springel, V. and White, S.D.M. and Wang, J. and Frenk, C.S. and Jenkins, A. and Ludlow, A. and Navarro, J.F.},
+  journal=mn,
+  volume={395},
+  number={2},
+  pages={797--811},
+  year={2009},
+  publisher={Wiley Online Library}
+}
+
+@ARTICLE{gao_2004,
+   author = {{Gao}, L. and {White}, S.~D.~M. and {Jenkins}, A. and {Stoehr}, F. and 
+	{Springel}, V.},
+    title = "{The subhalo populations of {$\Lambda$}CDM dark haloes}",
+  journal = mn,
+   eprint = {arXiv:astro-ph/0404589},
+ keywords = {methods: N-body simulations, methods: numerical, galaxies: clusters: general, galaxies: haloes, dark matter},
+     year = 2004,
+    month = dec,
+   volume = 355,
+    pages = {819-834},
+      doi = {10.1111/j.1365-2966.2004.08360.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2004MNRAS.355..819G},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+@ARTICLE{DeLucia_2004,
+   author = {{De Lucia}, G. and {Kauffmann}, G. and {Springel}, V. and {White}, S.~D.~M. and 
+	{Lanzoni}, B. and {Stoehr}, F. and {Tormen}, G. and {Yoshida}, N.
+	},
+    title = "{Substructures in cold dark matter haloes}",
+  journal = mn,
+   eprint = {arXiv:astro-ph/0306205},
+ keywords = {galaxies: clusters: general, galaxies: evolution, galaxies: formation, cosmology: dark matter},
+     year = 2004,
+    month = feb,
+   volume = 348,
+    pages = {333-344},
+      doi = {10.1111/j.1365-2966.2004.07372.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2004MNRAS.348..333D},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{wang_2011,
+   author = {{Wang}, J. and {Navarro}, J.~F. and {Frenk}, C.~S. and {White}, S.~D.~M. and 
+	{Springel}, V. and {Jenkins}, A. and {Helmi}, A. and {Ludlow}, A. and 
+	{Vogelsberger}, M.},
+    title = "{Assembly history and structure of galactic cold dark matter haloes}",
+  journal = mn,
+archivePrefix = "arXiv",
+   eprint = {1008.5114},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: numerical, Galaxy: formation, dark matter},
+     year = 2011,
+    month = may,
+   volume = 413,
+    pages = {1373-1382},
+      doi = {10.1111/j.1365-2966.2011.18220.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2011MNRAS.413.1373W},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+@ARTICLE{han_etal_2012,
+   author = {{Han}, J. and {Jing}, Y.~P. and {Wang}, H. and {Wang}, W.},
+    title = "{Resolving subhaloes' lives with the Hierarchical Bound-Tracing algorithm}",
+  journal = {\mnras},
+archivePrefix = "arXiv",
+   eprint = {1103.2099},
+ primaryClass = "astro-ph.CO",
+ keywords = {methods: data analysis, methods: numerical, dark matter},
+     year = 2012,
+    month = dec,
+   volume = 427,
+    pages = {2437-2449},
+      doi = {10.1111/j.1365-2966.2012.22111.x},
+   adsurl = {http://adsabs.harvard.edu/abs/2012MNRAS.427.2437H},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}

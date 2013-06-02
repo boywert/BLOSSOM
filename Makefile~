@@ -1,0 +1,90 @@
+THIS = $(CURDIR)
+SRC = $(THIS)/src
+LIB = $(THIS)/lib
+MICLIB = $(THIS)/miclib
+
+CF = mpif90
+MICCF = mpif90
+
+CFFLAGS = -fpp  -openmp  -xhost 
+MICCFFLAGS = -fpp  -openmp  -mmic
+
+CFFLAGS += -L/$(LIB) -I/$(LIB)
+MICCFFLAGS += -L/$(MICLIB) -I/$(MICLIB)
+OPT = -DTEST
+
+CFFLAGS += $(OPT)
+MICCFFLAGS += $(OPT)
+
+all: main 
+
+main: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o main -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools
+
+main.mic: $(MICLIB)/read_parameters.a $(MICLIB)/libcommon_vars.a $(MICLIB)/librunprocs.a
+	$(MICCF) $(MICCFFLAGS) $(SRC)/main.f90 -o main.mic -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools
+
+$(LIB)/read_parameters.a: $(LIB)/libcommon_vars.a
+	$(CF) $(CFFLAGS) -c $(SRC)/read_parameters.f90 -o $(LIB)/libread_parameters.a  -lcommon_vars
+
+$(MICLIB)/read_parameters.a: $(MICLIB)/libcommon_vars.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/read_parameters.f90 -o $(MICLIB)/libread_parameters.a  -lcommon_vars
+
+$(LIB)/libcommon_vars.a: $(LIB)/libmpitools.a
+	$(CF) $(CFFLAGS) -c $(SRC)/common_vars.f90 -o $(LIB)/libcommon_vars.a -lmpitools
+
+$(MICLIB)/libcommon_vars.a: $(MICLIB)/libmpitools.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/common_vars.f90 -o $(MICLIB)/libcommon_vars.a -lmpitools
+
+$(LIB)/libmpitools.a: 
+	$(CF) $(CFFLAGS) -c $(SRC)/mpitools.f90 -o $(LIB)/libmpitools.a 
+
+$(MICLIB)/libmpitools.a:
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/mpitools.f90 -o $(MICLIB)/libmpitools.a 
+
+$(LIB)/libio_tools.a: $(LIB)/libmpitools.a
+	$(CF) $(CFFLAGS) -c $(SRC)/io_tools.f90 -o $(LIB)/libio_tools.a -lmpitools
+
+$(MICLIB)/libio_tools.a: $(MICLIB)/libmpitools.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/io_tools.f90 -o $(MICLIB)/libio_tools.a -lmpitools
+
+$(LIB)/libvectortools.a:
+	$(CF) $(CFFLAGS) -c $(SRC)/vectortools.f90 -o $(LIB)/libvectortools.a
+
+$(MICLIB)/libvectortools.a:
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/vectortools.f90 -o $(MICLIB)/libvectortools.a
+
+$(LIB)/libarraytools.a:
+	$(CF) $(CFFLAGS) -c $(SRC)/arraytools.f90 -o $(LIB)/libarraytools.a
+
+$(MICLIB)/libarraytools.a:
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/arraytools.f90 -o $(MICLIB)/libarraytools.a
+
+$(LIB)/libdatatools.a:
+	$(CF) $(CFFLAGS) -c $(SRC)/datatools.f90 -o $(LIB)/libdatatools.a
+
+$(MICLIB)/libdatatools.a:
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/datatools.f90 -o $(MICLIB)/libdatatools.a
+
+$(LIB)/libabsorptiontools.a: $(LIB)/libcommon_vars.a
+	$(CF) $(CFFLAGS) -c $(SRC)/absorptiontools.f90 -o $(LIB)/libabsorptiontools.a -lcommon_vars
+
+$(MICLIB)/libabsorptiontools.a: $(MICLIB)/libcommon_vars.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/absorptiontools.f90 -o $(MICLIB)/libabsorptiontools.a -lcommon_vars
+
+$(LIB)/libconversiontools.a: $(LIB)/libcommon_vars.a
+	$(CF) $(CFFLAGS) -c $(SRC)/conversiontools.f90 -o $(LIB)/libconversiontools.a -lcommon_vars
+
+$(MICLIB)/libconversiontools.a: $(MICLIB)/libcommon_vars.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/conversiontools.f90 -o $(MICLIB)/libconversiontools.a -lcommon_vars
+
+$(LIB)/librunprocs.a: $(LIB)/libconversiontools.a $(LIB)/libabsorptiontools.a $(LIB)/libdatatools.a $(LIB)/libarraytools.a $(LIB)/libvectortools.a  $(LIB)/libio_tools.a $(LIB)/libmpitools.a $(LIB)/libcommon_vars.a
+	$(CF) $(CFFLAGS) -c $(SRC)/runprocs.f90 -o $(LIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars 
+
+$(MICLIB)/librunprocs.a: $(MICLIB)/libconversiontools.a $(MICLIB)/libabsorptiontools.a $(MICLIB)/libdatatools.a $(MICLIB)/libarraytools.a $(MICLIB)/libvectortools.a  $(MICLIB)/libio_tools.a $(MICLIB)/libmpitools.a $(MICLIB)/libcommon_vars.a
+	$(MICCF) $(MICCFFLAGS) -c $(SRC)/runprocs.f90 -o $(MICLIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars
+clean:
+	rm -f $(THIS)/*.mod
+	rm -f $(SRC)/*.o
+	rm -f $(LIB)/*
+	rm -f $(MICLIB)/*

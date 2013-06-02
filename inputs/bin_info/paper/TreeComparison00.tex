@@ -1,0 +1,1010 @@
+\documentclass[useAMS,usenatbib]{mn2e}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,url,times,subfig}
+%\usepackage{aas_macros}
+\setlength{\paperheight}{297mm}
+\setlength{\paperwidth}{210mm}
+
+%To produce a PDF file with hyperlinks, uncomment the following lines
+%\usepackage[pdftex,pdfpagemode={UseOutlines},bookmarks,bookmarksopen,
+%colorlinks,linkcolor={blue},citecolor={green},urlcolor={red}]{hyperref}
+
+% new if for PDF mode
+\newif\ifpdf\ifx\pdfoutput\undefined\pdffalse\else\pdfoutput=1\pdftrue\fi
+% set PDF properties if in pdf latex
+\ifpdf\hypersetup{
+pdftitle={SubHaloes going Notts: The SubHalo-Finder Comparison Project},
+pdfauthor={Julian Onions},
+pdfkeywords={N-body simulations, haloes evolution, dark matter},
+}
+\fi
+
+% the finder names
+\newcommand{\ahf}{\textsc{ahf}}
+\newcommand{\subfind}{\textsc{subfind}}
+\newcommand{\asohf}{\textsc{asohf}}
+\newcommand{\lanl}{\textsc{lanl}}
+\newcommand{\gadget}{\textsc{gadget3}}
+\newcommand{\voboz}{\textsc{voboz}}
+\newcommand{\mendieta}{\textsc{mendieta}}
+\newcommand{\dfof}{\textsc{6dfof}}
+\newcommand{\adaptahop}{\textsc{adaptahop}}
+\newcommand{\fiestathree}{\textsc{HOT+FiEstAS (3d)}}
+\newcommand{\htd}{\textsc{hot3d}}
+\newcommand{\hsd}{\textsc{hot6d}}
+\newcommand{\fiestasix}{\textsc{HOT+FiEstAS (6d)}}
+\newcommand{\rockstar}{\textsc{rockstar}}
+\newcommand{\hbt}{\textsc{hbt}}
+\newcommand{\hsf}{\textsc{hsf}}
+\newcommand{\stf}{\textsc{stf}}
+
+\newcommand{\Fig}[1]{Figure~\ref{#1}}
+\def\vmax{$v_{\rm max}$}
+\newcommand{\rth}{$R_{200}$}
+\newcommand{\subhalos}{subhaloes}
+
+\newlength{\figwidth}
+\setlength{\figwidth}{0.43\textwidth}
+\newlength{\resplot}
+\setlength{\resplot}{0.32\textwidth}
+
+% main paper
+\title[SubHalo-Finder Comparison]
+{SubHaloes going Notts: The SubHalo-Finder Comparison Project}
+\author[Onions et al.]
+{Julian~Onions,$^1$\thanks{E-mail: \href{mailto:julian.onions@gmail.com}{julian.onions@gmail.com}}
+  Alexander~Knebe,$^2$
+  Frazer~R.~Pearce,$^1$ 
+  Stuart~I.~Muldrew,$^1$ 
+\newauthor
+  Hanni~Lux,$^1$
+  Steffen~R.~Knollmann,$^2$ 
+  Yago Ascasibar,$^2$
+  Peter Behroozi,$^{3,4,5}$
+\newauthor
+  Pascal Elahi,$^{6}$
+  Jixian Han,$^{7,6}$
+  Michal Maciejewski,$^8$
+  M. E. Merch\'{a}n,$^{9}$
+\newauthor
+  Mark Neyrinck,$^{10}$
+  A. N. Ruiz,$^{9}$ 
+  M. A. Sgr\'{o},$^{9}$ 
+  Volker Springel,$^{11,12}$
+ and Dylan Tweed$^{13}$
+\\
+  $^1$School of Physics \& Astronomy, University of Nottingham, Nottingham, NG7 2RD, UK\\
+  $^2$Departamento de F\'{ı}sica Te\'{o}rica, M\'{o}dulo C-15, Facultad de Ciencias, 
+  Universidad Aut\'{o}noma de Madrid, 28049 Cantoblanco, Madrid, Spain\\
+  $^{3}$Kavli Institute for Particle Astrophysics and Cosmology, Stanford, CA 94309, USA\\
+  $^{4}$Physics Department, Stanford University, Stanford, CA 94305, USA\\
+  $^{5}$SLAC National Accelerator Laboratory, Menlo Park, CA 94025, USA\\
+  $^{6}$Shanghai Astronomical Observatory, 80 Nandan Road, Shanghai, China, 200030 \\
+  $^{7}$Institute for Computational Cosmology, Department of Physics, Durham University, South Road, Durham DH1 3LE, UK\\
+  $^{8}$Max-Planck-Institut f\"{u}r Astrophysik, Garching,
+  Karl-Schwarzschild-Stra\ss e 1, 85741 Garching bei M\"{u}nchen,
+  Germany\\
+  $^{9}$ Instituto de Astronom\'{ı}a Te\'{o}rica y Experimental (CCT C\'{o}rdoba, CONICET, UNC), Argentina\\
+  $^{10}$Department of Physics and Astronomy, Johns Hopkins University, 
+  3701 San Martin Drive, Baltimore, MD 21218, USA\\
+$^{11}$Heidelberg Institute for Theoretical Studies, Schloss-Wolfsbrunnenweg 35, 69118 Heidelberg, Germany\\ 
+$^{12}$Zentrum f\"ur Astronomie der Universit\"at Heidelberg, ARI, M\"{o}nchhofstr. 12-14, 69120 Heidelberg, Germany \\
+  $^{13}$Institut d'Astrophysique Spatiale, CNRS/Universite Paris-Sud 11, 91405 Orsay, France \\
+}
+
+\begin{document}
+%\date{}
+
+\pagerange{\pageref{firstpage}--\pageref{lastpage}} \pubyear{2011}\volume{0000}
+
+\maketitle
+
+\label{firstpage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+  We present a detailed comparison of the substructure properties of a
+  single Milky Way sized dark matter halo extracted by a variety of
+  different (sub-)halo finders for simulations of cosmic structure
+  formation. These finders span a wide range of techniques and employ
+  different methodologies to identify and quantify substructures
+  within a larger non-homogeneous background density (e.g. a host
+  halo). We include both real-space and phase-space based finders as
+  well as finders employing a Voronoi tessellation, the
+  friends-of-friends technique or refined meshes as the starting point
+  for locating substructure. The dataset, a part of the Aquarius suite
+  (Springel et al.), simulates the same Milky Way type dark matter
+  halo across a range of 5 different resolutions. This also allows us
+  to perform convergence studies of the subhalo properties of the
+  different finders.
+
+  We applied a common post-processing pipeline to uniformly analyse
+  the list of particles associated with each substructure as defined
+  by the individual halo finders.  We extract quantitative and
+  comparable measures for the \subhalos. We find that all of the
+  finders agree extremely well on the presence and location of
+  substructure. For properties relating to the inner part of the
+  subhalo such as the maximum value of the rotation curve (and the
+  actual location as also determined by our specific pipeline), the
+  agreement between different finders is amazingly good. For
+  properties that rely on particles near the outer edge of the subhalo
+  (here defined as either $200$ or $500\times\rho_{\rm crit}$ with
+  each subhalo treated in isolation) the agreement is at around the 20
+  per cent level. We find that basic properties (mass, maximum
+  circular velocity) of a subhalo can be reliably recovered if the
+  subhalo contains more than 100 particles although its presence can
+  be reliably inferred down our choice for a lower particle number
+  limit of 20.
+
+  The most difficult region within which to identify substructure is
+  expected to be very close to the centre of the host halo where the
+  background density is very high. Contrary to expectations none of
+  the phase spaced based finders proved to be significantly better
+  than the more traditional real-space based finders at recovering
+  substructure in this region. In practice this volume contributes
+  only a very small fraction to the typical total region of interest.
+
+  We finally note that the logarithmic slope of the subhalo cumulative
+  number count is remarkably consistent and $<1$ for all the finders
+  that reached high resolution. This indicates that the larger and
+  more massive, respectively, substructures are the most dynamically
+  interesting and that higher levels of the (sub-)subhalo hierarchy
+  become progressively less important.
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{keywords}
+methods: $N$-body simulations -- 
+galaxies: haloes -- 
+galaxies: evolution -- 
+cosmology: theory -- dark matter
+\end{keywords}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction} \label{sec:introduction}
+
+The growth of structure via a hierarchical series of mergers is now a
+well established paradigm \citep{white_1978}. As larger structures
+grow they subsume small infalling objects. However the memory of the
+existence of these substructures is not immediately erased, either in
+the observable Universe (where thousands of individual galaxies within
+a galaxy cluster are obvious markers of this pre-existing structure)
+or within numerical models, first noted for the latter by
+\citet{klypin_overmerging_1999}.
+
+Knowing the properties of substructure created in cosmological
+$N$-body simulations allows the most direct comparison between these
+simulations and observations of the Universe. The fraction of material
+that remains undispersed and so survives as separate structures within
+larger halos is an important quantity for both studies of dark-matter
+detection \citep{zavala_2010} and the apparent overabundance of
+substructure within numerical models when compared to observations
+\citep{klypin_1999,moore_1999}. The mass and radial position of the
+most massive Milky Way satellites seem to raise new concerns for our
+standard $\Lambda$CDM cosmology
+\citep{boylan_toobig_2011,boylan_mwlcdm_2011,dicintio_2011,ferrero_2011},
+while differences between the simulated and observed internal density
+profiles of the satellites seems to have been reconciled by taking
+baryonic effects into account \citep[e.g.][]{Oh_2011,pontzen_2011}.
+We are certain that between 5 per cent and 10 per cent of the material
+within simulated galactic sized haloes exists within bound
+substructures \citep[e.g.][]{contini_2011} and a substantial part of
+the host halo has formed from disrupted subhalo material
+\citep[e.g.][]{gill_2004b,knebe_2005,warnick_2008,cooper_2010,libeskind_2011}.
+
+%not quite sure this is the right structure for the introduction and certainly other topics /citations can be added. Unfortunately I did not get any further with this. HL
+
+Quantification of the amount of substructure (both observationally and
+in simulations of structure formation) are therefore an essential tool
+to what is nowadays referred to as ``Near-Field Cosmology''
+\citep{freeman_2002} and attempts to do so in numerical models have
+followed two broad approaches: either a small number of individual
+haloes are simulated at exquisite resolution
+\citep[e.g.][]{diemand_vl2_2008, springel_aquarius_2008,
+  stadel_ghalo_2009} (respectively the via Lactea, Aquarius and GHalo
+projects) or a larger representative sample of the Universe is
+modelled in order to quantify halo-to-halo substructure variations
+\citep[e.g.][]{angulo_2009, boylan_mill2_2009, klypin_bolshoi_2011}
+who used the Millennium simulation, Millennium II simulation and the
+Bolshoi simulation, respectively. As in this paper we have studied the
+convergence of halo-finders within a single halo we can add nothing to
+the topic of halo-to-halo substructure variations. In a very
+comprehensive study that included 6 different haloes and 5 levels of
+resolution \citet{springel_aquarius_2008} utilised their substructure
+finder \subfind\ to detect around 300000 substructures within the
+virial radius of their best resolved halo. They found that the number
+counts of substructures per logarithmic decade in mass falls with a
+power law index of at most 0.93, indicating that smaller substructures
+are progressively less dynamically important and that the central
+regions of the host dark matter halo are likely to be dominated by a
+diffuse dark matter component composed of hundreds of thousands of
+streams of tidally stripped material. \citet{maciejewski_2011}
+confirmed the existence and properties of this stripped material using
+a 6-dimensional phase space finder \hsf. A similar power law index was
+also found for the larger cosmological studies of
+\citet{boylan_mill2_2009, angulo_2009}. For the Bolshoi simulation
+\citet{klypin_bolshoi_2011} find results that are in agreement with
+their re-analysis of the Via Lactea II of \citet{diemand_vl2_2008}
+with a abundance of \subhalos\ falling as the cube of the subhalo
+rotation velocity. Rather than the present value of the maximum
+rotation velocity they prefer to use the value that the subhalo had
+when it first became a subhalo (i.e. on infall). This negates the
+effects of tidal stripping and harassment within the cluster
+environment but makes it difficult for us to directly compare because
+we have generally only used the final $z=0$ snapshot for this
+comparison study.
+
+In recent years there has not only been a plethora of different groups
+performing billion particle single-halo calculations, there has also
+been an explosion in the number of methods available for quantifying
+the size and location of the structures within such an $N$-body
+simulation. In this paper we extend the halo finder comparison study
+of \citet{knebe_haloes_2011} to examine how well these finders extract
+the properties of those haloes that survive the merging process and
+live within larger haloes. While this issue has already been addressed
+by \citet{knebe_haloes_2011} it was nevertheless only in an academic
+way where controlled set-ups of individual \subhalos\ placed into
+generic host haloes were studied; here we however apply the comparison
+to a fully self-consistently formed dark matter halo extracted from a
+cosmological simulation. As the results of credible and reliable
+subhalo identification have such important implications across a wide
+range of astrophysics it is essential to ask how well the subhalo
+finders do at reliably extracting the \subhalos. This still leaves the
+open question of how well different modern gravity solvers compare
+when performing the same simulation but at least we can hope to
+ascertain whether or not -- given the same set of simulation data --
+the different finders will arrive at the same conclusions about the
+enclosed subhalo properties. We intend this paper to form the first
+part of a series of comparisons. It primarily focuses on the most
+relevant subhalo properties, i.e. location, mass spectrum and the
+distribution of the value of the peak of the \subhalos\' rotation
+curve.
+
+In \S\ref{sec:Finders} we begin by summarising the eleven substructure
+finders that have participated in this study, focusing upon any
+elements that are of particular relevance for substructure finding. In
+\S\ref{sec:Data} we introduce the Aquarius dataset that the described
+finders analysed for this study. Both a qualitative and a quantitative
+comparison between the finders is contained in \S\ref{sec:Comparison}
+which also contains a discussion of our results, before we summarise
+and conclude in \S\ref{sec:Summary}.
+
+\begin{figure*}
+ \includegraphics[height=\figwidth]{plots/AdaptaHOP-density-4}
+ \includegraphics[height=\figwidth]{plots/AHF-density-4} \\
+ \includegraphics[height=\figwidth]{plots/H3D-density-4}
+ \includegraphics[height=\figwidth]{plots/H6D-density-4} \\
+ \includegraphics[height=\figwidth]{plots/HBT-density-4} 
+ \includegraphics[width=\figwidth]{plots/HSF-density-4}
+\caption{The images show the smoothed dark matter density within an
+  octant at level 4. In each panel the overplotted circles indicate
+  the location of the recovered \subhalos\ for the finder labelled at
+  the top of each panel. They are scaled proportionally using
+  \vmax. Only \subhalos\ with a \vmax\ greater than 10 km/s are
+  shown.}
+\label{fig:haloes}
+\end{figure*}
+
+\begin{figure*}
+\ContinuedFloat
+ \includegraphics[height=\figwidth]{plots/mendieta-density-4} 
+ \includegraphics[height=\figwidth]{plots/Rockstar-density-4} \\
+ \includegraphics[height=\figwidth]{plots/STF-density-4} 
+ \includegraphics[height=\figwidth]{plots/subfind-density-4} \\
+ \includegraphics[height=\figwidth]{plots/VOBOZ-density-4} 
+\caption[]{(continued) Recovered subhalo locations and sizes by
+  labelled finder.}
+\label{fig:haloes2}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Merger Trees Builders} \label{sec:Finders} In this section we
+are going to present the merger trees builders participating in the
+comparison project in alphabetical order. Please note that we
+primarily only provide references to the actual code description
+papers and not an exhaustive portrait of each builder as this would be
+far beyond the scope of this paper. While the general mode of
+operation can be found in elsewhere, we nevertheless focus here on the
+way each code collects and defines the set of particles belonging to a
+subhalo: as already mentioned before, those particle lists are
+subjected to a unique post-processing pipeline and hence the retrieval
+of this list is the only relevant piece of information as far as the
+comparison in this particular paper is concerned.
+
+%put participants' details here
+
+\subsection{Consistent Trees}
+
+The \textsc{Consistent Trees} algorithm \citep{BehrooziTree} simulates
+the gravitational bulk motion of halos given their positions,
+velocities, and mass profiles as returned by the halo finder.  From
+halos in any given simulation snapshot, the expected positions and
+velocities of halos at an earlier snapshot may be calculated.  In some
+cases, obvious inconsistencies arise between the predicted and actual
+halo properties, such as missed satellite halos (e.g., satellite halos
+which pass too close to the center of a larger halo to be detected)
+and spurious mass changes (e.g., satellite halos which suddenly
+increase in mass due to temporary misassignment of particles from the
+central halo).  These defects can be simply repaired by substituting
+predicted halo properties instead of the properties returned by the
+halo finder.  This process helps to ensure accurate mass accretion
+histories and merger rates for satellite and central halos; full
+details of the algorithm as well as tests of the approach may be found
+in \cite{BehrooziTree}.
+
+\subsection{HBT}
+
+HBT (\cite{han_etal_2012}) is a tree-oriented subhalo finder which builds the merger tree as it identifies subhaloes through tracking. Specifically, starting from a set of isolated haloes,  meger trees up to halo level are first constructed. HBT then traverses the halo merger trees from the earliest to the latest time and identifies a self-bound remnant for every halo at every snapshot after infall. These self-bound remnants are defined as descendent subhaloes of their progenitors. With this kind of tracking, each subhalo has at most one progenitor, which defines its main branch. The main branch extends until the subhalo goes under resolution. As soon as this happens, a final tracking step is done to determine a host subhalo into which it vanishes. After this the subhalo joins the branch of its host subhalo.
+
+The major challenge in this method is to robustly track the subhaloes over long periods, and HBT has been specially tuned to meet this.  In addition, the merging hierarchy among progenitor haloes are utilized to efficiently allow satellite-satellite mergers or satellite accretion among subhaloes.
+
+In order to apply HBT to existing subhalo catalogues, we first blind ourselves to the subhaloes and run HBT normally with only the haloes as input. When this is done, we match the HBT subhaloes to the provided ones. This enables us to map the HBT merger trees onto the provided subhalo catalogues.
+
+\subsection{JMerger}
+This algorithm runs by using only the gross data available for each halo. It compares two snapshots at a time, together with the time interval to account for the velocity calculation. For the two sets of haloes at t1 and t2, a new position is calculated for the centre of each halo by moving the t1 haloes forward in time by half the timestep, and the t2 haloes backwards by half the timestep.
+
+Then for each halo in t1, a best match on position is found, together with constraints on mass and Vmax parameters. Mass is allowed to shrink by a given factor, and to grow by another factor.  Empirical values of 0.7 shrinkage and 4 growth are allowed. 
+The Vmax parameter can only vary by +/- 70\%. The distance search is limited to twice the virial radius + four times the distance the halo has moved during the timestep.
+This process attempts to trace haloes growing over time.
+
+For those haloes that don't find a successor at t2, two other processes are tried. 
+Firstly a major merger event, whereby two haloes are attempted to merge, and still fall within the distance and mass constraints of the first step.
+
+Secondly minor mergers are considered whereby unmatched haloes are attempted to be merged with those haloes already matched in a minor merger process again using position and mass matching data.
+
+\subsection{\textsc{MergerTree}}
+\textsc{MergerTree} (publicly available with the \textsc{AHF} halo finder package, \texttt{http://popia.ft.uam.es/AHF}) is a very simple and straight forward particle correlator (despite its maybe misguiding name): it only takes two particle ID lists (preferentially coming from an \textsc{AHF} analysis) and identifies for each object in list \#1 those objects in list \#2 with which there are particles in common. This information is written into file. The code also writes a second file which assigns a unique "progenitor" to each object in file #1 as found in file \#2. To this extent a maximization of the merit function $M_i = N^{shared}_{i}^2/(N*N_i)$\footnote{$N^{shared}_{i}$ is the number of shared particles between the halo and its $i$-th progenitor, $N$ is the number of particles in the halo, and $N_i$ is the number of particles in the $i$-th progenitor} has proven extremely successful (Klimentowski et al. 2010; Libeskind et al. 2010; Knebe et al. 2013). The code can hence not only be used to trace a particular object backwards (or forward, depending on the temporal ordering of file \#1 and \#2) in time, but also to cross-correlate different simulations (e.g. different cosmological models run with the same phases for the initial conditions, etc.). But to be applicable to semi-analytical modeling it is desirable to ensure that each object not only has a unique progenitor but also a unique descendant. This is guaranteed by running \textsc{MergerTree} in a novel mode that applies the same merit function not only in one way but in both ways when correlating two files. For the comparison presented here \textsc{MergerTree} has been run in both modes, once without ensuring unique descendants and once with this feature activated. It further needs to be noted that the choice of the applied merit function eliminates the need for particles to only belong to one object: $M_i$ takes care of particles being assigned to multiple objects and was designed to do so in the first place, respectively.
+
+
+\subsubsection{TreeMaker}
+
+The code {\tt TreeMaker} was first used for semi-analytical model {\tt GalICS}  (Galaxies
+in Cosmological Simulations) \citep{Hatton2003}. It was
+first used on Frends-of-Frends halos\citep{Davis1985}, and later
+applied on haloes and subhaloes extracted with group finder {\tt
+  AdaptaHOP}\citep{Aubert2004,Tweed2009}.
+The code simply consists in associating groups from two consecutive
+time steps,  listing all progenitors (including the background) and
+descendants (multiple descendants being allowed, the background being
+ignored).
+This first step is completed by using the particle ids within each
+groups as working tracers. We mention that a particle can trace one single
+group at a given step, meaning a particle in a subhalo would trace
+only the subhalo but not the host halo. We thus refer to this
+subset of particles -- unique to on individual group at one time step -- as tracers.
+
+In order to create a ``usable'' merger tree a simplification stage is
+required. Only one descendant per group (either halo
+or subhalo) is selected and the list of progenitors updated to reflect
+this selection. Selecting this unique descendent requires the use of a
+merit function. The first versions of  {\tt TreeMaker} used a shared
+merit function. For this study, we tested two modifications of
+this selection, we added a normalized merit function $N_{\rm                                                                                                                                                       
+  ij}/(N_{\rm i}N_{\rm j})$ where $N_{\rm ij}$ is the number of
+particles found in both groups i and j in two consecutive time steps,
+$N_{\rm i}$ and $N_{\rm j}$ being the respective number of tracers in these
+groups. Since the data made available for this comparison
+project contains the total energy of each particle within a group, we tested a possibility to weight each tracer of a given
+group accordingly to its rank order in term of decreasing total energy. More
+precisely for a group of $N$ tracers, the most bound tracer has a weigh
+of $w_1=2N/(N+1)$ and the least bound a weight of
+$w_N=2/(N+1)$. The total $\sum_{\rm i}w_{\rm i}$ being $N$ by definition, the shared merit function is then written as
+$\sum_{\rm i=j} w_{\rm i}$ and the normalized shared merit function as
+$\sum_{\rm i=j} w_{\rm i}/(N_{\rm i}N_{\rm j})$. The progenitors
+themselves are also ordered by decreasing merit function, so that the
+main progenitor itself has the highest value of the given merit function.
+
+We different runs used in this paper are labeled as follows:
+\begin{enumerate}
+  \item {\tt TreeMaker\_v2}: Shared merit function, no tracer weighting
+  \item {\tt TreeMaker\_v3}: Normalized shared merit function, no
+    tracer weighting
+  \item {\tt TreeMaker\_v4}: Shared merit function, tracer weighting
+  \item {\tt TreeMaker\_v5}: Normalized shared merit function, tracer weighting
+\end{enumerate}
+
+
+
+
+\begin{figure*}
+  %\includegraphics[width=\resplot]{plots/AHF-density-4-nolab} 
+ %\includegraphics[width=\resplot]{plots/Rockstar-density-4-nolab}
+  %\includegraphics[width=\resplot]{plots/subfind-density-4-nolab}\\
+  \includegraphics[width=\resplot]{plots/AHF-density-3-nolab} 
+\includegraphics[width=\resplot]{plots/Rockstar-density-3-nolab}
+  \includegraphics[width=\resplot]{plots/subfind-density-3-nolab}\\
+  \includegraphics[width=\resplot]{plots/AHF-density-2-nolab} 
+\includegraphics[width=\resplot]{plots/Rockstar-density-2-nolab}
+  \includegraphics[width=\resplot]{plots/subfind-density-2-nolab}\\
+  \includegraphics[width=\resplot]{plots/AHF-density-1-nolab} 
+\includegraphics[width=\resplot]{plots/Rockstar-density-1-nolab}  
+  \includegraphics[width=\resplot]{plots/subfind-density-1-nolab}\\
+\caption{Subhalo recovery as a function of resolution. Location and
+  size of recovered substructure from level 3 to level 1 for the three
+  finders that reached this level. In all panels \subhalos\ with
+  \vmax $>10$ km/s are shown, scaled by \vmax\ as in \Fig{fig:haloes} and
+  the background image is the smoothed dark matter density at that
+  level. The relevant finder and level are labelled in the top right
+  of each panel. The biggest change between levels is the additional
+  small scale power moving the substructure locations.}
+\label{fig:plotcomp}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Data} \label{sec:Data}
+
+The data used for this paper are from (Milgas mini-run) 
+
+The data used for this paper forms part of the Aquarius project
+\citep{springel_aquarius_2008}. It consists of multiple dark matter
+only re-simulations of a Milky Way like halo at a variety of
+resolutions performed using \gadget\
+\citep{springel_cosmological_2005}.  We have used the Aquarius-A halo
+dataset for this project.  This provided 5 levels of data, varying in
+complexity from the 2.3 million particles of the lowest resolution
+level 5 up to the 4.25 billion particles of the highest resolution
+level 1 as shown in Table~\ref{tbl:Data}. The underlying cosmology for
+the Aquarius simulations is the same as that used for the Millennium
+simulation \citep{springel_millenium_2005} i.e. $\Omega_M = 0.25,
+\Omega_\Lambda = 0.75, \sigma_8 = 0.9, n_s = 1, h = 0.73$. These
+parameters are consistent with the latest WMAP data \citep{wmap_2011}
+although $\sigma_8$ is a little high.  All the simulations were
+started at an initial redshift of 127. Precise details on the set-up
+and performance of these models can be found in
+\citet{springel_aquarius_2008}.
+
+The participants were asked to run their subhalo finders on the
+supplied data and to return a catalogue listing the substructures they
+found.  Specifically they were asked to return a list of uniquely
+identified substructures together with a list of all particles
+associated with each subhalo.
+
+Finders were initially run on the smallest dataset, the Aq-A-5 data.
+This allowed for debugging of the common output format required by the
+project and some basic checks on the internal consistency of the data
+returned from each participant. Once this had been achieved each
+participant scaled up to the higher resolution datasets, continuing
+until they reached the limits of their finder and/or the computing
+resources readily available to them. A summary of the number of
+\subhalos\ found by each subhalo finder at the various levels is
+contained in Table~\ref{tbl:ResultsCent} as well as the size of the
+largest subhalo at level 4. All of the finders that participated in
+this study completed the analysis of the level 4 dataset which is used
+for the main comparison that follows and contains around 6 million
+particles within the region considered, a sphere of radius 250 kpc/$h$
+around a fiducial centre. Three of the finders (\ahf, \rockstar\ \&
+\subfind) completed the analysis of the very computationally demanding
+level 1 dataset. In addition to these \hbt\ and \hsf\ completed level
+2 which contains around 160 million particles within the region
+examined here.
+
+\begin{table*}
+  \caption{Summary of key numbers for each Aquarius level, the dataset
+    used for this study. $N_h$ is the number of particles with the
+    highest resolution (lowest individual mass).  $N_l$ the number of
+    low resolution particles - the sum of the remainder.  $N_{250}$ is
+    the number of high resolution particles found within a sphere of
+    radius 250 kpc/h from the fiducial centre at each resolution ({\it
+    i.e.} those of interest for this study). $M_p$ is the mass of one
+    of these particles (in $\mathrm{M_{\sun}/h}$). $S$ is the resolution increase
+    (mass decrease) for each level relative to level 5, and $S_p$ is
+    the resolution increase relative to the previous level.  All
+    particles are dark matter particles.}
+
+  \label{tbl:Data}
+  \begin{tabular}{l r r r r r r }
+    \hline
+    Data & $N_h$ & $N_l$ & $N_{250}$ & $M_p$ & $S$ & $S_p$\\
+    \hline
+    Aq-A-5 &  2,316,893    & 634,793     & 712,232     & $2.294\times10^{6}$& 1    &$\times 1$\\
+    Aq-A-4 & 18,535,972    & 634,793     & 5,715,467   & $2.868\times10^{5}$& 8    &$\times 8$\\
+    Aq-A-3 & 148,285,000   & 20,035,279  &45,150,166   & $3.585\times10^{4}$& 64   &$\times 8$ \\
+    Aq-A-2 & 531,570,000   & 75,296,170  &162,527,280  & $1.000\times10^{4}$& 229  &$\times 3.6$\\
+    Aq-A-1 & 4,252,607,000 & 144,979,154 &1,306,256,871& $1.250\times10^{3}$& 1835 &$\times 8$\\
+    \hline
+  \end{tabular}
+\end{table*}
+
+\begin{table*}
+  \caption{The number of \subhalos\ containing 20 or more particles and
+    centres within a sphere of radius 250kpc/h from the fiducial
+    centre found by each finder after standardised post-processing
+    (see text). Three finders (\ahf, \rockstar\ \& \subfind) returned
+    results from the highest resolution (level 1) within the timescale
+    of this project. Below this we list the number of particles
+    contained within the largest subhalo after post-processing.}
+  \label{tbl:ResultsCent}
+  \begin{tabular}{l *{11}{r}}
+ \hline
+         & \multicolumn{11}{c}{Number of \subhalos\ within 250kpc/h of
+         the fiducial centre after post processing.}\\
+    Name & \adaptahop&\ahf   &\htd&\hsd &\hbt &\hsf &\mendieta&\rockstar &\stf &\subfind&\voboz \\
+    \hline 
+    Aq-A-5 & 354     & 230   & 58 & 136 & 228 & 231 & 180     & 272      & 205 & 214    & 257 \\ 
+    Aq-A-4 & 2497    & 1599  &1265&1075 & 1544& 1544& 985     & 1707     & 1520& 1433   & 1862 \\ 
+    Aq-A-3 & -       & 11213 & -  & -   &11693&11240& 8048    & 11797    &10250& 10094  & 13343 \\ 
+    Aq-A-2 & -       & 38441 & -  & -   &39703&20584& -       & 38489    & -   & 33135  & - \\ 
+    Aq-A-1 & -       & 226802& -  & -   & -   & -   & -       & 235819   & -   & 221229 & - \\ 
+    \hline
+         & \multicolumn{11}{c}{Number of particles contained in
+         largest \subhalos\ within 250kpc/h of
+         the fiducial centre after post processing.}\\
+    Aq-A-4 & 49076    & 77225 & 66470 & 69307 & 61581 & 73167 & 48320 & 78565 & 51874 & 50114 & 54685 \\ 
+    \hline 
+  \end{tabular}
+\end{table*}
+
+Both the halo finder catalogues (alongside the particle ID lists) and
+our post-processing software (to be detailed below) are publically
+available from the web site
+\href{http://popia.ft.uam.es/SubhaloesGoingNotts}{http://popia.ft.uam.es/SubhaloesGoingNotts}
+under the Tab ``Data''.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Comparison} \label{sec:Comparison}
+
+We are going to primarily focus on comparing the location of \subhalos\
+(both visually and quantitatively), the mass spectrum, and the
+distribution of the peak value of the rotation curve. The comparison,
+however, is based solely upon the provided particle lists and not the
+subhalo catalogues as the latter are based upon each code's own
+definitions and means to determine aforementioned properties and hence
+possibly introducing ``noise'' into the comparison
+\citep[cf.][]{knebe_haloes_2011}. In order to achieve a fair
+comparison between the respective finders we produced a single
+analysis pipeline which we used to post-process the particle lists
+provided by each participating group. This ensured consistency across
+our sample while removing differences due to the adoption of different
+post-processing methodologies and the particular choice of threshold
+criteria. The comparison detailed in this paper is restricted to this
+uniform post-processed dataset. We intend to explore differences due
+to different methodologies in a subsequent work. However, we stress at
+the outset that our particular chosen post-processing methodology is
+not intended to be unique nor do we put it forward as the {\it best}
+way of defining a subhalo. Rather we use a single methodology so that
+we can first answer the most fundamental question: if we agree on a
+single subhalo definition do the different finders agree on the most
+fundamental properties they recover?  Perhaps surprisingly we will see
+that the answer to this question is broadly yes.
+
+\subsection{Post-processing pipeline}
+
+Some finders (e.g. \ahf) include the mass (and particles) of a subhalo
+within the associated host halo whereas others do not (e.g. \subfind),
+preferring each particle to only be associated with a single halo or
+subhalo. Either of these approaches has its pros and cons. For
+instance, keeping the subhalo mass as part of the halo mass makes it
+straightforward to calculate the enclosed dynamical mass of any
+object. However, such an approach easily leads to multiple counting of
+mass, particularly if there are many layers of the substructure
+hierarchy. Halo-finding authors rightly argue that it is not difficult
+to transform from one definition to the other given that you in
+principle know both the halo and particle locations. In our study 5 of
+the 11 finders chose to include the mass of \subhalos\ whereas the
+other 6 did not. Following our principle of creating a uniform
+analysis pipeline we processed all the particle lists to insist that a
+particle could only reside within a single subhalo and hence removing
+sub-\subhalos\ from \subhalos, etc.  To this extent, we first sorted
+the returned halo catalogue into mass order. Then starting from the
+smallest halo we performed the centring, trimming and overdensity
+checks detailed below to trim the subhalo uniformly. We then tagged
+the particles contained within this object as being within a subhalo
+before continuing to the next largest subhalo and repeating the
+procedure ignoring particles already tagged as being used before. This
+preserved the maximum depth of the subhalo hierarchy while ensuring
+that a particle could only reside within a single subhalo. We though
+have to remark that in practice excising all the sub-\subhalos\ from
+each subhalo's particle list made little difference to any of the
+results presented here as at any level of the subhalo hierarchy only
+around 10 per cent of the material is within a subhalo of the current
+halo. So sub-\subhalos\ contribute only around 1 per cent of the halo
+mass.
+
+All the particles belonging to the list each finder identified as
+being associated with a subhalo were extracted from the original
+simulation data files to retrieve each particle's position, velocity
+and mass. From this data the centre of mass was first calculated,
+before being refined based on considering only the innermost 10 per
+cent of these particles sorted with respect to the initial centre of
+mass. This procedure was repeated until a stable centre was found,
+i.e. until the change in the position was below the actual force
+resolution of the simulation. Once the centre had been defined the
+particles were ordered radially from this point and a rotation curve
+$GM(<r)/r$ and overdensity $M(<r)/(4\pi r^3/3)$ calculated until it
+dropped below 200 times the background density (\rth) defining the
+subhalo radius $R_{200}$ and mass $M_{200}$. All particles outside
+$R_{200}$ were removed which was essential in particular for the
+phase-space finders who also considered already stripped material as
+still being part of and belonging to the subhalo. At this point the
+maximum circular velocity, \vmax\ was obtained by smoothing the
+rotation curve and locating its maximum by searching both inwards and
+outwards for a peak in the rotation curve and taking the average of
+these two measures, a process that stabilises the measure if the
+rotation curve is very flat. 
+
+We emphasise that the precise subhalo properties are somewhat
+sensitive to the definition of the halo centre. Various groups use the
+centre-of-mass as the centre of all material enclosed within the
+subhalo's radius (both with and without including substructure), the
+centre-of-mass of some smaller subset (as here for example), the
+location of the most bound particle or the location of the densest
+particle. Additionally different groups use different methodologies
+for deciding whether or not a particle is bound to a halo as this
+involves some decisions about the global potential and can be a very
+time consuming process if done fully generally and
+iteratively.
+
+Finally the choice of where to place the subhalo edge is also
+problematic. By definition the subhalo resides within some
+in-homogeneous background density and so at some point particles cease
+to belong to it and should rather be associated with the background
+object. Different groups split the host halo from the subhalo in
+different ways and there is no {\it correct} method. Without a uniform
+choice these differences can swamp any differences due to actually
+finding \subhalos\ or not. We stress that our post-processing (where
+we treat each subhalo in isolation) can only remove particles from the
+original list of those particles associated with a subhalo. We have
+therefore tested whether or not our results are sensitive to our
+choice of 200 as an overdensity parameter by re-running our analysis
+with a tighter threshold of 500. Other than making all the subhalo
+masses smaller this has no noticeable effect on the scatter of the
+cumulative number counts. We therefore decided to stick to the
+original choice of $R_{200}$ and $M_{200}$, respectively. Further,
+throughout the subsequent comparison only haloes with more than 20
+(bound) particles within \rth were used, although some finders
+detected and returned haloes with less particles.
+
+To summarise, our uniform post-processing pipeline involved the
+following steps, applied iteratively where necessary:
+\begin{itemize}
+\item The subhalo catalogues were sorted into mass order.
+\item Starting from the smallest subhalo, the particles associated with the
+  current subhalo were obtained from the simulation data.
+\item Only particles tagged as ``not used before'' were considered.
+\item The centre-of-mass was iteratively calculated using the
+  innermost 10\% of particles.
+\item A value for \rth\ was calculated based on an enclosed overdensity of 200
+  times the cosmic background density. 
+\item The subhalo mass and rotation curve peak \vmax\ were computed based
+  on particles inside \rth.
+\item Only substructures containing more than 20 particles were retained.
+\end{itemize}
+
+\subsection{Visual comparison}
+
+A visual representation of the location and size of the recovered
+\subhalos\ at Aquarius level 4 from each of the finders is shown in
+\Fig{fig:haloes}. A smoothed colour image of the underlying dark
+matter density in one octant of the main halo is overplotted and
+\subhalos\ are characterised by circles whose size is scaled according
+to \vmax\ (specifically \vmax\ (in km/s) divided by 3). This allows a
+visual comparison between the finders. Only haloes with \vmax\ $>
+10h^{-1}$km/s are indicated. We immediately see that most of the
+finders are very capable, ably extracting the locations of the obvious
+overdensities in the underlying dark matter field. Wherever you would
+expect to find a subhalo (given the background density map) one is
+indeed recovered. This demonstrates that substructure finders should
+be expected to work well, recovering the vast majority of the
+substructure visible to the eye. Additionally, if a uniform
+post-processing pipeline is applied the quantitative agreement between
+the finders is also excellent, with the extracted structures having
+very similar properties between finders (see below). The majority of
+the finders agree very well, reliably and consistently recovering
+nearly all the \subhalos\ with maximum circular velocities above our
+threshold.
+
+\Fig{fig:haloes} illustrates the agreement between the finders at a
+single Aquarius level (in this case level 4, which all the
+participating finders have completed). In \Fig{fig:plotcomp} we
+construct a similar figure to illustrate the agreement between
+levels. We show the same quadrant at level 3 to level 1 for the three
+finders (\ahf, \rockstar\ \& \subfind) that have completed the level 1
+analysis; we deliberately omitted level 5 and level 4 as the former is
+not very informative and the latter has already been presented in
+\Fig{fig:haloes}. As can be seen, the main difference between the
+different levels is in the exact location of the substructures. This
+changes because additional power was added to the Aquarius initial
+power spectrum to produce the additional small objects that form as
+the resolution is increased (fundamentally, the Nyquist frequency has
+changed as there are more available tracers within the higher
+resolution box). This extra power moves the substructure around
+slightly, and these differences are amplified in the, by definition,
+non-linear region of a collapsed object. Despite this the ready
+agreement between the three finders at any single level is clear to
+see and this is similarly true for both the other finders (\hbt, \hsf)
+that completed level 2. We do not explore the effect of changing the
+resolution on subhalo extraction in more detail here because that is
+not the main point of this paper, which focuses on how well different
+finders extract substructure relative to each other. Also, this topic
+has already been well studied for \subfind\ using this same suite of
+models by \citep{springel_aquarius_2008}.
+
+\subsection{Subhalo Mass Function}
+
+\begin{figure*}
+ \centering
+ \includegraphics[width=1\linewidth]{plots/submassfunc} \\
+\caption{ Cumulative number count of \subhalos\ above the indicated mass
+found within a radius of 250 kpc/h from the fiducial halo centre after
+standardised post-processing at resolution level 4 (see text for details).}
+\label{fig:massfunc}
+\end{figure*}
+
+\subsubsection{Level 4}
+Perhaps the most straightforward quantitative comparison is simply to
+count the number of \subhalos\ found above any given mass. For
+Aquarius level 4 this produces the cumulative mass plot shown in
+\Fig{fig:massfunc}. Results from each participating finder are shown
+as a line of the indicated colour. Generally the agreement is good,
+with some intrinsic scatter and a couple of outliers (particularly
+\adaptahop\ and \mendieta ) which do not appear to be working as well
+as the others, finding systematically too many or too few \subhalos\
+of any given mass respectively. Typically the scatter is around the 10
+per cent level except at the high mass end where it is larger as each
+finder systematically recovers larger or smaller masses in general. We
+like to remind the reader again that this scatter is not due to the
+inclusion/exclusion of sub-\subhalos\ (which has been taken care of by
+our post-processing pipeline) nor the definition of the halo edge: the
+10\% differences remain if choosing $R_{500}$ as the subhalo edge.
+
+Table~\ref{tbl:ResultsCent} lists the number of \subhalos\ found that
+contain 20 or more particles after the uniform post-processing
+procedure detailed above had been performed and within $250$ kpc/h of
+the fiducial centre\footnote{We adopted a fixed and unique position
+  for the host halo of $x=57060.4,y=52618.6,z=48704.8$ kpc/$h$.} of
+the main Aquarius halo at each level completed for all the eleven
+finders that participated.  These number counts are generally
+remarkably consistent, again with a few outliers. The majority of the
+finders are recovering the substructure locations well.
+
+As an additional quantitative comparison we list the number of
+particles associated with the largest substructure found by each of
+the finders as the last row of Table~\ref{tbl:ResultsCent}. All the finders
+recover a structure containing $60,000$ particles $\pm 20$ per cent. As
+\Fig{fig:massfunc} has shown above there is a lot of residual scatter
+for the highest mass haloes even when a uniform post-processing
+pipeline is used. This is most likely due to the different unbinding
+algorithms used in the initial creation of the substructure membership
+lists which are particularly uncertain for these large structures. At
+the other end of the substructure mass scale we have chosen to
+truncate our comparison at \subhalos\ containing 20 particles as this
+was shown to be the practical limit in \cite{knebe_haloes_2011}. Some
+participants returned halos smaller than this as this is their normal
+practice. They all stress that such small \subhalos\ should be treated
+with extreme caution but that there does appear to be a bound object
+at these locations even if its size is uncertain. We have removed them
+here for the purposes of a fair comparison.
+
+\begin{figure}
+ \centering
+  \includegraphics[width=1\linewidth]{plots/submassfuncM-convergence}
+  \caption{Cumulative subhalo mass function (multiplied by $M$ to
+    compress the vertical dynamical range) for all five Aquarius
+    levels for the \ahf, \rockstar, and \subfind\ finder. We fit the
+    function $N/N_{tot} = a_0 \times M^{-n}$ between the mass
+    equivalent to 100 particles at each level and $10^9
+    \mathrm{M_{\sun}/h}$.}
+ \label{fig:fitAHF}
+\end{figure}
+
+\begin{figure}
+ \centering
+  \includegraphics[width=1\linewidth]{plots/fitsubmass}
+  \caption{A comparison of the slope and normalisation of the fits
+    derived as per \Fig{fig:fitAHF} for all finders at all levels
+    returned.}
+ \label{fig:fitsubmass}
+\end{figure}
+
+\subsubsection{All Levels}
+Cumulative subhalo number counts like that shown for level 4 in
+\Fig{fig:massfunc} can be calculated for all levels completed and
+compared. As shown in \Fig{fig:plotcomp} while increasing the
+resolution does not exactly reproduce the same substructures a
+reasonable approximation is achieved and so we expect to find a set of
+similar \subhalos\ containing more particles as we decrease the
+individual particle mass between levels (i.e. any specific subhalo
+should effectively be better resolved as the resolution increases). We
+show the cumulative number counts for the finders \ahf, \rockstar, and
+\subfind\ (multiplied by $M$ to compensate for the large vertical
+scale) from level 5 to level 1 in \Fig{fig:fitAHF}. We show this as an
+example and stress that similar plots with equally good agreement and
+similar features could be produced for any of the finders that
+completed level 2. The curve for each level starts at 20 particles per
+halo. Below about 100 particles per halo the cumulative number counts
+fall below the better resolved curves, indicating that \subhalos\
+containing between 20 and 100 particles are not fully resolved and
+should have a slightly higher associated mass, also reported in
+\citet{muldrew_accuracy_2011}.  Above $10^9 \mathrm{M_{\sun}/h}$ the
+power law slope breaks as there are less than 10 \subhalos\ more
+massive than this limit and the number of these is a property of this
+particular host halo. For these reasons we fit a power law of the form
+\begin{equation}\label{eq:massfit}
+  \frac{N}{N_{tot}} = a_0 M^{-n}
+\end{equation}
+between 100 particles and $10^9 \mathrm{M_{\sun}/h}$ where the power
+law breaks.  Here $a_0$ is a normalisation, $M$ is the mass and $n$ is
+the power law slope. The fitted values of the parameters by level are
+given in the legend for each finder. The subhalo cumulative number
+count appears to be an unbroken power law -- at least in the range
+considered for the fitting. Similar results for \subfind\ were found
+by \citet{springel_aquarius_2008}. 
+
+We extended this particular analysis of fitting a single power-law to
+the (cumulative) subhalo mass function to all finders at all available
+levels and compare the values of $a_0$ and $n$ as a function of level
+for all participating substructure finders. \Fig{fig:fitsubmass} shows
+that at level 5 little can be said because the fitting range is so
+narrow. At the lower levels good agreement is seen between the finders
+and a consistent trend emerges: all agree that the power law slope,
+$n$ is less than 1 and if anything decreasing with increasing
+resolution. Clearly both \adaptahop\ and \htd\ are strong outliers on
+this plot. Values of $n$ less than 1 are significant because they
+imply that not all the mass is contained within substructures, with
+some material being part of the background halo. This has important
+ramifications for studies requiring the fraction of material within
+substructures such as the dark matter annihilation signal and lensing
+work. Although this result is robust between all high-resolution
+finders we remind the reader that this is for a single halo within a
+single cosmological model. However, it does indicate that, as perhaps
+expected, the most important contribution to substructure mass is from
+the most massive objects and that progressively smaller structures
+contribute less and less to the signal.
+
+
+\subsection{Distribution of  \vmax}
+If, instead of quantifying the total mass of each subhalo, we rather
+use the maximum rotational velocity, \vmax\ to rank order the
+\subhalos\ in size we obtain a generally much tighter
+relation. \Fig{fig:vmaxplot} displays the cumulative \vmax\ for all
+the finders for level 4 again. \citet{knebe_haloes_2011} already found
+that \vmax\ was a particularly good metric for comparing haloes and we
+confirm this for \subhalos. As \citet{muldrew_accuracy_2011} showed in
+figure 6 of their paper, this is because for an NFW profile
+\citep{nfw_1997} the maximum of the rotation curve is reached at less
+than 20 per cent of the virial radius for objects in this mass range
+so \vmax\ is a property that depends upon only the very inner part of
+the subhalo and is not affected by any assumptions made about the
+outer edge. Except for \stf\ all the finders align incredibly well for
+the largest \subhalos\ with \vmax $>$ 20 km/s. For \subhalos\ smaller
+than this the alignment remains tighter than the total mass comparison
+down to rotation velocities of around 6 km/s. At level 4 haloes of
+this size contain around 80 particles in total, so \vmax\ is being
+calculated from less than 20 particles at this point. While it agrees
+well with the other finders for high rotation velocities \adaptahop\
+displays a strange behaviour for small values of \vmax, finding many
+more small \subhalos\ than any of the other finders.
+
+\begin{figure*}
+ \centering
+ \includegraphics[width=1\linewidth]{plots/vmaxfunc}
+\caption{Cumulative number count of \subhalos\ above the indicated \vmax\
+value within a radius of 250 kpc/h from the fiducial halo centre after
+standardised post-processing (see text for details). The arrows
+indicate the number of particles interior to $r_{\rm max}$, the
+position of the peak of the rotation curve.}
+\label{fig:vmaxplot}
+ \end{figure*}
+
+\subsection{Radial Mass Distribution}
+The accumulated total mass of material within \subhalos\ is measured
+by ordering the subhalo centres in radial distance from the fiducial
+centre of the halo and summing outwards,i.e. $\sum_{r_{\rm sat}<r}
+M_{\rm sat}$. We include all post-processed \subhalos\ above our mass
+threshold of 20 particles. As \Fig{fig:radialdist} demonstrates at
+level 4 most of the finders (\ahf, \hbt, \hsd, \hsf, \stf, \voboz)
+agree very well, finding very similar amounts of substructure both in
+radial location and mass. \rockstar\ finds a little more structure,
+particularly in the central region where its phase-space nature works
+to its advantage and \subfind\ finds around a factor of $25\$ less due
+to its conservative subhalo mass assignment \textbf{AK: that needs to
+be explained in the SUBFIND description in Section 2!}. Not
+surprisingly \htd\ struggles in the very central region where it is
+difficult for the underlying real-space friends-of-friends methodology
+to distinguish structures from the background halo. The \mendieta\
+finder appears to fail badly. As previously noted the \adaptahop\
+finder locates many small \subhalos\ and these push up the total mass
+found in substructure above that found by the others particular in the
+range around 50-100kpc. We note that three of the four phase space
+based finders (\hsd, \hsf\ & \stf) have a radial performance
+indistinguishable from real-spaced based finders. The only one to show
+any difference is \rockstar\ and it remains unclear whether or not
+this is in practice a significant improvement.
+
+\begin{figure*}
+ \centering
+ \includegraphics[width=1\linewidth]{plots/radialdist_M}
+\caption{Cumulative plot of the enclosed mass within \subhalos\ as a
+  function of radial distance from the fiducial centre of the host
+  halo.}
+\label{fig:radialdist}
+\end{figure*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summary \& Conclusions} \label{sec:Summary}
+
+We have used a suite of increasing resolution models of a single Milky
+Way sized halo extracted from a self-consistent cosmological
+simulation (i.e. the Aquarius suite \citep{springel_aquarius_2008}) to
+study the accuracy of substructure recovery by a wide range of popular
+substructure finders. Each participating group analysed independently
+as many levels of the Aquarius dataset as they could manage and
+returned lists of particles they associated with any subhalo they
+found. These lists were post-processed by a single uniform analysis
+pipeline. This pipeline employed a standard fixed definition of the
+subhalo centre and subhalo mass, and employed a standard methodology
+for removing particles and deriving \vmax. This analysis was used to
+produce cumulative number counts of the \subhalos\ and examine how
+well each finder was able to locate substructure.
+
+We find a remarkable agreement between the finders which are based on
+widely different algorithms and concepts. The finders agree very well
+on the presence and location of \subhalos\ and quantities that depend
+on this or the inner part of the halo are amazingly well and reliably
+recovered. We agree with \citet{knebe_haloes_2011} that \vmax\ is a
+good parameter by which to rank order the halos (in this case
+\subhalos). However, we also show that as \vmax\ is only dependent
+upon the inner 20 per cent or less of the subhalo particles around 100
+particles are required to be within the subhalo for this measure to be
+reliably recovered.  Quantities that depend on the outer parts of the
+\subhalos, such as the total mass, are still recovered with a scatter
+of around 10 per cent but are more dependent upon the exact algorithm
+employed both for unbinding and to define the outer edge.
+
+The most difficult region within which to resolve substructures is the
+very centre of the halo which has, by definition, a very high
+background density. In this region real-space based finders are
+expected to struggle whereas the full six-dimensional phase space
+based finders should do better. In practice \rockstar\ is the only
+phase space based finder that shows any indication of this (and this
+difference becomes {\it less} pronounced as the resolution is
+increased).  We conclude that, as yet, non of the phase space based
+finders present a significant improvement upon the best of the more
+traditional real-space based finders.
+
+Convergence studies indicate that identified \subhalos\ containing
+less than 100 particles tend to be under-resolved and these objects
+grow slightly in mass if a higher resolution study is used. This could
+be due to that fact that particles in the outer regions of these
+\subhalos\ are stripped more readily at lower resolution or it could
+be an artifact of the difficulty of measuring the potential (and hence
+completing any unbinding satisfactorily) with this small number of
+particles. Several studies
+\citep{kase_2007,pilipenko_2009,trenti_2010} have indicated the
+unreliability of halo properties (other than physical presence) for
+(sub)halos of this size or less.
+
+Fitting power law slopes to the convergence studies of each finder
+indicates that the logarithmic slope of the cumulative number count is
+less than 1. While this is only for a single halo within a single
+cosmology the result appears to be robust as it is found for all the
+high-resolution finders employed in this study. This indicates that
+the larger substructures are the most important ones and that higher
+levels of the (sub)subhalo hierarchy play a less significant dynamical
+role.
+
+
+\section*{Acknowledgements} \label{sec:Acknowledgements}
+
+We wish to thank the Virgo Consortium for allowing the use of 
+the Aquarius dataset and Adrian Jenkins for assisting with the data.
+
+AK is supported by the {\it Spanish Ministerio de Ciencia e
+  Innovaci\'on} (MICINN) in Spain through the Ramon y Cajal programme
+as well as the grants AYA 2009-13875-C03-02, AYA2009-12792-C03-03,
+CSD2009-00064, and CAM S2009/ESP-1496. He further thanks Astrud
+Gilberto for the shadow of your smile.
+
+HL acknowledges a fellowship from the European Commission's Framework Programme 7, 
+through the Marie Curie Initial Training Network CosmoComp (PITN-GA-2009-238356).
+
+\bibliography{mn-jour,SubHaloes}
+\bibliographystyle{mn2e} \label{sec:Bibliography}
+\label{lastpage}
+
+
+\end{document}

@@ -1,0 +1,56 @@
+#INPUT FILE
+zlist_file		/home1/01937/cs390/LOS-001/inputs/z27.dat
+den_profile_file	/home1/01937/cs390/LOS-001/inputs/TIS_profile.dat
+subcell_perdim_file	/home1/01937/cs390/LOS-001/inputs/subcell_perdim_20mpc.dat
+
+#COSMOLOGICAL PARAMETERS
+
+Omega_0			0.3
+Lambda0			0.7
+h			0.7
+rho_crit_0 		1.879d-29	# g/cm^3/h^2
+Omega_b			0.02		# Omega_b*h^2
+
+#CUBEP3M PARAMETERS
+
+file_dimension		14
+particle_per_dim	5488		
+co_boxwidth		20.		#Mpc/h
+
+#FOLDERS
+los_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/LOS/1000000/
+halo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/DATA/
+result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT_linear/
+subcellden_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/postprocessing/
+databin_path		/home1/01937/cs390/LOS-001/inputs/bin_info/
+
+
+rr			0		#random = 1, point to massive halo 0
+
+#REALISATIONS
+MassiveNumber		128		#number of halos pointed
+Max_l			1000000	#number of LOS per halo per node
+
+
+#TIS PARAMETERS
+
+Mttil			61.48		
+etaTIS			0.5544		
+etaSUS			0.5
+zeta_t			29.4005325
+A10			2.85d-15 	#1/s
+nu0			1420.40575d6	#Hz
+T_star			0.0681		#K
+grav_const		6.672d-8	#cm^3/g/s^2
+AMASS			2.041d-24	#g
+boltzk			1.38d-16	#erg/K
+nH			0.926
+nHe			0.074		#1-nH
+mu			1.222
+mu_H			1.32
+m_tis			1000
+max_size		1500
+
+c			2.9979d+10		#cm/s
+Mpc			3.08567758d24	#cm
+M_sol			1.989e33		#g
