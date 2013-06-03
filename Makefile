@@ -6,7 +6,7 @@ MICLIB = $(THIS)/miclib
 CF = mpif90
 MICCF = mpif90
 
-CFFLAGS = -fpp -O2  -openmp 
+CFFLAGS = -fpp -O2 -g -openmp 
 MICCFFLAGS = -fpp -O3  -openmp  -mmic
 
 CFFLAGS += -L/$(LIB) -I/$(LIB)
