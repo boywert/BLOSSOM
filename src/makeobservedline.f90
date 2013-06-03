@@ -202,14 +202,14 @@ subroutine makeobserveline(z)
   d0 = z_to_d(z)
 
   do i=1,n_point
- !    curHalo = haloid(i)
+     curHalo = haloid(i)
  !    comov_dist(i) = online(i)
- !    undistorted_dist(i) = d0+convert_length2physical(real((BoxSize/2.-online(i)),8),z)
- !    undistorted_z = d_to_z(undistorted_dist(i))
- !    distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(-1.*direction(1:3,i),halodata(1:3,curHalo)),8),z)/c
- !    distorted_dist(i) = z_to_d(distorted_z)
+     undistorted_dist(i) = d0+convert_length2physical(real((BoxSize/2.-online(i)),8),z)
+     undistorted_z = d_to_z(undistorted_dist(i))
+     distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(-1.*direction(1:3,i),halodata(1:3,curHalo)),8),z)/c
+     distorted_dist(i) = z_to_d(distorted_z)
 
- !    haloperline(lineid(i)) = haloperline(lineid(i))+1
+ 
  !    if(convert_mass2physical(real(halodata(4,curHalo),8))/M_sol > mass_limit) then
  !       haloperline_large(lineid(i)) =  haloperline_large(lineid(i)) +1
  !    else
