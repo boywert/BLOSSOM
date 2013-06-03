@@ -19,10 +19,10 @@ OPT += -DABSORPTION
 CFFLAGS += $(OPT)
 MICCFFLAGS += $(OPT)
 
-all: main 
+all: main.exe 
 
-main: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
-	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o main -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+main.exe: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o main.exe -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
 
 $(LIB)/read_parameters.a: $(LIB)/libcommon_vars.a
 	$(CF) $(CFFLAGS) -c $(SRC)/read_parameters.f90 -o $(LIB)/libread_parameters.a  -lcommon_vars
@@ -62,3 +62,6 @@ clean:
 	rm -f $(SRC)/*.o
 	rm -f $(LIB)/*
 	rm -f $(MICLIB)/*
+	rm -f myMPI.*
+	rm -f *.o
+	rm -f *.exe
