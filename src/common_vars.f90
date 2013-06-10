@@ -97,7 +97,7 @@ module common_vars
   !@ for LOSs
   integer :: max_line
   integer :: line_use_to_save
-
+  integer, target :: line_length_factor
   !#######################################################################
   !@ zlist
   real(kind=8) :: zlist(ZLIST_MAXSIZE)

@@ -12,7 +12,7 @@ subroutine gen_los_rg(z)
   use mpitools
   use io_tools
   implicit none   
-
+  !integer(kind=4) , parameter :: line_length_factor = 2
   integer (kind = 4)   :: n_threads, omp_thread
 
   integer(kind=4)   :: omp
@@ -27,7 +27,7 @@ subroutine gen_los_rg(z)
   real(kind=4) :: redshift_index 
 
   integer(kind=4) :: NumBlock,curHalo,unitid,totalhaloline !curHalo => 8byte
-  real(kind=4) :: InitPoint(3), TargetPoint(3), Direction(3)
+  real(kind=4) :: InitPoint(3), TargetPoint(3), Direction(3),tempvector(3)
   real(kind=4) :: FinishPoint(3),maxradius,r4_uniform_01
 
   real(kind=4) :: crossBlock(3),shiftdistance(3),pos(3),block_dummy(3)
@@ -129,7 +129,7 @@ subroutine gen_los_rg(z)
 151  GridSize = real(i)
      !GridSize = Boxsize/6.
      GridLines = int(BoxSize/GridSize)
-     PrGridLines = GridLines*3
+     PrGridLines = GridLines*(2*line_length_factor+1)
      print*, 'Gridsize: ',Gridsize
      print*, 'GridLines: ',GridLines
 
@@ -379,7 +379,7 @@ subroutine gen_los_rg(z)
 
   if(rank==0) print*, 'Start LOS finder'
 
-  !$omp parallel private(i,j,k,l,o,InitPoint,TargetPoint,Direction,FinishPoint,xStart,xStop,totalcellx,totalcelly,totalcellz,totalcell_dummy,box1,box2,crossBlock,length,shiftcell,shiftdistance,Numblock,curHalo,pos,distancetoline,distanceonline,unitid,timearray,baserandom3,baserandom2,baserandom1,m,haloperline) &
+  !$omp parallel private(i,j,k,l,o,InitPoint,TargetPoint,Direction,FinishPoint,xStart,xStop,totalcellx,totalcelly,totalcellz,totalcell_dummy,box1,box2,crossBlock,length,shiftcell,shiftdistance,Numblock,curHalo,pos,distancetoline,distanceonline,unitid,timearray,baserandom3,baserandom2,baserandom1,m,haloperline,tempvector) &
   !$omp shared(halodata,initarray,linenum, hitnum)
   call date_and_time(values=timearray)
   call srand(rank*omp_get_thread_num()+timearray(5)+timearray(6)+timearray(7)+timearray(8)+timearray(1)*(rank+1)+1)
@@ -387,11 +387,15 @@ subroutine gen_los_rg(z)
 
   !$omp do
   do l=1,max_l
-
-     allocate(totalcellx(1:54*(GridLines+1)))
-     allocate(totalcelly(1:54*(GridLines+1)))
-     allocate(totalcellz(1:54*(GridLines+1)))
-     allocate(totalcell_dummy(1:54*(GridLines+1)*3))
+#ifdef DEBUG
+     if(rank==0 .and. omp_get_thread_num()==0) then
+        print*, 'l',l
+     end if
+#endif
+     allocate(totalcellx(1:54*(GridLines+1)*line_length_factor))
+     allocate(totalcelly(1:54*(GridLines+1)*line_length_factor))
+     allocate(totalcellz(1:54*(GridLines+1)*line_length_factor))
+     allocate(totalcell_dummy(1:54*(GridLines+1)*3*line_length_factor))
 
      totalcellx(1:size(totalcellx)) = -1
      totalcelly(1:size(totalcelly)) = -1
@@ -419,8 +423,8 @@ subroutine gen_los_rg(z)
 #endif
      !write(*,*) InitPoint, omp_get_thread_num(),rank
      !write(fh_logs,*)  TargetPoint
-     initPoint = (/ BoxSize, BoxSize, BoxSize/) + initPoint
-     TargetPoint = (/ BoxSize, BoxSize, BoxSize/) + TargetPoint
+     initPoint = line_length_factor*(/ BoxSize, BoxSize, BoxSize/) + initPoint
+     TargetPoint = line_length_factor*(/ BoxSize, BoxSize, BoxSize/) + TargetPoint
 
      !print*,'ori',  floor((InitPoint(1)-BoxSize)/GridSize)*GridLines**2 + &
      !     floor((InitPoint(2)-BoxSize)/GridSize)*GridLines + &
@@ -432,7 +436,15 @@ subroutine gen_los_rg(z)
 
      Direction(1:3) =(TargetPoint(1:3)-InitPoint(1:3))/vectorabs(TargetPoint - InitPoint)
      !initpoint(1:3) = InitPoint(1:3) - BoxSize * Direction(1:3) / 2.
-     FinishPoint(1:3) = InitPoint(1:3) + BoxSize * Direction(1:3)
+     initpoint(1:3) = initpoint(1:3) - BoxSize*0.5*Direction(1:3)
+     FinishPoint(1:3) = InitPoint(1:3) + line_length_factor * BoxSize * Direction(1:3)
+     
+     !swap initpoint and finishpoint
+     tempvector(1:3) = initpoint(1:3)
+     initpoint(1:3) = FinishPoint(1:3)
+     FinishPoint(1:3) = tempvector(1:3)
+     Direction(1:3) = -1.*Direction(1:3)
+     
      !if(rank == 0 .and. omp_get_thread_num() == 0) then
      !                 print*, 'finishppoint',FinishPoint
      !                 print*, 'target',TargetPoint
@@ -440,7 +452,13 @@ subroutine gen_los_rg(z)
      !                 print*, 'direction',Direction
      !endif
      haloperline = 0
-     centre_point = (/ BoxSize*3./2., BoxSize*3./2., BoxSize*3./2. /)
+#ifdef DEBUG
+     if(rank==0 .and. omp_get_thread_num()==0) then
+        print*, 'init',initpoint
+        print*, 'finish',FinishPoint
+     end if
+#endif
+     !centre_point = (/ BoxSize*(2*line_length_factor+1)/2., BoxSize*(2*line_length_factor+1)/2., BoxSize*(2*line_length_factor+1)/2. /)
 !!$omp critical 
      !write(fh_centreref,*)  int((l+(m-1)*max_l),4),linedistance(initPoint,FinishPoint,centre_point), finddistance(initPoint,FinishPoint,centre_point)
 !!$omp end critical
@@ -455,10 +473,13 @@ subroutine gen_los_rg(z)
         xStart = ceiling(FinishPoint(1)/(GridSize))
         xStop = floor(InitPoint(1)/(GridSize))
      end if
+     
+#ifdef DEBUG
+     if(rank == 0 .and. omp_get_thread_num() == 0) then
+        write(*,*),'x', xStart, xStop
+     endif
+#endif
 
-     !    if(rank == 0 .and. omp_get_thread_num() == 0) then
-     !                write(*,*),'x', xStart, xStop
-     !    endif
      !print*, InitPoint(1)/(GridSize), FinishPoint(1)/(GridSize)
 
      !write(*,*), xStart, xStop,iabs(xStop-xStart)+1
@@ -596,9 +617,11 @@ subroutine gen_los_rg(z)
         xStart = ceiling(FinishPoint(2)/(GridSize))
         xStop = floor(InitPoint(2)/(GridSize))
      end if
-     !if(rank == 0 .and. omp_get_thread_num() == 0) then
-     !                  write(*,*),'y', xStart, xStop
-     !endif
+#ifdef DEBUG
+     if(rank == 0 .and. omp_get_thread_num() == 0) then
+        write(*,*),'y', xStart, xStop
+     endif
+#endif
      !write(*,*), xStart, xStop,iabs(xStop-xStart)+1
      
      if(int(InitPoint(1)/(GridSize)) == int(FinishPoint(1)/(GridSize))) then
@@ -738,11 +761,11 @@ subroutine gen_los_rg(z)
      end if
 
      !write(*,*), xStart, xStop,iabs(xStop-xStart)+1
-
-     !if(rank == 0 .and. omp_get_thread_num() == 0) then
-     !                  write(*,*),'z', xStart, xStop
-     !          endif
-
+#ifdef DEBUG
+     if(rank == 0 .and. omp_get_thread_num() == 0) then
+        write(*,*),'z', xStart, xStop
+     endif
+#endif
      if(int(InitPoint(1)/(GridSize)) == int(FinishPoint(1)/(GridSize))) then
         box1(1) = floor(InitPoint(1)/GridSize)*PrGridLines**2 + &
              floor(InitPoint(2)/GridSize)*PrGridLines + &
@@ -876,11 +899,11 @@ subroutine gen_los_rg(z)
            call abort
         end if
      end do
-
-     !if(rank == 0 .and. omp_get_thread_num() == 0) then
-     !        write(*,*),'merging x-y-z to dummy'
-     !endif
-
+#ifdef DEBUG
+     if(rank == 0 .and. omp_get_thread_num() == 0) then
+        write(*,*),'merging x-y-z to dummy'
+     endif
+#endif
 
      totalcell_dummy(1:size(totalcellx)) = totalcellx(1:size(totalcellx))
      totalcell_dummy(size(totalcellx)+1:size(totalcellx)+size(totalcelly)) = totalcelly(1:size(totalcelly))
@@ -890,6 +913,13 @@ subroutine gen_los_rg(z)
      !print*, totalcell_dummy
      i=1
      deallocate(totalcellx,totalcelly,totalcellz)
+
+#ifdef DEBUG
+     if(rank == 0 .and. omp_get_thread_num() == 0) then
+        write(*,*),'finish merging'
+        print*,totalcell_dummy(1:20)
+     endif
+#endif
      !print*,totalcell_dummy(1:20)
      !if(totalcell_dummy(i) == -1) write(fh_logs,*) 'start dump',totalcell_dummy
      do while (totalcell_dummy(i) /= -1)
@@ -955,7 +985,7 @@ subroutine gen_los_rg(z)
 !              print*, curHalo, distancetoline, distanceonline
 !           end if
 
-           if(distancetoline < radius(curHalo) .and. distanceonline <= BoxSize .and. distanceonline >= 0.) then
+           if(distancetoline < radius(curHalo) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
               haloperline = haloperline + 1
 
               !$omp critical
@@ -964,8 +994,9 @@ subroutine gen_los_rg(z)
               call MPI_FILE_WRITE(fh_lineid, int((l),4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_toline, distancetoline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_direction, direction, 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_startpoint, real(initpoint - (/ BoxSize, BoxSize, BoxSize/),4) , 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_hitpoint, direction(1:3)*(distanceonline)-(pos(1:3)-initpoint(1:3)), 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_startpoint, real(initpoint-line_length_factor*(/ BoxSize, BoxSize, BoxSize/),4) , 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+              !call MPI_FILE_WRITE(fh_hitpoint, direction(1:3)*(distanceonline)-(pos(1:3)-initpoint(1:3)), 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+              
               !$omp end critical
 
            endif

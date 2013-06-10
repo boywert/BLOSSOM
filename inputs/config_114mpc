@@ -1,7 +1,7 @@
 #INPUT FILE
-zlist_file		/home1/01937/cs390/LOS-001/inputs/zlist2.dat
-den_profile_file	/home1/01937/cs390/LOS-001/inputs/TIS_profile.dat
-subcell_perdim_file	/home1/01937/cs390/LOS-001/inputs/subcell_perdim_114mpc.dat
+zlist_file		/home1/01937/cs390/BLOSSOM/inputs/zlist2.dat
+den_profile_file	/home1/01937/cs390/BLOSSOM/inputs/TIS_profile.dat
+subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_114mpc.dat
 
 #COSMOLOGICAL PARAMETERS
 

@@ -571,6 +571,9 @@ subroutine read_subcell_overden(z,GridLines,subcell_overden)
      end do
      close(28)
      meanden = totalden/(GridLines**3)
+     do i=0, GridLines**3-1
+        print*,subcell_overden(i)/meanden
+     end do
      subcell_overden(0:GridLines**3-1) = subcell_overden(0:GridLines**3-1)/(meanden) -1.
      return
   end if

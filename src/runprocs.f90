@@ -7,11 +7,12 @@ contains
 
 #include "gen_los.f90"
 #include "makecorrelation.f90"
-#include "absorpstats.f90"
+!#include "absorpstats.f90"
 #include "makeobservedline.f90"
 
 #define RR
 #include "gen_los.f90"
 #include "makecorrelation.f90"
+#include "makeobservedline.f90"
 
 end module runprocs

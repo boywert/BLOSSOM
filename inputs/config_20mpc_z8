@@ -26,10 +26,11 @@ databin_path		/home1/01937/cs390/LOS-001/inputs/bin_info/
 
 
 rr			0		#random = 1, point to massive halo 0
+line_length_factor	2		#length of a line of sight (Boxsize)
 
 #REALISATIONS
-MassiveNumber		128		#number of halos pointed
-Max_l			1000000	#number of LOS per halo per node
+MassiveNumber		64		#number of halos pointed
+Max_l			100000	#number of LOS per halo per node
 
 
 #TIS PARAMETERS

@@ -51,7 +51,8 @@ contains
   end function find_T_k
 
 
-  subroutine tau_cal(M0,zcoll,impact_param,n,r,rho,sigma_V,tau0)
+  subroutine tau_cal(M0,zcoll,impact_param,n,r,rho,sigma_V,areatau0,tau0)
+    use omp_lib
     implicit none
     integer :: size
     real(kind=8) :: rho(0:max_size), r(0:max_size), n_HI(0:max_size)
@@ -62,15 +63,17 @@ contains
     real(kind=8) :: diff, x, T_CMB_z
     real(kind=8) :: delta_nu, nu_z, kappa_coeff
     real(kind=8) :: r_t, r0, rho0, sigma_V, T_k, M0, zcoll, dnum, M_J
-    real(kind=8) :: Delta_c,tau0,absorption,impact_param
+    real(kind=8) :: Delta_c,tau0,areatau0,absorption,impact_param
 
     real(kind=8) :: shape, kappa1, delTb_bol, bol_abs_nu
     real(kind=8) :: X1(8), neutr_fraction, delOmega, bol_absorp
-    real(kind=8) :: lgtau(0:100),area_tau0(0:100), tau_current
+    !real(kind=8) :: lgtau(0:100),area_tau0(0:100), tau_current
     real(kind=8),allocatable :: tau(:,:)
+    real(kind=4) :: start_time, stop_time
+    integer :: area_flag
     integer :: i, n, j, q, niter, k, upper_r
 
-
+    call cpu_time(start_time)
     nu_z = nu0/(1.d0+zcoll)
     Delta_c = 18.*pi**2 
 
@@ -109,6 +112,9 @@ contains
     allocate(tau(0:max_size,-max_size:max_size))
     tau(n,n)   = 0.0d0
     tau_tot(n) = tau(n,n)
+    
+    !$omp parallel private(j,diff) 
+    !$omp do
     do i=n-1,0,-1
        tau(i,-n)=0.0d0
        do j=-n,-i-1
@@ -123,17 +129,28 @@ contains
        end do
        tau_tot(i) = 2.0d0*tau(i,i)*r0 !total optical depth at r_i
     enddo
+    !$omp end do
+    !$omp end parallel
     deallocate(tau)
     do i=1,n
        if(impact_param/r0 < r(i)) then
-          goto 120
+          goto 127
        endif
     end do
- 
-120 tau0 = (tau_tot(i)-tau_tot(i-1))/(r(i) - r(i-1))*(impact_param/r0-r(i-1)) + tau_tot(i-1) 
+
+127 tau0 = (tau_tot(i)-tau_tot(i-1))/(r(i) - r(i-1))*(impact_param/r0-r(i-1)) + tau_tot(i-1) 
+
+
+    areatau0=0.0d0
+    do i=1,n
+       areatau0 = areatau0 + (tau_tot(i-1)*r(i-1)+tau_tot(i)*r(i)) * (r(i)-r(i-1))
+    end do
+    areatau0 =  areatau0/zeta_t**2
+
+
     !print*,T_k,exp(-1*tau0)
     !absorption = 1.0d0 - exp(-1.d0*tau0)
-    
+
     ! do j=0,100
     !    tau_current=10**lgtau(j)
     !    do i=0,n-1
@@ -168,12 +185,12 @@ contains
   subroutine doppler_term_cal(n,f0,delta_f,sigma,doppler_term)
     implicit none
     integer :: n,i
-    real(kind=8) :: delta_f,sigma,f0
+    real(kind=8) :: delta_f,sigma,sigma_f,f0
     real(kind=8) :: f(-n:n), doppler_term(-n:n)
     do i=-n,n
        f(i) = real(i,8)*delta_f+f0
-       sigma = sigma*f0/c*sqrt(2./3.)
-       doppler_term(i) = exp(-1.*(f(i)/sigma)**2.)/sqrt(pi)/sigma
+       sigma_f = sigma*f0/c*sqrt(2./3.)
+       doppler_term(i) = exp(-1.*(f(i)/sigma_f)**2.)/sqrt(pi)/sigma
        !print*, f(i), doppler_term(i) 
     end do
     return

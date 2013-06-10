@@ -1,7 +1,7 @@
 #ifdef RR
-subroutine makecorrelation_rr(z)
+subroutine makeobservedlines_rr(z)
 #else
-subroutine makecorrelation_rg(z)
+subroutine makeobservedlines_rg(z)
 #endif
   use mpi
   use mpitools
@@ -20,24 +20,13 @@ subroutine makecorrelation_rg(z)
 
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
   integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid
-  integer(kind=4) :: fh_lineid,fh_online, line_with_max_halo, max_halo_so_far
-  integer(kind=8) :: curHalo,innerHalo,block
+  integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
+  integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
-  integer(kind=4),allocatable :: lineid(:),linelinkedlist(:),haloid(:)
-  real(kind=4), allocatable :: online(:),direction(:,:)
-  integer(kind=8) :: haloperline(max_line),headofline(max_line),haloperline_small(max_line)
-  integer(kind=8) :: haloperline_large(max_line)
-  real(kind=8),allocatable :: histogram_dist(:), histogram_undist(:),histogram_comov(:), &
-       subhisto_dist(:,:),subhisto_undist(:,:),subhisto_comov(:,:), &
-       subhisto_galactic_dist(:,:), subhisto_mini_dist(:,:), &
-       subhisto_galactic_undist(:,:), subhisto_mini_undist(:,:), &
-       finalhisto_dist(:),finalhisto_undist(:),finalhisto_comov(:)
-  integer(kind=8),allocatable  ::   innerhisto_dist(:,:),innerhisto_undist(:,:),innerhisto_comov(:,:)
-  integer(kind=8),allocatable  ::  haloperlinehisto(:),subhaloperlinehisto(:,:), &
-       finalhalolinehisto(:)
-  real(kind=8),allocatable :: correlation_dist(:),correlation_undist(:), correlation_comov(:)
-  real(kind=4) :: r
-  real(kind=8) :: Halfbox,mass_limit,lambda
+  integer(kind=4),allocatable :: lineid(:),linelinkedlist(:),haloid(:),haloperline(:),headofline(:)
+  real(kind=4), allocatable :: online(:),toline(:),direction(:,:)
+
+  real(kind=8) :: Halfbox,mass_limit,lambda,line_centre
   character(len=100) :: str_rank,z_s
   real(kind=8) :: z,d0,d_self
   integer(kind=4) :: halonumber,n_elements,rlogsteps
@@ -48,20 +37,18 @@ subroutine makecorrelation_rg(z)
   integer(kind=8) :: usedlines, totusedlines
   real(kind=8) :: rmax,rmin,rminlog,rmaxlog,deltalogr
   integer :: status_checkfiles
-  
+  real(kind=8) :: nu_dist, nu_undist
+
+  integer(kind=4) :: n
+  real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size)
+  real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source
+  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd
+ 
+
 
   Halfbox = real(BoxSize,8)/2.d0
-  !totalbin = int(convert_length2physical(HalfBox,z)/convert_length2physical(BinSize,z))
-  totalbin = 75
-  binsize = HalfBox/totalbin
+  line_centre = real(Boxsize*line_length_factor,8)/2.d0
 
-  rmin = convert_length2physical(1.d0,z)
-  rmax = convert_length2physical(Halfbox,z)
-  rminlog = log10(rmin)
-  rmaxlog = log10(rmax)
-  rlogsteps = 10
-  deltalogr  =  (rmaxlog-rminlog)/rlogsteps
-  
   write(z_s,'(f10.3)') z
   z_s = adjustl(z_s)
   write(str_rank,'(i10)') rank
@@ -140,12 +127,10 @@ subroutine makecorrelation_rg(z)
 
   allocate(lineid(1:n_point))
   allocate(online(1:n_point))
+  allocate(toline(1:n_point))
   allocate(haloid(1:n_point))
   allocate(direction(1:3,1:n_point))
-  allocate(distorted_dist(1:n_point))
-  allocate(comov_dist(1:n_point))
-  allocate(undistorted_dist(1:n_point))
-  allocate(linelinkedlist(1:n_point))
+
 
   if(rank ==0) print*,'Read data into lineid ....'
   call mpi_file_read(fh_lineid,lineid,n_point,mpi_integer,mpi_status_ignore,ierr)
@@ -174,6 +159,28 @@ subroutine makecorrelation_rg(z)
      print*,'Close file online ....'
   endif
   call mpi_file_close(fh_online,ierr)
+
+
+  if(rank ==0) print*,'Open file for toline ....'
+
+#ifdef RR
+  call mpi_file_open(mpi_comm_self, &
+        trim(los_path)//'/'//z_s(1:len_trim(z_s))//'/RR/TOLINE/'//trim(adjustl(str_rank)), &
+       MPI_MODE_RDONLY, &
+       mpi_info_null,fh_toline,ierr)
+#else
+  call mpi_file_open(mpi_comm_self, &
+        trim(los_path)//'/'//z_s(1:len_trim(z_s))//'/RG/TOLINE/'//trim(adjustl(str_rank)), &
+       MPI_MODE_RDONLY, &
+       mpi_info_null,fh_toline,ierr)
+#endif
+  if(rank ==0) print*,'Read data into toline ....'
+
+  call mpi_file_read(fh_toline,toline,n_point,mpi_real,mpi_status_ignore,ierr)
+  if(rank ==0) then
+     print*,'Close file toline ....'
+  endif
+  call mpi_file_close(fh_toline,ierr)
 
 
   if(rank ==0) print*,'Open file for direction ....'
@@ -217,11 +224,22 @@ subroutine makecorrelation_rg(z)
   endif
   call mpi_file_close(fh_haloid,ierr)
 
-
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   ! make linked list
   if(rank ==0) then
      print*,'Making linkedlist ....'
      print*,'... Allocating.....'
+  endif
+
+  allocate(distorted_dist(1:n_point))
+  allocate(comov_dist(1:n_point))
+  allocate(undistorted_dist(1:n_point))
+  allocate(linelinkedlist(1:n_point))
+  allocate(headofline(1:max_line))
+  allocate(haloperline(1:max_line))
+
+  if(rank ==0) then
+     print*,'Set varaiables to 0 ...'
   endif
   haloperline(1:max_line) = 0
   linelinkedlist(1:n_point) = 0
@@ -231,358 +249,85 @@ subroutine makecorrelation_rg(z)
   if(rank ==0) print*,'... Looping for linkedlist....'
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
-  d0 = z_to_d(z)
+  d0 = z_to_d(z) !physical distance from observer to the centre of line
+
   do i=1,n_point
-     curHalo = haloid(i)
+     curHaloid = haloid(i)
      comov_dist(i) = online(i)
-     undistorted_dist(i) = d0+convert_length2physical(real((BoxSize/2.-online(i)),8),z)
+     undistorted_dist(i) = d0+convert_length2physical(real(online(i),8),z) - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z)
      undistorted_z = d_to_z(undistorted_dist(i))
-     distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(-1.*direction(1:3,i),halodata(1:3,curHalo)),8),z)/c
+     distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(direction(1:3,i),halodata(1:3,curHaloid)),8),z)/c
      distorted_dist(i) = z_to_d(distorted_z)
+     !nu_dist = d_to_nu(distorted_dist(i))
+     !nu_undist = d_to_nu(undistorted_dist(i))
 
-#ifdef DEBUG
-     if(rank==0 .and. (lineid(i) > max_line .or. lineid(i) < 1)) &
-          print*,i,lineid(i)
-#endif
-
-     haloperline(lineid(i)) = haloperline(lineid(i))+1
-     if(convert_mass2physical(real(halodata(4,curHalo),8))/M_sol > mass_limit) then
-        haloperline_large(lineid(i)) =  haloperline_large(lineid(i)) +1
-     else
-        haloperline_small(lineid(i)) =  haloperline_small(lineid(i)) + 1
+     !@ Use only minihalos
+     M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
+     if(M0 > 1.e5 .and. M0 < 1.e8) then
+        linelinkedlist(i) = headofline(lineid(i))
+        headofline(lineid(i)) = i
+        haloperline(lineid(i)) = haloperline(lineid(i)) + 1
      end if
-     linelinkedlist(i) = headofline(lineid(i))
-     headofline(lineid(i)) = i
   end do
 
-  deallocate(halodata,haloid,direction)
+  !call n_cal(n,r,rho)
+  
+  max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
+  nu_min = d_to_nu(max_observe)
+  min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
+  nu_max = d_to_nu(min_observe)
 
-  if(rank==0)  then
-     line_with_max_halo = 0
-     max_halo_so_far = 0
-     do i = 1, max_line
-        if(haloperline(i) > max_halo_so_far) then
-           max_halo_so_far = haloperline(i)
-           line_with_max_halo = i
-        end if
-     end do
-     line_use_to_save = line_with_max_halo
+#ifndef RR
+  d_source = d0 + convert_length2physical(real(Boxsize*(real(line_length_factor)-0.5),8),z) 
+  nu_source = d_to_nu(d_source)
+#endif
+
+#ifdef DEBUG
+  if(rank==0) then
+     print*, 'Start simulating observe data'
   end if
-  if(rank ==0) print*,'Calculating total bins ....'
-
-  !totalbin = rlogsteps
-  if(rank ==0) print*,'Total bin :',totalbin
-  if(rank ==0) print*,'Allocating histogram ....'
-
-
-  allocate(histogram_undist(1:totalbin))
-  allocate(histogram_dist(1:totalbin))
-  allocate(histogram_comov(1:totalbin))
-  allocate(haloperlinehisto(0:max_haloperlinehisto))
-  allocate(subhisto_dist(1:totalbin,0:omp_thread-1))
-  allocate(subhisto_undist(1:totalbin,0:omp_thread-1))
-  allocate(subhisto_comov(1:totalbin,0:omp_thread-1))
-
-  allocate(innerhisto_dist(1:totalbin,0:omp_thread-1))
-  allocate(innerhisto_undist(1:totalbin,0:omp_thread-1))
-  allocate(innerhisto_comov(1:totalbin,0:omp_thread-1))
-
-  allocate(subhisto_mini_dist(1:totalbin,0:omp_thread-1))
-  allocate(subhisto_galactic_dist(1:totalbin,0:omp_thread-1))
-  allocate(subhisto_mini_undist(1:totalbin,0:omp_thread-1))
-  allocate(subhisto_galactic_undist(1:totalbin,0:omp_thread-1))
-  allocate(subhaloperlinehisto(0:max_haloperlinehisto,0:omp_thread-1))
-
-  if(rank ==0) print*,'Set all histograms to 0 ....'
-
-
-  subhisto_dist(1:totalbin,0:omp_thread-1) = 0.
-  subhisto_undist(1:totalbin,0:omp_thread-1) = 0.
-  subhisto_comov(1:totalbin,0:omp_thread-1) = 0.
-
-  innerhisto_dist(1:totalbin,0:omp_thread-1) = 0
-  innerhisto_undist(1:totalbin,0:omp_thread-1) = 0
-  innerhisto_comov(1:totalbin,0:omp_thread-1) = 0
-
-  subhisto_mini_dist(1:totalbin,0:omp_thread-1) = 0.
-  subhisto_mini_undist(1:totalbin,0:omp_thread-1) = 0.
-  subhisto_galactic_dist(1:totalbin,0:omp_thread-1) = 0.
-  subhisto_galactic_undist(1:totalbin,0:omp_thread-1) = 0.
-
-  histogram_dist(1:totalbin) = 0.
-  histogram_undist(1:totalbin) = 0.
-  histogram_comov(1:totalbin) = 0.
-
-  haloperlinehisto(0:max_haloperlinehisto) = 0
-  subhaloperlinehisto(0:max_haloperlinehisto,0:omp_thread-1) = 0
-
-  if(rank ==0) print*,'Making Halonumber/line histogram ....'
-  !if(rank == 0) then
-  !do i=1,max_line 
-  !        if(haloperline(i) == 0) print*,i
-  !end do
-  !endif
-
-  !$omp parallel
-  !$omp do
-  do i=1,max_line
-     if(haloperline(i) >= 0 .and. haloperline(i) <= &
-          max_haloperlinehisto) then
-        subhaloperlinehisto(haloperline(i),omp_get_thread_num()) = &
-             subhaloperlinehisto(haloperline(i),omp_get_thread_num())+1
-     endif
-  end do
-  !$omp end do
-  !$omp end parallel
-
-
-
-
-  if(rank ==0) print*,'Combining Halonumber/line histogram from OMP ....'
-
-
-  do i=0,omp_thread-1
-     haloperlinehisto(0:max_haloperlinehisto) = &
-          subhaloperlinehisto(0:max_haloperlinehisto,i) + &
-          haloperlinehisto(0:max_haloperlinehisto)
-  end do
-
-  !print*, "rank = ",rank, haloperlinehisto(0)
-
-  if(rank ==0) print*,'Making N(r) histogram ....'
-
-  usedlines = 0
-  !$omp parallel private(curHalo,innerHalo,r,block,lambda,sumtest)  reduction(+:usedlines)
-  !$omp do
-  do i=1, max_line
-     if(haloperline(i) > 5) then
-        curHalo = headofline(i)
-        innerhisto_dist(1:totalbin,omp_get_thread_num()) = 0.
-        innerhisto_undist(1:totalbin,omp_get_thread_num()) = 0.
-        innerhisto_comov(1:totalbin,omp_get_thread_num()) = 0.
-#ifdef DEBUG
-        if(curHalo < 0 .or. curHalo > n_point) then
-           print*, &
-                'rank=',rank,'mp=',omp_get_thread_num(), &
-                'curHalo=',curhalo
-           call abort
-        endif
 #endif
-        do while(curHalo /= 0)
-           
-           innerHalo = headofline(i)
-           do while (innerHalo /= curHalo)
-              !r = min(real(abs(distorted_dist(curHalo) - distorted_dist(innerHalo) + convert_length2physical(HalfBox*2,z)),4),real(abs(distorted_dist(curHalo) - distorted_dist(innerHalo) - convert_length2physical(HalfBox*2,z)),4),real(abs(distorted_dist(curHalo) - distorted_dist(innerHalo)),4))
-              r = real(abs(distorted_dist(curHalo) - distorted_dist(innerHalo)))
-              block = ceiling((r)/convert_length2physical(BinSize,z))
-
-              if(block <= totalbin .and. block >= 1) then
-                 innerhisto_dist(block,omp_get_thread_num()) = &
-                      innerhisto_dist(block,omp_get_thread_num())+2
-              end if
-              !r = min(real(abs(undistorted_dist(curHalo) - undistorted_dist(innerHalo) + convert_length2physical(HalfBox*2,z)),4),real(abs(undistorted_dist(curHalo) - undistorted_dist(innerHalo) - convert_length2physical(HalfBox*2,z)),4),real(abs(undistorted_dist(curHalo) - undistorted_dist(innerHalo)),4))
-              r = real(abs(undistorted_dist(curHalo) - undistorted_dist(innerHalo)))
-              block = ceiling((r)/convert_length2physical(BinSize,z))
-
-              if(block <= totalbin .and. block >= 1) then
-                 innerhisto_undist(block,omp_get_thread_num()) = &
-                      innerhisto_undist(block,omp_get_thread_num())+2
-              end if
-
-              !r = min(abs(comov_dist(curHalo) - comov_dist(innerHalo)),abs(comov_dist(curHalo) - comov_dist(innerHalo) - Boxsize),abs(comov_dist(curHalo) - comov_dist(innerHalo) + Boxsize))
-              r = abs(comov_dist(curHalo) - comov_dist(innerHalo))
-              !print*, 'r',r
-              block = ceiling(r/binsize)
-              if (block <= totalbin .and. block >= 1) then
-                 innerhisto_comov(block,omp_get_thread_num()) = &
-                      innerhisto_comov(block,omp_get_thread_num())+2
-              end if
-
-              innerHalo = linelinkedlist(innerHalo)
-           end do
-           curHalo = linelinkedlist(curHalo)
-        end do
-        lambda = real(haloperline(i))/convert_length2physical(HalfBox*2,z)
-        sumtest = 0
-        do j=1,totalbin
-           subhisto_dist(j,omp_get_thread_num()) = subhisto_dist(j,omp_get_thread_num()) + real(innerhisto_dist(j,omp_get_thread_num()))/real(haloperline(i))/convert_length2physical(BinSize,z)/lambda - 1.
-           subhisto_undist(j,omp_get_thread_num()) = subhisto_undist(j,omp_get_thread_num()) + real(innerhisto_undist(j,omp_get_thread_num()))/real(haloperline(i))/convert_length2physical(BinSize,z)/lambda - 1.
-           subhisto_comov(j,omp_get_thread_num()) = subhisto_comov(j,omp_get_thread_num()) + real(innerhisto_comov(j,omp_get_thread_num()))/real(haloperline(i))/binsize/(haloperline(i)/Boxsize) - 1.
-           sumtest = sumtest + real(innerhisto_comov(j,omp_get_thread_num()))/real(haloperline(i))/binsize/(haloperline(i)/(Boxsize)) - 1.
-        enddo
-!#define boong
-#ifdef boong
-        if(rank==0 .and. omp_get_thread_num() == 0) then
-           print*,""
-           print*,"sum = ", sumtest
-           print*,'xi'
-           print*, real(innerhisto_comov(1:totalbin,omp_get_thread_num()))/real(haloperline(i))/binsize/(haloperline(i)/(0.5*Boxsize)) - 1.
-           print*,'count'
-           print*, innerhisto_comov(1:totalbin,omp_get_thread_num())
-           print*,'1/dr/lambda'
-           print*, 1./binsize/(haloperline(i)/Boxsize)
-           print*,'haloperline', haloperline(i)
-           print*,'lambda', lambda
-           print*,""
-           ! call abort
+  
+  call n_cal(n,r,rho)
+  if(rank==0) call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat')
+  if(rank==0) open(unit=53,file=trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat',STATUS = 'NEW')
+  !@ use openmp in tau_cal instead since it's troublesome 
+  !@ to set up multiple arrays to collect information
+  
+  do i=1,100 !max_line
+#ifdef DEBUG
+     if(rank==0) then
+        print*, 'line =',i
+     end if
+#endif
+     curHalo = headofline(i)
+     do while(curHalo /= 0)
+        curHaloid = haloid(curHalo)
+        nu_dist = d_to_nu(distorted_dist(curhalo))
+        nu_undist = d_to_nu(undistorted_dist(curhalo))
+        M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
+        impact_param = convert_length2physical(real(toline(curHalo),8),z)
+        call tau_cal(M0,z,impact_param,n,r,rho,sigma_V,area_tau,tau)
+        absorp = 1.d0 - exp(-1*tau)
+        extend_absorp =  1.d0 - exp(-1*area_tau)
+#ifdef DEBUG
+        if(rank==0) then
+           print*,'absorp',absorp,'impact',impact_param
         end if
 #endif
-        usedlines = usedlines + 1 
-     else
-        !else
-     end if
+        !@ convert to SI
+        gaussian_sd = sqrt(2.)*sigma_V/c*nu_dist
+        if(rank==0) write(53,*) int(i), real(nu_dist), real(absorp),real(extend_absorp),real(gaussian_sd)
+        !gaussian_sd = sqrt(2.)*sigma_V/c*nu_undist
+        !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
+        
+        !@ next halo
+        curHalo = linelinkedlist(curHalo)
+     end do
   end do
-  !$omp end do
-  !$omp end parallel
-
-  print*, "sum line",rank,usedlines
-  if(rank ==0) then
-     print*,'Combining N(r) histogram from OMP ....'
-  endif
-  do i = 0,omp_thread-1
-     histogram_dist(1:totalbin) = histogram_dist(1:totalbin) + &
-          subhisto_dist(1:totalbin,i) 
-     histogram_undist(1:totalbin) = histogram_undist(1:totalbin) + &
-          subhisto_undist(1:totalbin,i) 
-     histogram_comov(1:totalbin) = histogram_comov(1:totalbin) +&
-          subhisto_comov(1:totalbin,i)
-  end do
-
-
-  deallocate(subhisto_undist,subhisto_dist)
-  if(rank == 0) then
-
-     print*,'Allocate arrays in Rank 0 for combining data from MPI ....'        
-     allocate(finalhisto_dist(1:totalbin))
-     allocate(finalhisto_undist(1:totalbin))
-     allocate(finalhisto_comov(1:totalbin))
-
-     allocate(correlation_dist(1:totalbin))
-     allocate(correlation_undist(1:totalbin))
-     allocate(correlation_comov(1:totalbin))
-     allocate(finalhalolinehisto(0:max_haloperlinehisto))
-     finalhisto_dist(1:totalbin) = 0.
-     finalhisto_undist(1:totalbin) = 0.
-  endif
-
-  if(rank ==0) then
-     print*,'Waiting for MPI ....'
-  endif
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-
-  if(rank ==0) print*,'Combining histogram from MPI ....'
-  call mpi_reduce(usedlines, &
-       totusedlines,1, &
-       mpi_integer8,mpi_sum,0,mpi_comm_world,ierr)
-  call mpi_reduce(histogram_dist, &
-       finalhisto_dist,totalbin, &
-       mpi_real8,mpi_sum,0,mpi_comm_world,ierr)
-  call mpi_reduce(histogram_undist, &
-       finalhisto_undist,totalbin, &
-       mpi_real8,mpi_sum,0,mpi_comm_world,ierr)
-  call mpi_reduce(histogram_comov, &
-       finalhisto_comov,totalbin, &
-       mpi_real8,mpi_sum,0,mpi_comm_world,ierr)
-
-  if(rank ==0) print*,'Waiting for MPI ....'
-
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-
-  !if(rank ==0) print*,'Combining Total point from MPI ....'
-
-  !call mpi_reduce(n_point, totalpoint,1, &
-  !        mpi_integer8,mpi_sum,0,mpi_comm_world,ierr)
-
-  if(rank ==0) print*,'Waiting for MPI ....'
-  if(rank ==0) print*,'total points:',totalpoint
-
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-
-  if(rank ==0) print*,'Combining halo per line from MPI ....'
-
-  call mpi_reduce(haloperlinehisto, &
-       finalhalolinehisto,max_haloperlinehisto+1, &
-       mpi_integer8,mpi_sum,0,mpi_comm_world,ierr)       
- 
-  if(rank ==0) print*,'Waiting for MPI ....'
-
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-
-  if(rank ==0) then
-     !print*, 'Combining N .....'
-     !do i=0,nodes_returned-1
-     !        finalhisto(1:totalbin) = finalhisto(1:totalbin) + &
-     !                                  totalhisto(i*totalbin+1:i*totalbin+totalbin)
-     !end do
-
-     print*, 'Calculating correlation ....'
-
-     totalpoint = 0
-     do i=0, max_haloperlinehisto
-        totalpoint = totalpoint+finalhalolinehisto(i)*i
-     end do
-     print*, 'used lines', totusedlines
-     do i=1,totalbin
-        correlation_dist(i) =  finalhisto_dist(i)/totusedlines !real(max_line*nodes_returned)
-        correlation_undist(i) =  finalhisto_undist(i)/totusedlines !real(max_line*nodes_returned)
-        correlation_comov(i) =  finalhisto_comov(i)/totusedlines !real(max_line*nodes_returned)
-     enddo
+  if(rank==0) close(53)
 #ifdef RR
-
-     call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR')
-     print*, 'Printing to file ',trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RR/correlation.dat'
-     call system("rm -rf "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/correlation.dat')
-     open(11,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RR/correlation.dat',STATUS = 'NEW')
+end subroutine makeobservedlines_rr
 #else
-     call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG')
-     print*, 'Printing to file ',trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RG/correlation.dat'
-     call system("rm -rf "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/correlation.dat')
-     open(11,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RG/correlation.dat',STATUS = 'NEW')
-#endif
-     do i=1,totalbin
-        write(11,*),(real(i-1)*convert_length2physical(BinSize,0.d0))/Mpc*h ,correlation_undist(i),correlation_comov(i)
-     end do
-     close(11)
-
-#ifdef RR
-     call system("rm -rf "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/haloperline.dat')
-     print*, 'Printing to file ',trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RR/haloperline.dat'
-     open(20,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RR/haloperline.dat',STATUS = 'NEW')
-#else
-     call system("rm -rf "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/haloperline.dat')
-     print*, 'Printing to file ',trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RG/haloperline.dat'
-     open(20,file=trim(result_path)//'/'//z_s(1:len_trim(z_s))//'/RG/haloperline.dat',STATUS = 'NEW')
-#endif
-
-     do i=0,max_haloperlinehisto
-        write(20,*),i ,finalhalolinehisto(i)
-     end do
-     close(20)
-
-     !do i=2,totalbin
-     !        finalhisto(i) = finalhisto(i) + finalhisto(i-1)
-     !end do
-     !open(12,file=trim(output_path)//'histo.dat')
-     !do i=2,totalbin
-     !   finalhisto(i)=finalhisto(i)+ finalhisto(i-1)
-     !end do
-     !do i=1,totalbin
-     !   write(12,*),real(i)*(BinSize)-BinSize/2.,finalhisto(i)
-     !end do
-     !close(12)
-
-     print*,'Deallocating arrays ....'
-     deallocate(finalhisto_dist,finalhisto_undist)
-     deallocate(correlation_dist,correlation_undist,finalhalolinehisto)
-  endif
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-  deallocate(distorted_dist)
-  deallocate(undistorted_dist)
-  deallocate(lineid,online,linelinkedlist,histogram_dist,histogram_undist)
-  deallocate(haloperlinehisto,subhaloperlinehisto)
-
-#ifdef RR
-end subroutine makecorrelation_rr
-#else
-end subroutine makecorrelation_rg
+end subroutine makeobservedlines_rg
 #endif

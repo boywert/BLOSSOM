@@ -118,6 +118,11 @@ contains
     var_pointer(n)%int4 => file_dimension
 
     n=n+1
+    tag(n) = 'line_length_factor'
+    var_type(n) = 1
+    var_pointer(n)%int4 => line_length_factor
+
+    n=n+1
     tag(n) = 'particle_per_dim'
     var_type(n) = 2
     var_pointer(n)%int8 => particle_per_dim
