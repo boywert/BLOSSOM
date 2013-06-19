@@ -35,9 +35,13 @@ program test
 #ifdef CALCORR_RG
         call makecorrelation_rg(zlist(i))
 #endif
-#ifdef ABSORPTION
-        call absorpstats(zlist(i))
+#ifdef ABSORPTION_RR
+        call makeobservedlines_rr(zlist(i))
 #endif
+#ifdef ABSORPTION_RG
+        call makeobservedlines_rg(zlist(i))
+#endif
+
      end if
   end do
 

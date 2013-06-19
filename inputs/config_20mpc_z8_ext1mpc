@@ -1,7 +1,7 @@
 #INPUT FILE
-zlist_file		/home1/01937/cs390/LOS-001/inputs/z8.dat
-den_profile_file	/home1/01937/cs390/LOS-001/inputs/TIS_profile.dat
-subcell_perdim_file	/home1/01937/cs390/LOS-001/inputs/subcell_perdim_20mpc.dat
+zlist_file		/home1/01937/cs390/BLOSSOM/inputs/z8.dat
+den_profile_file	/home1/01937/cs390/BLOSSOM/inputs/TIS_profile.dat
+subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_20mpc.dat
 
 #COSMOLOGICAL PARAMETERS WMAP5
 
@@ -22,7 +22,7 @@ los_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/LOS/ext1mpc/
 halo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/DATA/
 result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/
 subcellden_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/postprocessing/
-databin_path		/home1/01937/cs390/LOS-001/inputs/bin_info/
+databin_path		/home1/01937/cs390/BLOSSOM/inputs/bin_info/
 
 
 rr			0		#random = 1, point to massive halo 0

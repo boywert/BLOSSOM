@@ -14,5 +14,6 @@ contains
 #include "gen_los.f90"
 #include "makecorrelation.f90"
 #include "makeobservedline.f90"
+#include "gen_random.f90"
 
 end module runprocs

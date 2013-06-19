@@ -17,6 +17,9 @@ program test
 
   do i=1,ZLIST_MAXSIZE
      if(zlist(i) > 0) then
+#ifdef GENRANDOM
+	call gen_random(zlist(i))
+#endif
 #ifdef SUBCELL
         call call_subcell_corr(zlist(i))
 #endif
