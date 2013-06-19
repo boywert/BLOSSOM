@@ -133,6 +133,11 @@ contains
     var_pointer(n)%real8 => co_boxwidth
 
     n=n+1
+    tag(n) = 'MaxSourceSize'
+    var_type(n) = 4
+    var_pointer(n)%real8 => MaxSourceSize
+   
+    n=n+1
     tag(n) = 'los_path'
     var_type(n) = 0
     var_pointer(n)%str => los_path
@@ -290,7 +295,7 @@ contains
     !@ CubeP3M
     total_file = file_dimension**3
     BoxSize = 2.*real(particle_per_dim)
-    PrBoxSize = 3.*BoxSize
+    PrBoxSize = (2*line_length_factor+1)*BoxSize
 
     !@ unit convertion tools
     

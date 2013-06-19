@@ -15,9 +15,9 @@ subroutine gen_los_rg(z)
   !integer(kind=4) , parameter :: line_length_factor = 2
   integer (kind = 4)   :: n_threads, omp_thread
 
-  integer(kind=4)   :: omp
-  integer(kind=4)   :: fh_haloid,fh_lineid,fh_online,fh_toline,fh_logs,fh_centreref,fh_readhalo,fh_direction,fh_hitpoint,fh_startpoint
-  integer(kind=4)   :: fh_haloid_disk,fh_lineid_disk,fh_online_disk,fh_toline_disk,fh_direction_disk,fh_hitpoint_disk
+  integer(kind=4)   :: omp,fh_readhalo
+  integer(kind=4),allocatable   :: fh_haloid(:),fh_lineid(:),fh_online(:),fh_toline(:),fh_direction(:),fh_hitpoint(:),fh_startpoint(:)
+
   real(kind=4) :: centre_point(1:3)
 
   integer(kind=4) :: GridLines 
@@ -45,7 +45,7 @@ subroutine gen_los_rg(z)
        totalcelly(:), &
        totalcellz(:),&
        totalcell_dummy(:)
-  character(len=100) :: str_rank,filename
+  character(len=100) :: str_rank,str_omp,filename
   character(len=20) :: z_s
   integer(kind=mpi_offset_kind) :: filesize
   integer(kind=4) :: n_point,totalpoint,tag,n_point_index
@@ -114,12 +114,16 @@ subroutine gen_los_rg(z)
 
      call findmassive(positions, mass, halonumber, MassiveNumber, MassivePos)
      deallocate(mass)
+#ifndef USEMAXSOURCESIZE
      max_radius = 0.
      do i=1,halonumber
         if(radius(i) > max_radius) max_radius = radius(i)
      end do
+#else
+     max_radius = MaxSourceSize/co_boxwidth*Boxsize/2.
+#endif
      print*, 'max radius', max_radius
-     do i=4*ceiling(max_radius), ceiling(Boxsize)
+     do i=2*ceiling(max_radius), ceiling(Boxsize)
         if(mod(int(Boxsize),i) == 0  ) then
            goto 151
         end if
@@ -217,7 +221,8 @@ subroutine gen_los_rg(z)
   call mpi_bcast(PrGridLines,1,mpi_integer,0,mpi_comm_world,ierr)
   call mpi_bcast(GridSize,1,mpi_real,0,mpi_comm_world,ierr)
   call mpi_barrier(mpi_comm_world,ierr)
-
+  call mpi_bcast(max_radius,1,mpi_real,0,mpi_comm_world,ierr)
+  call mpi_barrier(mpi_comm_world,ierr)
 
   !allocate array in other nodes
   if (rank /= 0) then
@@ -264,6 +269,8 @@ subroutine gen_los_rg(z)
   if(rank == 0) then
      print*, 'creating output folders....' 
 
+
+     
 #ifdef RR
      command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/')
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/*')
@@ -277,8 +284,6 @@ subroutine gen_los_rg(z)
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LOGS/*')
      command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/')
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/*')
-     command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HITPOINT/')
-     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HITPOINT/*')
      command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/')
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/*')
 #else
@@ -294,8 +299,6 @@ subroutine gen_los_rg(z)
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LOGS/*')
      command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/')
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/*')
-     command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HITPOINT/')
-     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HITPOINT/*')
      command = system('mkdir -p '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/')
      command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/*')
 #endif
@@ -304,71 +307,70 @@ subroutine gen_los_rg(z)
 
 
   call mpi_barrier(mpi_comm_world, ierr)
+  allocate(fh_lineid(0:omp_thread-1))
+  allocate(fh_haloid(0:omp_thread-1))
+  allocate(fh_online(0:omp_thread-1))
+  allocate(fh_toline(0:omp_thread-1))
+  allocate(fh_direction(0:omp_thread-1))
+  allocate(fh_startpoint(0:omp_thread-1))
 
+  do i=0, omp_thread-1
+     write(str_omp,'(i10)') i
+     str_omp = adjustl(str_omp)
 #ifdef RR
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_lineid,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HALOID/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_haloid,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'ONLINE/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_online,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'TOLINE/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_toline,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_direction,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HITPOINT/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_hitpoint,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_startpoint,ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_lineid(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HALOID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_haloid(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'ONLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_online(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'TOLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_toline(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_direction(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_startpoint(i),ierr)
 #else
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LINEID/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_lineid,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HALOID/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_haloid,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'ONLINE/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_online,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'TOLINE/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_toline,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_direction,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HITPOINT/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_hitpoint,ierr)
-  call mpi_file_open(mpi_comm_self, &
-       trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/'//trim(adjustl(str_rank)), &
-       MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-       mpi_info_null,fh_startpoint,ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LINEID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_lineid(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HALOID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_haloid(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'ONLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_online(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'TOLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_toline(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_direction(i),ierr)
+     call mpi_file_open(mpi_comm_self, &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)), &
+          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
+          mpi_info_null,fh_startpoint(i),ierr)
 #endif  
+  end do
 
-  fh_logs = 50
-  fh_centreref = 51
-  !open (unit=fh_logs,file=trim(los_path)//z_s(1:len_trim(z_s))//'/'//'LOGS/'//trim(adjustl(str_rank)))
-  !open (unit=fh_centreref,file=trim(los_path)//z_s(1:len_trim(z_s))//'/'//'CENTREREF/'//trim(adjustl(str_rank)))
+
   call mpi_barrier(mpi_comm_world, ierr)
 
 
@@ -387,6 +389,7 @@ subroutine gen_los_rg(z)
 
   !$omp do
   do l=1,max_l
+     
 #ifdef DEBUG
      if(rank==0 .and. omp_get_thread_num()==0) then
         print*, 'l',l
@@ -408,7 +411,7 @@ subroutine gen_los_rg(z)
      TargetPoint = (/ rand(0), rand(0), rand(0) /)
      InitPoint(1:3) = InitPoint(1:3)*BoxSize
      TargetPoint(1:3) = TargetPoint(1:3)*BoxSize
-     !write(fh_logs,*) hitperthread(omp_get_thread_num()),omp_get_thread_num(),TargetPoint
+
 #else
      !print*, "RG mode"
      TargetPoint = (/ rand(0), rand(0), rand(0) /)
@@ -419,7 +422,7 @@ subroutine gen_los_rg(z)
      !TargetPoint = (/ initpoint(1), initpoint(1), initpoint(3)+BoxSize/2. /)
      !TargetPoint(1:3) = TargetPoint(1:3)*BoxSize
      !initpoint = (/0.51,0.51, 2000. /)
-     !write(fh_logs,*) hitperthread(omp_get_thread_num()),omp_get_thread_num(),TargetPoint
+
 #endif
      !write(*,*) InitPoint, omp_get_thread_num(),rank
      !write(fh_logs,*)  TargetPoint
@@ -984,20 +987,24 @@ subroutine gen_los_rg(z)
 !              print*, "shiftcell",abscell(1:3)/GridLines
 !              print*, curHalo, distancetoline, distanceonline
 !           end if
-
+#ifndef USEMAXSOURCESIZE
            if(distancetoline < radius(curHalo) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
+#else
+           if(distancetoline < (radius(curHalo)+max_radius) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
+#endif
+          
               haloperline = haloperline + 1
 
-              !$omp critical
-              call MPI_FILE_WRITE(fh_haloid, int(curHalo,4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr) 
-              call MPI_FILE_WRITE(fh_online, distanceonline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr) 
-              call MPI_FILE_WRITE(fh_lineid, int((l),4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_toline, distancetoline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_direction, direction, 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_startpoint, real(initpoint-line_length_factor*(/ BoxSize, BoxSize, BoxSize/),4) , 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              !call MPI_FILE_WRITE(fh_hitpoint, direction(1:3)*(distanceonline)-(pos(1:3)-initpoint(1:3)), 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
-              
-              !$omp end critical
+
+              call MPI_FILE_WRITE(fh_haloid(omp_get_thread_num()), int(curHalo,4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr) 
+              call MPI_FILE_WRITE(fh_online(omp_get_thread_num()), distanceonline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr) 
+              call MPI_FILE_WRITE(fh_lineid(omp_get_thread_num()), int((l),4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_toline(omp_get_thread_num()), distancetoline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_direction(omp_get_thread_num()), direction, 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_startpoint(omp_get_thread_num()), real(initpoint-line_length_factor*(/ BoxSize, BoxSize, BoxSize/),4) , 3, MPI_REAL, MPI_STATUS_IGNORE, ierr)
+            
+        
+
 
            endif
 
@@ -1017,27 +1024,110 @@ subroutine gen_los_rg(z)
 
   call mpi_barrier(mpi_comm_world,ierr)        
 
-
-  call MPI_FILE_CLOSE(fh_toline, ierr)
-  call MPI_FILE_CLOSE(fh_online, ierr)
-  call MPI_FILE_CLOSE(fh_lineid, ierr)
-  call MPI_FILE_CLOSE(fh_haloid, ierr)
-  call MPI_FILE_CLOSE(fh_hitpoint, ierr)
-  call MPI_FILE_CLOSE(fh_direction, ierr)
-  call MPI_FILE_CLOSE(fh_startpoint, ierr)
-
-#ifdef separatedisk
-  call MPI_FILE_CLOSE(fh_toline_disk, ierr)
-  call MPI_FILE_CLOSE(fh_online_disk, ierr)
-  call MPI_FILE_CLOSE(fh_lineid_disk, ierr)
-  call MPI_FILE_CLOSE(fh_haloid_disk, ierr)
-  call MPI_FILE_CLOSE(fh_hitpoint_disk, ierr)
-  call MPI_FILE_CLOSE(fh_direction_disk, ierr)
-#endif
-  !close(fh_logs)
-  !close(fh_centreref)
+  do i=0,omp_thread-1
+     call MPI_FILE_CLOSE(fh_toline(i), ierr)
+     call MPI_FILE_CLOSE(fh_online(i), ierr)
+     call MPI_FILE_CLOSE(fh_lineid(i), ierr)
+     call MPI_FILE_CLOSE(fh_haloid(i), ierr)
+     call MPI_FILE_CLOSE(fh_direction(i), ierr)
+     call MPI_FILE_CLOSE(fh_startpoint(i), ierr)
+  end do
 
   deallocate(positions,radius,headofchain,linkedlist)
+
+  
+
+  do i=0, omp_thread-1
+     write(str_omp,'(i10)') i
+     str_omp = adjustl(str_omp)
+#ifdef RR
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HALOID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HALOID/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'ONLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'ONLINE/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'TOLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'TOLINE/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+           " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/'//trim(adjustl(str_rank)))
+#else
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LINEID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LINEID/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HALOID/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HALOID/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'ONLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'ONLINE/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'TOLINE/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'TOLINE/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+          " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank)))
+     command = system("cat "// &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
+           " >> " // &
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/'//trim(adjustl(str_rank)))
+#endif  
+
+  end do
+  call mpi_barrier(mpi_comm_world,ierr)  
+#ifdef CLEARTEMP
+  if(rank == 0) then
+#ifdef RR
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LINEID/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'HALOID/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'ONLINE/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'TOLINE/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'LOGS/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'STARTPOINT/*.*')
+#else
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LINEID/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'HALOID/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'ONLINE/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'TOLINE/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'LOGS/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/*.*')
+
+     command = system('rm -f '//trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/*.*')
+#endif
+  end if
+#endif !CLEARTEMP
   return
 #ifdef RR
 end subroutine gen_los_rr

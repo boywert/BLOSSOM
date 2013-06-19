@@ -3,13 +3,13 @@ zlist_file		/home1/01937/cs390/LOS-001/inputs/z8.dat
 den_profile_file	/home1/01937/cs390/LOS-001/inputs/TIS_profile.dat
 subcell_perdim_file	/home1/01937/cs390/LOS-001/inputs/subcell_perdim_20mpc.dat
 
-#COSMOLOGICAL PARAMETERS
+#COSMOLOGICAL PARAMETERS WMAP5
 
-Omega_0			0.3
-Lambda0			0.7
+Omega_0			0.27
+Lambda0			0.73
 h			0.7
 rho_crit_0 		1.879d-29	# g/cm^3/h^2
-Omega_b			0.02		# Omega_b*h^2
+Omega_b			0.023		# Omega_b*h^2
 
 #CUBEP3M PARAMETERS
 
@@ -29,9 +29,9 @@ rr			0		#random = 1, point to massive halo 0
 line_length_factor	2		#length of a line of sight (Boxsize)
 
 #REALISATIONS
-MassiveNumber		64		#number of halos pointed
-Max_l			100000	#number of LOS per halo per node
-
+MassiveNumber		64		#  number of halos pointed
+Max_l			3	#number of LOS per halo per node
+MaxSourceSize		1.0		#  comoving Mpc/h
 
 #TIS PARAMETERS
 

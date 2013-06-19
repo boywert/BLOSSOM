@@ -7,6 +7,7 @@
 #$ -pe 4way 12	 # Requests 12 tasks/node, 24 cores total
 #$ -q development	 # Queue name normal
 #$ -l h_rt=01:00:00	 # Run time (hh:mm:ss) - 1.5 hours
+#$ -A TG-AST090005
 ####$ -M boywert@mail.com	 # Address for email notification
 ####$ -m be	 # Email at Begin and End of job
 set -x	 # Echo commands, use set echo with csh

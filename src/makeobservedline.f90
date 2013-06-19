@@ -106,6 +106,8 @@ subroutine makeobservedlines_rg(z)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
  
   if(rank ==0) print*,"Start reading LOS data"
+
+
 #ifdef RR
   call mpi_file_open(mpi_comm_self, &
        trim(los_path)//'/'//z_s(1:len_trim(z_s))//'/RR/LINEID/'//trim(adjustl(str_rank)), &

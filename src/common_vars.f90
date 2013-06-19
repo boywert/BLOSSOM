@@ -98,6 +98,7 @@ module common_vars
   integer :: max_line
   integer :: line_use_to_save
   integer, target :: line_length_factor
+  real(kind=8), target :: MaxSourceSize
   !#######################################################################
   !@ zlist
   real(kind=8) :: zlist(ZLIST_MAXSIZE)
