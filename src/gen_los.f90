@@ -86,7 +86,7 @@ subroutine gen_los_rg(z)
 
   write(str_rank,'(i10)') rank
   str_rank = adjustl(str_rank)
-  print*, 'finish reading'
+  if (rank==0) print*, 'finish reading'
 
 
   if (rank==0) then
