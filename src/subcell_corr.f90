@@ -40,11 +40,11 @@ subroutine subcell_corr(z, GridLines)
 
   real(kind=4) :: shiftdistance(3),pos(3),block_dummy(3)
 
-  integer(kind=4) :: i,j,k,l,m,n,xStart,xStop,o,linenum,hitnum,halonumber
+  integer(kind=4) :: i,j,k,l,m,n,xStart,xStop,o,linenum,hitnum
   integer(kind=4) :: length,curBox,box1(27),box2(27),mixbox(54)
  
   integer(kind=4) :: timearray(8),command
-  real(kind=4),allocatable :: halodata(:,:), positions(:,:),radius(:),mass(:)
+  real(kind=4),allocatable ::  positions(:,:),radius(:),mass(:)
   integer(kind=4), allocatable :: headofchain(:,:),linkedlist(:),hitperthread(:),missperthread(:)
   real(kind=4) ,allocatable :: local_positions(:,:),inner_positions(:,:)
   real(kind=4) :: density_centre(1:overden_nbin,1:3), density_halfbin(1:overden_nbin,1:3)
@@ -81,7 +81,7 @@ subroutine subcell_corr(z, GridLines)
 
   if(status_checkfiles == 1) then
      if(rank == 0) then
-        call ascii_read_halo(real(z,4),element_flag,n_elements,halonumber)
+        call ascii_read_halo(real(z,4),element_flag,n_elements)
         allocate(halodata(1:n_elements,1:halonumber))
         halodata(1:n_elements,1:halonumber) = tmpfloat(1:n_elements,1:halonumber)      
         deallocate(tmpfloat)
@@ -98,7 +98,7 @@ subroutine subcell_corr(z, GridLines)
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         !print*, "total halos",halonumber
         if(rank == 0) allocate(halodata(1:n_elements,1:halonumber))
-        call mpi_read_halo(real(z,4),element_flag,n_elements,halonumber, halodata)
+        call mpi_read_halo(real(z,4),element_flag,n_elements)
   else
      if(rank==0) print*, "No file to read"
      call abort

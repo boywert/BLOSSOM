@@ -3,10 +3,53 @@ module absorptiontools
   implicit none
 
 contains
-  subroutine n_cal(n,r,rho)
+  subroutine n_cal(zcoll,n,r,rho)
     implicit none
     integer :: i,n
     real(kind=8) :: rho(0:max_size), r(0:max_size)
+    real(kind=8) :: Delta_c, Delta_tophat,rho_crit_z,rho0,volume,mass,den_bar,Mxtil,zeta_x,zcoll
+#ifdef USERHO178
+    Delta_tophat = 18.*pi**2 
+    rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
+         +(1.-lambda0-Omega_0)*(1.+zcoll)**2.)
+    Delta_c = (etaSUS/etaTIS)**3.*Delta_tophat
+    rho0 = 6.*pi**2.*(b_T/5.)**3. * Mttil**2. * rho_crit_z
+
+    open(3,file=trim(den_profile_file)) !contains dimensionless TIS density
+    ! profile in the first 2 columns     
+    i = 1
+    r(0) = 0.0 
+    rho(0) = 1.0d0
+    !read the TIS profile in
+
+    do while(r(i-1) .le. zeta_t)
+       read(3,*) r(i), rho(i)
+       i = i + 1
+    enddo
+    n = i-1
+    close(3)
+
+    mass = 0.
+    volume = 0.
+
+    do i= 1,n
+       volume = 4./3.*pi*r(i)**3.
+       mass = mass + rho0*(rho(i)+rho(i-1))/2. * 4./3.*pi*(r(i)**3.-r(i-1)**3.)
+       den_bar = mass/volume/rho_crit_z
+       if(den_bar <= Delta_tophat) goto 128
+    end do
+ 128   n=i
+    zeta_x = r(n)
+    Mxtil = (Delta_tophat/Delta_c)*(Mttil/zeta_t**3.)*zeta_x**3. 
+    !set new values 
+    Mttil = Mxtil
+    zeta_t = zeta_x
+    if(rank==0) print*, "MXtil:",Mttil,"zeta_X:",zeta_t
+#endif
+
+
+
+
 
     open(3,file=trim(den_profile_file)) !contains dimensionless TIS density
     ! profile in the first 2 columns     
@@ -36,7 +79,11 @@ contains
 
     rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
          +(1.-lambda0-Omega_0)*(1.+zcoll)**2.)
+
+#ifndef USERHO178
     Delta_c = (etaSUS/etaTIS)**3.*Delta_c
+#endif
+    
     M_J = 5.7d3*(Omega_0*h**2/0.15)**(-0.5)* &     
          (Omega_b*h**2/0.02)**(-0.6)*((1.0d0+zcoll)/10.)**1.5 !M_J in M_sol 
 
@@ -79,7 +126,10 @@ contains
 
     rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
          +(1.-lambda0-Omega_0)*(1.+zcoll)**2.)
+#ifndef USERHO178
     Delta_c = (etaSUS/etaTIS)**3.*Delta_c
+#endif
+
     M_J = 5.7d3*(Omega_0*h**2/0.15)**(-0.5)* &     
          (Omega_b*h**2/0.02)**(-0.6)*((1.0d0+zcoll)/10.)**1.5 !M_J in M_sol 
 
@@ -100,7 +150,7 @@ contains
     do i = 0,n
        n_HI(i)=neutr_fraction*Omega_b/Omega_0*rho(i)*rho0/amass
        y_H = 7.345d-5*n_HI(i)*T_k**(8.781-4.7755*log10(T_k) &        
-            +1.075*(log10(T_k))**2-0.091*log10(T_k)**3)!combined fit
+            +1.075*(log10(T_k))**2-0.091*log10(T_k)**3) !combined fit
        y_e =0.0d0
        y_c(i) = y_H+y_e
        T_S(i) = (T_CMB_z+y_c(i)*T_k)/(1.0d0+y_c(i))

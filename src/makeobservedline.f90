@@ -29,8 +29,7 @@ subroutine makeobservedlines_rg(z)
   real(kind=8) :: Halfbox,mass_limit,lambda,line_centre
   character(len=100) :: str_rank,z_s
   real(kind=8) :: z,d0,d_self
-  integer(kind=4) :: halonumber,n_elements,rlogsteps
-  real(kind=4), allocatable :: halodata(:,:)
+  integer(kind=4) :: n_elements,rlogsteps
   real(kind=8), allocatable :: distorted_dist(:),undistorted_dist(:),comov_dist(:)
   logical :: element_flag(1:17)
   real(kind=8) :: undistorted_z,distorted_z,sumtest
@@ -71,7 +70,7 @@ subroutine makeobservedlines_rg(z)
   status_checkfiles = checkfiles(real(z,4))
   if(status_checkfiles == 1) then
      if(rank == 0) then
-        call ascii_read_halo(real(z,4),element_flag,n_elements,halonumber)
+        call ascii_read_halo(real(z,4),element_flag,n_elements)
         allocate(halodata(1:n_elements,1:halonumber))
         halodata(1:n_elements,1:halonumber) = tmpfloat(1:n_elements,1:halonumber)      
         deallocate(tmpfloat)
@@ -82,13 +81,16 @@ subroutine makeobservedlines_rg(z)
   else if(status_checkfiles ==2) then
      if(rank == 0) then
         halonumber = get_halo_number(real(z,4))
+        print*, "halonumber=",halonumber
      end if
      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
      call mpi_bcast(halonumber,1,mpi_integer,0,mpi_comm_world,ierr)
      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-     !print*, "total halos",halonumber
+#ifdef DEBUG
+     print*, '#DEBUG: rank',rank,"halonumber",halonumber
+#endif
      if(rank == 0) allocate(halodata(1:n_elements,1:halonumber))
-     call mpi_read_halo(real(z,4),element_flag,n_elements,halonumber, halodata)
+     call mpi_read_halo(real(z,4),element_flag,n_elements)
   else
      if(rank==0) print*, "No file to read"
      call abort
@@ -290,7 +292,7 @@ subroutine makeobservedlines_rg(z)
   end if
 #endif
   
-  call n_cal(n,r,rho)
+  call n_cal(z,n,r,rho)
   if(rank==0) call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat')
   if(rank==0) open(unit=53,file=trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat',STATUS = 'NEW')
   !@ use openmp in tau_cal instead since it's troublesome 

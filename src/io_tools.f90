@@ -3,12 +3,14 @@ module io_tools
   use omp_lib
   use common_vars
   real(kind=4), allocatable :: tmpfloat(:,:)
+  real(kind=4), allocatable :: halodata(:,:)
+  integer(kind=4) :: halonumber
 contains
   integer function get_halo_number(z)
     implicit none
     character(len=20) :: z_s,str_i
     real(kind=4) :: z
-    integer(kind=4) :: i,j,n
+    integer(kind=4) :: i,j,n,size
     integer :: buff(13)
     integer :: status
     write(z_s,'(f10.3)') z
@@ -17,13 +19,29 @@ contains
     do i=0, total_file-1
        write(str_i,'(i10)') i
        str_i = adjustl(str_i)
-       n =  (get_file_size(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_i(1:len_trim(str_i))//'.dat')-4)/4/17
+#ifdef DEBUG
+    if(rank ==0) print*,"#DEBUG Getting number from File: ",trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_i(1:len_trim(str_i))//'.dat'
+#endif
+       call stat(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_i(1:len_trim(str_i))//'.dat',buff)
+       !size = get_file_size(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_i(1:len_trim(str_i))//'.dat')
+       size = buff(8)
+       n =  (size-4)/4/17
+#ifdef DEBUG
+    if(rank ==0) print*,"#DEBUG File: "//str_i(1:len_trim(str_i))//' Raw:',size,"n=",n
+#endif
        if(n .eq. 0) then
+#ifdef DEBUG
+          if(rank ==0) print*,"#DEBUG File: "//str_i(1:len_trim(str_i))//' CRITICAL ERROR: HALONUMBER = 0'
+#endif
+          call abort
           get_halo_number = 0
           return
        end if
        get_halo_number = get_halo_number + n
     end do
+#ifdef DEBUG
+    if(rank ==0) print*,"#DEBUG Total halos:",get_halo_number
+#endif
   end function get_halo_number
 
   function ascii_count_line(z)
@@ -53,17 +71,20 @@ contains
 
   integer function get_file_size(filename)
     implicit none
-    character(len=100) :: filename
+    character(len=512) :: filename
     integer :: buff(13)
-    filename = adjustl(filename)
-    call stat(filename(1:len_trim(filename)),buff)
+
+    call stat(trim(adjustl(filename)),buff)
+#ifdef DEBUG
+    if(rank==0) print*,"#DEBUG: Get stat file",trim(adjustl(filename))
+    if(rank==0) print*,"#DEBUG: stat",buff
+#endif
     get_file_size = buff(8)
   end function get_file_size
 
 
-  subroutine ascii_read_halo(z,element_flag,n_elements,halonumber)
+  subroutine ascii_read_halo(z,element_flag,n_elements)
     implicit none
-    integer(kind=4) :: halonumber
     integer  :: i,j,k,l,n_elements
     character (len=512) :: filename
     logical :: element_flag(1:17)  
@@ -118,6 +139,10 @@ contains
              print*, 'file', i, 'does not exist'
              status = 0  ! set to have none file
              goto 129
+#ifdef DEBUG
+          else
+             print*, '#DEBUG: file',i,"exists"
+#endif             
           endif
        end do
        goto 130
@@ -136,20 +161,19 @@ contains
     checkfiles = status
   end function checkfiles
 
-  subroutine mpi_read_halo(z,element_flag,n_elements,halo_number, halodata)
+  subroutine mpi_read_halo(z,element_flag,n_elements)
     use mpi
     use mpitools
     implicit none   
     logical :: element_flag(1:17)    
     integer(kind=4)   :: fh_readhalo
     integer(kind=4) :: n_elements
-
+    integer :: buff(13)
     integer(kind=4) :: i,j,k,l,m,n,halo_number
     real(kind=4) :: z
 
-    real(kind=4) :: halodata(1:n_elements,1:halo_number)
 
-    character(len=100) :: str_rank,filename
+    character(len=200) :: str_rank,filename
     character(len=20) :: z_s
     integer(kind=4) :: n_point,totalpoint,tag,n_point_index
     integer(kind=4),allocatable :: n_point_arr(:)
@@ -187,17 +211,21 @@ contains
     else 
        file_read_per_node(0:total_file-1) = 1
     endif
+#ifdef DEBUG
     do i=0,nodes_returned-1
-       !if(rank == 0) print*,i,'files/node',file_read_per_node(i)
+       if(rank == 0) print*,"#DEBUG",i,'files/node',file_read_per_node(i)
     end do
+#endif
     call MPI_BARRIER(MPI_COMM_WORLD,ierr)
     if(rank < total_file) then
        n_point = 0
        allocate(n_point_file(1:file_read_per_node(rank)))
        do j=1,file_read_per_node(rank)
           write(str_rank,'(i10)') (j-1)*nodes_returned + rank
-          str_rank = adjustl(str_rank)  
-          n_point_file(j) = (get_file_size(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_rank(1:len_trim(str_rank))//'.dat')-4)/4/17
+          str_rank = adjustl(str_rank) 
+          call stat(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_rank(1:len_trim(str_rank))//'.dat',buff)
+          n_point_file(j) = (buff(8)-4)/4/17
+          !n_point_file(j) = (get_file_size(trim(halo_path)//z_s(1:len_trim(z_s))//'halo'//str_rank(1:len_trim(str_rank))//'.dat')-4)/4/17
           n_point = n_point + n_point_file(j)
        end do
        !read only positio(3), radius, mass
@@ -255,6 +283,10 @@ contains
        do i=0, min(total_file,nodes_returned)-1
           halo_number = halo_number + n_point_arr(i)
        enddo
+       if(halonumber /= halo_number) then
+          print*, "Halonumber in node 0",halonumber,"Actual read",halo_number
+          call abort
+       end if
        totalpoint = 1 
        halodata(1:n_elements,1:n_point) = halo_in(1:n_elements,1:n_point)
        totalpoint = totalpoint + n_point
@@ -267,18 +299,26 @@ contains
        tag=i
 
        if (rank == 0) then
-          !print*, '.. recieving',n_point_arr(i),' point from',i
+#ifdef DEBUG
+          call system('free')
+          print*, '.. recieving',n_point_arr(i),' point from',i
+#endif
           call mpi_recv(halodata(1:n_elements,totalpoint:totalpoint+n_point_arr(i)-1),n_elements*n_point_arr(i),mpi_real, &
                i,tag,mpi_comm_world,status,ierr)
           !print*,halodata(totalpoint+n_point_arr(i)-1,1:n_elements)
        elseif (rank == i) then
-          !print*, '.. transfering',n_point,' points from',i
+#ifdef DEBUG
+          print*, '.. transfering',n_point,' points from',i
+#endif
           !print*,halo_in(n_point,1:n_elements)
           call mpi_send(halo_in(1:n_elements,1:n_point),n_elements*n_point,mpi_real,0,tag,mpi_comm_world,ierr)
        endif
        call mpi_barrier(mpi_comm_world,ierr)
        if (rank ==0)  totalpoint = totalpoint + n_point_arr(i)
        call mpi_barrier(mpi_comm_world,ierr)
+#ifdef DEBUG
+       if(rank==0) print*, 'Finish transfering Node',i
+#endif
     enddo
     if(rank==0) print*, 'Finish transfering'
 

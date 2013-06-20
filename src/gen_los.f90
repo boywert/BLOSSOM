@@ -32,12 +32,12 @@ subroutine gen_los_rg(z)
 
   real(kind=4) :: crossBlock(3),shiftdistance(3),pos(3),block_dummy(3)
   real(kind=4) :: baserandom1(3),baserandom2(3),baserandom3(3)
-  integer(kind=4) :: i,j,k,l,m,n,xStart,xStop,o,linenum,hitnum,halonumber
+  integer(kind=4) :: i,j,k,l,m,n,xStart,xStop,o,linenum,hitnum
   integer(kind=4) :: length,curBox,box1(27),box2(27),mixbox(54)
   integer(kind=4) :: mixbox_x(54),mixbox_y(54), &
        mixbox_z(54),shiftcell(3),abscell(3)
   integer(kind=4) :: timearray(8),command
-  real(kind=4),allocatable :: halodata(:,:), positions(:,:),radius(:),mass(:),spin(:,:)
+  real(kind=4),allocatable ::  positions(:,:),radius(:),mass(:),spin(:,:)
   integer(kind=4), allocatable :: headofchain(:),linkedlist(:),hitperthread(:),missperthread(:)
   real(kind=4) :: distanceonline,distancetoline,initarray(max_l,3)
   real(kind=4) :: MassivePos(1:3,1:MassiveNumber)
@@ -56,36 +56,59 @@ subroutine gen_los_rg(z)
   integer(kind=4), allocatable :: file_read_per_node(:),n_point_file(:)
   logical :: file_e, element_flag(1:17)
   real(kind=8) :: z,d0
-  integer(kind=4) :: n_elements, haloperline,count_halo,boydID
+  integer(kind=4) :: n_elements, haloperline,count_halo,boydID,status_checkfiles
+
+
+  write(z_s,'(f10.3)') z
+  z_s = adjustl(z_s)
+
+  omp_thread = omp_get_max_threads()
+
+  write(str_rank,'(i10)') rank
+  str_rank = adjustl(str_rank)
+
 
   element_flag(1:17) = .FALSE.
   element_flag(1:3) = .TRUE. ! 1:3 => positions
   !element_flag(7:9) = .TRUE. ! 7:9 => velocities
   element_flag(14:15) = .TRUE. ! 14:15 =>  radius: mass
-
-
-  halonumber = get_halo_number(real(z,4))
   n_elements = get_n_elements(element_flag)
 
-  !halonumber = 10
-  allocate(halodata(1:n_elements,1:halonumber))
-  call mpi_read_halo(real(z,4),element_flag,n_elements,halonumber, halodata)
-  
-  !halodata(1:3,1:9) = 0.1
-  !halodata(1:3,10) = Boxsize-0.1
-  !halodata(4,1:10) = 1.0
-  !halodata(5,1:9) = 0.1
-  !halodata(5,10) = 1.0
+
+  !## Read data to node 0
+  status_checkfiles = checkfiles(real(z,4))
+  if(status_checkfiles == 1) then
+     if(rank == 0) then
+        call ascii_read_halo(real(z,4),element_flag,n_elements)
+        allocate(halodata(1:n_elements,1:halonumber))
+        halodata(1:n_elements,1:halonumber) = tmpfloat(1:n_elements,1:halonumber)      
+        deallocate(tmpfloat)
+     end if
+     call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+     call mpi_bcast(halonumber,1,mpi_integer,0,mpi_comm_world,ierr)
+     !print*, "total halos",halonumber
+  else if(status_checkfiles ==2) then
+     if(rank == 0) then
+        halonumber = get_halo_number(real(z,4))
+     end if
+     call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+     call mpi_bcast(halonumber,1,mpi_integer,0,mpi_comm_world,ierr)
+     call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+     !print*, "total halos",halonumber
+     if(rank == 0) allocate(halodata(1:n_elements,1:halonumber))
+     call mpi_read_halo(real(z,4),element_flag,n_elements)
+  else
+     if(rank==0) print*, "No file to read"
+     call abort
+  end if
+  !## End read data to node 0
+
+
+
+
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
-  write(z_s,'(f10.3)') z
-  z_s = adjustl(z_s)
 
-  write(str_rank,'(i10)') rank
-  omp_thread = omp_get_max_threads()
-
-  write(str_rank,'(i10)') rank
-  str_rank = adjustl(str_rank)
   if (rank==0) print*, 'finish reading'
 
 
@@ -93,9 +116,10 @@ subroutine gen_los_rg(z)
 
      print*,'MPI node:',nodes_returned
      print*,'OMP node:',omp_thread
-
+#ifdef DEBUG
      write(*,*) 'Start using Node 0 to read and transfer the essentials to others'
-
+     print*, 'Total halo :',halonumber
+#endif
      !count total halo from shell
      !halonumber = getlinenumber(halo_path, 30)
 

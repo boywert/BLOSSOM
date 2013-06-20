@@ -40,6 +40,7 @@ module common_vars
   real(kind=8), target :: mu_H
   real(kind=8), target :: nH
   real(kind=8), target :: nHe
+  real(kind=8), target :: b_T
   integer, target :: m_tis 
   integer, target :: max_size 
 

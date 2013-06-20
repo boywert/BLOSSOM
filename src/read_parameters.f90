@@ -255,6 +255,11 @@ contains
     var_pointer(n)%real8 => mu_H
 
     n=n+1
+    tag(n) = 'b_T'
+    var_type(n) = 4
+    var_pointer(n)%real8 => b_T
+
+    n=n+1
     tag(n) = 'm_tis'
     var_type(n) = 1
     var_pointer(n)%int4 => m_tis

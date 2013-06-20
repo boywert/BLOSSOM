@@ -4,7 +4,7 @@
 #$ -N myMPI	 # Job Name
 #$ -j y	 # Combine stderr and stdout
 #$ -o $JOB_NAME.o$JOB_ID	 # Name of the output file (eg. myMPI.oJobID)
-#$ -pe 4way 24	 # Requests 12 tasks/node, 24 cores total
+#$ -pe 4way 12	 # Requests 12 tasks/node, 24 cores total
 #$ -q development	 # Queue name normal
 #$ -A TG-AST090005
 #$ -l h_rt=01:00:00	 # Run time (hh:mm:ss) - 1.5 hours
