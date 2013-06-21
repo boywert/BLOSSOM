@@ -21,7 +21,7 @@ subroutine gen_los_rg(z)
   real(kind=4) :: centre_point(1:3)
 
   integer(kind=4) :: GridLines 
-  integer(kind=4):: PrGridLines 
+  integer(kind=4):: PrGridLines,checkBlocktest
   real(kind=4) :: GridSize
 
   real(kind=4) :: redshift_index 
@@ -405,7 +405,7 @@ subroutine gen_los_rg(z)
 
   if(rank==0) print*, 'Start LOS finder'
 
-  !$omp parallel private(i,j,k,l,o,InitPoint,TargetPoint,Direction,FinishPoint,xStart,xStop,totalcellx,totalcelly,totalcellz,totalcell_dummy,box1,box2,crossBlock,length,shiftcell,shiftdistance,Numblock,curHalo,pos,distancetoline,distanceonline,unitid,timearray,baserandom3,baserandom2,baserandom1,m,haloperline,tempvector) &
+  !$omp parallel private(i,j,k,l,o,InitPoint,TargetPoint,Direction,FinishPoint,xStart,xStop,totalcellx,totalcelly,totalcellz,totalcell_dummy,box1,box2,crossBlock,length,shiftcell,shiftdistance,Numblock,curHalo,pos,distancetoline,distanceonline,unitid,timearray,baserandom3,baserandom2,baserandom1,m,haloperline,tempvector,checkBlocktest) &
   !$omp shared(halodata,initarray,linenum, hitnum)
   call date_and_time(values=timearray)
   call srand(rank*omp_get_thread_num()+timearray(5)+timearray(6)+timearray(7)+timearray(8)+timearray(1)*(rank+1)+1)
@@ -450,7 +450,21 @@ subroutine gen_los_rg(z)
 #endif
      !write(*,*) InitPoint, omp_get_thread_num(),rank
      !write(fh_logs,*)  TargetPoint
+     
+#ifdef DEBUG
+     if(rank==0 .and. omp_get_thread_num() == 0) then
+        print*, "original Init block", get_blockID(InitPoint(1:3),Gridsize,GridLines)
+     end if
+#endif
      initPoint = line_length_factor*(/ BoxSize, BoxSize, BoxSize/) + initPoint
+
+     checkBlocktest = get_blockID(InitPoint(1:3),Gridsize,PrGridLines)
+#ifdef DEBUG
+     if(rank==0 .and. omp_get_thread_num() == 0) then
+        print*, "shifted Init block", checkBlocktest
+        print*, "convert back", unshift_blockID(checkBlocktest,PrGridlines,GridLines)
+     end if
+#endif
      TargetPoint = line_length_factor*(/ BoxSize, BoxSize, BoxSize/) + TargetPoint
 
      !print*,'ori',  floor((InitPoint(1)-BoxSize)/GridSize)*GridLines**2 + &
@@ -462,8 +476,8 @@ subroutine gen_los_rg(z)
 
 
      Direction(1:3) =(TargetPoint(1:3)-InitPoint(1:3))/vectorabs(TargetPoint - InitPoint)
-     !initpoint(1:3) = InitPoint(1:3) - BoxSize * Direction(1:3) / 2.
-     initpoint(1:3) = initpoint(1:3) - BoxSize*0.5*Direction(1:3)
+     initpoint(1:3) = InitPoint(1:3) - line_length_factor * BoxSize * Direction(1:3) / 2.
+     !initpoint(1:3) = initpoint(1:3) - BoxSize*0.5*Direction(1:3)
      FinishPoint(1:3) = InitPoint(1:3) + line_length_factor * BoxSize * Direction(1:3)
      
      !swap initpoint and finishpoint
@@ -961,11 +975,16 @@ subroutine gen_los_rg(z)
         abscell(1) = totalcell_dummy(i)/PrGridlines**2
         abscell(2) = (totalcell_dummy(i)-abscell(1)*PrGridlines**2)/(PrGridlines)
         abscell(3) = totalcell_dummy(i)-abscell(1)*PrGridlines**2-abscell(2)*PrGridlines
-
         shiftcell(1:3) = mod(abscell(1:3),GridLines)
-
         Numblock = shiftcell(1)*GridLines**2 + shiftcell(2)*GridLines+shiftcell(3)
-        !print*, "block", totalcell_dummy(i), Numblock
+
+#ifdef DEBUG
+        if(rank==0 .and. omp_get_thread_num() == 0) then
+           if(totalcell_dummy(i)==checkBlocktest) then
+              print*, "block", totalcell_dummy(i), Numblock
+           end if
+        end if
+#endif 
 #ifdef DEBUG
         if(Numblock < 0 .or. Numblock > GridLines**3-1) then
            print*,'Error: Block',Numblock,'Invalid'
@@ -1003,22 +1022,25 @@ subroutine gen_los_rg(z)
            !if(distancetoline .lt. radius(curHalo)) then
            !   print*,l,m,curHalo,distanceonline,distancetoline
            !endif
-!           if(curHalo == boydID) then
-!              print*, "hasve minit halo"
-!              print*, 'Block', Numblock
-!              print*, 'GlobalBlock', totalcell_dummy(i)
-!              print*, "abscell", abscell
-!              print*, "shiftcell",abscell(1:3)/GridLines
-!              print*, curHalo, distancetoline, distanceonline
-!           end if
+           ! if(curHalo == boydID) then
+           !    print*, "has minit halo"
+           !    print*, 'Block', Numblock
+           !    print*, 'GlobalBlock', totalcell_dummy(i)
+           !    print*, "abscell", abscell
+           !    print*, "shiftcell",abscell(1:3)/GridLines
+           !    print*, curHalo, distancetoline, distanceonline
+           ! end if
 #ifndef USEMAXSOURCESIZE
-           if(distancetoline < radius(curHalo) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
+            if(distancetoline < radius(curHalo) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then 
+            !if(distancetoline < 0.001 .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
 #else
            if(distancetoline < (radius(curHalo)+max_radius) .and. distanceonline <= BoxSize*line_length_factor .and. distanceonline >= 0 ) then
 #endif
           
               haloperline = haloperline + 1
-
+#ifdef DEBUG
+                 print*,"#DEBUG", rank, curHalo, distancetoline, distanceonline
+#endif
 
               call MPI_FILE_WRITE(fh_haloid(omp_get_thread_num()), int(curHalo,4), 1, MPI_INTEGER, MPI_STATUS_IGNORE, ierr) 
               call MPI_FILE_WRITE(fh_online(omp_get_thread_num()), distanceonline, 1, MPI_REAL, MPI_STATUS_IGNORE, ierr) 
@@ -1109,7 +1131,7 @@ subroutine gen_los_rg(z)
      command = system("cat "// &
           trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
           " >> " // &
-          trim(los_path)//z_s(1:len_trim(z_s))//'/RR/'//'DIRECTION/'//trim(adjustl(str_rank)))
+          trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'DIRECTION/'//trim(adjustl(str_rank)))
      command = system("cat "// &
           trim(los_path)//z_s(1:len_trim(z_s))//'/RG/'//'STARTPOINT/'//trim(adjustl(str_rank))//'.'//trim(adjustl(str_omp)) // &
            " >> " // &
@@ -1159,3 +1181,41 @@ end subroutine gen_los_rr
 end subroutine gen_los_rg
 #endif
 
+#ifndef GET_BLOCKID
+#define GET_BLOCKID
+function get_blockID(pos,Gridsize,GridLines)
+  implicit none
+  integer(kind=4) :: get_blockID,GridLines,block_dummy(3)
+  real(kind=4) :: Gridsize,pos(1:3)
+  
+  block_dummy(1) = floor(pos(1)/GridSize)
+  if(block_dummy(1) == GridLines) block_dummy(1) = GridLines-1
+  block_dummy(2) = floor(pos(2)/GridSize)
+  if(block_dummy(2) == GridLines) block_dummy(2) = GridLines-1
+  block_dummy(3) = floor(pos(3)/GridSize)
+  if(block_dummy(3) == GridLines) block_dummy(3) = GridLines-1
+
+  get_blockID = block_dummy(1)*GridLines**2 + &
+       block_dummy(2)*GridLines + &
+       block_dummy(3)
+  return
+end function get_blockID
+#endif
+
+
+#ifndef UNSHIFT_BLOCKID
+#define UNSHIFT_BLOCKID
+function unshift_blockID(id,PrGridlines,GridLines)
+  implicit none
+  integer(kind=4) ::id, unshift_blockID,GridLines,abscell(3),shiftcell(1:3),PrGridlines
+
+  abscell(1) = id/PrGridlines**2
+  abscell(2) = (id-abscell(1)*PrGridlines**2)/(PrGridlines)
+  abscell(3) = id-abscell(1)*PrGridlines**2-abscell(2)*PrGridlines
+  shiftcell(1:3) = mod(abscell(1:3),GridLines)
+  
+  unshift_blockID = shiftcell(1)*GridLines**2 + shiftcell(2)*GridLines + shiftcell(3)
+
+  return
+end function unshift_blockID
+#endif

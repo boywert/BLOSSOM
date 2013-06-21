@@ -29,9 +29,9 @@ rr			0		#random = 1, point to massive halo 0
 line_length_factor	2		#length of a line of sight (Boxsize)
 
 #REALISATIONS
-MassiveNumber		64		#  number of halos pointed
-Max_l			1	#number of LOS per halo per node
-MaxSourceSize		0.1		#  comoving Mpc/h
+MassiveNumber		50		#  number of halos pointed
+Max_l			100	#number of LOS per halo per node
+MaxSourceSize		0.4		#  comoving Mpc/h
 
 #TIS PARAMETERS
 

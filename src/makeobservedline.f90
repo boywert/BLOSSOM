@@ -65,7 +65,7 @@ subroutine makeobservedlines_rg(z)
 
   element_flag(1:17) = .FALSE.
   element_flag(7:9) = .TRUE. ! 1:3 => velocity
-  element_flag(15) = .TRUE.
+  element_flag(14:15) = .TRUE.
   n_elements = get_n_elements(element_flag)
 
   !## Read data to node 0
@@ -263,14 +263,14 @@ subroutine makeobservedlines_rg(z)
   allocate(undistorted_dist(1:n_point))
   allocate(linelinkedlist(1:n_point))
   allocate(headofline(1:max_line))
-  allocate(haloperline(1:max_line))
+  !allocate(haloperline(1:max_line))
 #ifdef DEBUG
   if(rank ==0) call system('free')
 #endif
   if(rank ==0) then
      print*,'Set varaiables to 0 ...'
   endif
-  haloperline(1:max_line) = 0
+  !haloperline(1:max_line) = 0
   linelinkedlist(1:n_point) = 0
   headofline(1:max_line) = 0
 
@@ -291,12 +291,16 @@ subroutine makeobservedlines_rg(z)
      !nu_undist = d_to_nu(undistorted_dist(i))
 
      !@ Use only minihalos
-     M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
+     M0 = convert_mass2physical(real(halodata(5,curHaloid),8))/M_sol
+#ifndef INCLUDEPROTOGALACTIC
      if(M0 > 1.e5 .and. M0 < 1.e8) then
+#endif
         linelinkedlist(i) = headofline(lineid(i))
         headofline(lineid(i)) = i
-        haloperline(lineid(i)) = haloperline(lineid(i)) + 1
+        !haloperline(lineid(i)) = haloperline(lineid(i)) + 1
+#ifndef INCLUDEPROTOGALACTIC
      end if
+#endif
   end do
 
   !call n_cal(n,r,rho)
@@ -336,33 +340,60 @@ subroutine makeobservedlines_rg(z)
         curHaloid = haloid(curHalo)
         nu_dist = d_to_nu(distorted_dist(curhalo))
         nu_undist = d_to_nu(undistorted_dist(curhalo))
-        M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
+        M0 = convert_mass2physical(real(halodata(5,curHaloid),8))/M_sol
         impact_param = convert_length2physical(real(toline(curHalo),8),z)
-        call tau_cal(M0,z,impact_param,n,r,rho,radius,delta_nu,tau,area_tau)
-        absorp = 1.d0 - exp(-1*tau)
-        extend_absorp =  1.d0 - exp(-1*area_tau)
+        
+        if(M0 >= 1.e5 .and. M0 <= 1.e8) then
+           call tau_cal(M0,z,impact_param,n,r,rho,radius,delta_nu,tau,area_tau)
+           absorp = 1.d0 - exp(-1*tau)
+           extend_absorp =  1.d0 - exp(-1*area_tau)
 
 
-        !point source case
-
-        if(convert_length2physical(real(toline(curHalo),8),0.d0) < radius) then
+           !point source case
+           if(impact_param < radius) then
+              ! not include z-distortion
+              gaussian_sd = delta_nu/nu0*nu_undist
 #ifdef DEBUG
-           if(rank==0) then
-              print*, "Toline:",convert_length2physical(real(toline(curHalo),8),0.d0), "Radius:", radius
-           end if
+              print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
+              print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)
 #endif
+              
+#ifndef RR
+              !source far away, los pass through cluster
+              if(rank==0) then
+                 print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
+                 print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)
+              end if
+              !source in cluster
+              if(online(curHalo) < line_length_factor/2.*Boxsize ) then
+                 if(rank==0) then
+                    print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
+                    print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)                 
+                 end if
+              endif
+#else
+              !source far away, pass random lines
+              if(rank==0) then
+                 print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
+                 print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)
+              end if
+#endif
+           end if
 
-           gaussian_sd = delta_nu/nu0*nu_dist
-           if(rank==0) print*, int(i), real(nu_dist), real(absorp),real(extend_absorp),real(gaussian_sd)
+           
         end if
         !gaussian_sd = sqrt(2.)*sigma_V/c*nu_undist
         !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
         
         !@ next halo
+
         curHalo = linelinkedlist(curHalo)
      end do
   end do
   if(rank==0) close(53)
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+  deallocate(halodata,online,toline,direction,lineid,haloid,distorted_dist,comov_dist,undistorted_dist,linelinkedlist,headofline)
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 #ifdef RR
 end subroutine makeobservedlines_rr
 #else
