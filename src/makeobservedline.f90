@@ -344,17 +344,14 @@ subroutine makeobservedlines_rg(z)
 
 
         !point source case
+
+        if(convert_length2physical(real(toline(curHalo),8),0.d0) < radius) then
 #ifdef DEBUG
            if(rank==0) then
               print*, "Toline:",convert_length2physical(real(toline(curHalo),8),0.d0), "Radius:", radius
            end if
 #endif
-        if(convert_length2physical(real(toline(curHalo),8),0.d0) < radius) then
-#ifdef DEBUG
-           if(rank==0) then
-              print*,'absorp',absorp,'impact',impact_param
-           end if
-#endif
+
            gaussian_sd = delta_nu/nu0*nu_dist
            if(rank==0) print*, int(i), real(nu_dist), real(absorp),real(extend_absorp),real(gaussian_sd)
         end if
