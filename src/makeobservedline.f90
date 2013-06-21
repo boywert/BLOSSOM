@@ -28,7 +28,7 @@ subroutine makeobservedlines_rg(z)
 
   real(kind=8) :: Halfbox,mass_limit,lambda,line_centre
   character(len=100) :: str_rank,z_s
-  real(kind=8) :: z,d0,d_self
+  real(kind=8) :: z,d0,d_self,radius
   integer(kind=4) :: n_elements,rlogsteps
   real(kind=8), allocatable :: distorted_dist(:),undistorted_dist(:),comov_dist(:)
   logical :: element_flag(1:17)
@@ -41,9 +41,11 @@ subroutine makeobservedlines_rg(z)
   integer(kind=4) :: n
   real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size)
   real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source
-  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd
+  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu
  
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
 
   Halfbox = real(BoxSize,8)/2.d0
   line_centre = real(Boxsize*line_length_factor,8)/2.d0
@@ -97,16 +99,24 @@ subroutine makeobservedlines_rg(z)
   end if
   !## End read data to node 0
 
-
+  call MPI_BARRIER( MPI_COMM_WORLD,ierr)
   if(rank /= 0) allocate(halodata(1:n_elements,1:halonumber))
   call MPI_BARRIER( MPI_COMM_WORLD,ierr)
   !call abort
   if(rank ==0) print*,"Broadcasting from node 0"
   if(rank ==0) print*,halodata(1:n_elements,1)
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+  if(rank==0) print*, 'halonumber',halonumber,'n_element',n_elements
+#endif
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+
   call mpi_bcast(halodata,halonumber*n_elements,mpi_real,0,mpi_comm_world,ierr)
   if(rank ==0) print*,"Finish broadcasting from node 0"
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
- 
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
   if(rank ==0) print*,"Start reading LOS data"
 
 
@@ -125,7 +135,9 @@ subroutine makeobservedlines_rg(z)
 
   call mpi_file_get_size (fh_lineid, filesize, ierr)
   n_point = filesize/4
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
   if(rank ==0) print*, 'total point',n_point
   if(rank ==0) print*,'Allocate lineid,online,linkedlist ....'
 
@@ -134,7 +146,9 @@ subroutine makeobservedlines_rg(z)
   allocate(toline(1:n_point))
   allocate(haloid(1:n_point))
   allocate(direction(1:3,1:n_point))
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
 
   if(rank ==0) print*,'Read data into lineid ....'
   call mpi_file_read(fh_lineid,lineid,n_point,mpi_integer,mpi_status_ignore,ierr)
@@ -163,7 +177,9 @@ subroutine makeobservedlines_rg(z)
      print*,'Close file online ....'
   endif
   call mpi_file_close(fh_online,ierr)
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
 
   if(rank ==0) print*,'Open file for toline ....'
 
@@ -185,7 +201,9 @@ subroutine makeobservedlines_rg(z)
      print*,'Close file toline ....'
   endif
   call mpi_file_close(fh_toline,ierr)
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
 
   if(rank ==0) print*,'Open file for direction ....'
 
@@ -207,7 +225,9 @@ subroutine makeobservedlines_rg(z)
      print*,'Close file online ....'
   endif
   call mpi_file_close(fh_direction,ierr)
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
 
 #ifdef RR
   call mpi_file_open(mpi_comm_self, &
@@ -229,6 +249,9 @@ subroutine makeobservedlines_rg(z)
   call mpi_file_close(fh_haloid,ierr)
 
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
   ! make linked list
   if(rank ==0) then
      print*,'Making linkedlist ....'
@@ -241,7 +264,9 @@ subroutine makeobservedlines_rg(z)
   allocate(linelinkedlist(1:n_point))
   allocate(headofline(1:max_line))
   allocate(haloperline(1:max_line))
-
+#ifdef DEBUG
+  if(rank ==0) call system('free')
+#endif
   if(rank ==0) then
      print*,'Set varaiables to 0 ...'
   endif
@@ -293,12 +318,14 @@ subroutine makeobservedlines_rg(z)
 #endif
   
   call n_cal(z,n,r,rho)
+
+  if(rank==0) call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/')
   if(rank==0) call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat')
   if(rank==0) open(unit=53,file=trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat',STATUS = 'NEW')
   !@ use openmp in tau_cal instead since it's troublesome 
   !@ to set up multiple arrays to collect information
   
-  do i=1,100 !max_line
+  do i=1,1 !max_line
 #ifdef DEBUG
      if(rank==0) then
         print*, 'line =',i
@@ -311,17 +338,26 @@ subroutine makeobservedlines_rg(z)
         nu_undist = d_to_nu(undistorted_dist(curhalo))
         M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
         impact_param = convert_length2physical(real(toline(curHalo),8),z)
-        call tau_cal(M0,z,impact_param,n,r,rho,sigma_V,area_tau,tau)
+        call tau_cal(M0,z,impact_param,n,r,rho,radius,delta_nu,tau,area_tau)
         absorp = 1.d0 - exp(-1*tau)
         extend_absorp =  1.d0 - exp(-1*area_tau)
+
+
+        !point source case
 #ifdef DEBUG
-        if(rank==0) then
-           print*,'absorp',absorp,'impact',impact_param
-        end if
+           if(rank==0) then
+              print*, "Toline:",convert_length2physical(real(toline(curHalo),8),0.d0), "Radius:", radius
+           end if
 #endif
-        !@ convert to SI
-        gaussian_sd = sqrt(2.)*sigma_V/c*nu_dist
-        if(rank==0) write(53,*) int(i), real(nu_dist), real(absorp),real(extend_absorp),real(gaussian_sd)
+        if(convert_length2physical(real(toline(curHalo),8),0.d0) < radius) then
+#ifdef DEBUG
+           if(rank==0) then
+              print*,'absorp',absorp,'impact',impact_param
+           end if
+#endif
+           gaussian_sd = delta_nu/nu0*nu_dist
+           if(rank==0) print*, int(i), real(nu_dist), real(absorp),real(extend_absorp),real(gaussian_sd)
+        end if
         !gaussian_sd = sqrt(2.)*sigma_V/c*nu_undist
         !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
         

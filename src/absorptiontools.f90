@@ -98,7 +98,7 @@ contains
   end function find_T_k
 
 
-  subroutine tau_cal(M0,zcoll,impact_param,n,r,rho,sigma_V,areatau0,tau0)
+  subroutine tau_cal(M0,zcoll,impact_param,n,r,rho,r_rtn,delta_nu_rtn,tau_rtn,areatau_rtn)
     use omp_lib
     implicit none
     integer :: size
@@ -111,7 +111,7 @@ contains
     real(kind=8) :: delta_nu, nu_z, kappa_coeff
     real(kind=8) :: r_t, r0, rho0, sigma_V, T_k, M0, zcoll, dnum, M_J
     real(kind=8) :: Delta_c,tau0,areatau0,absorption,impact_param
-
+    real(kind=8) :: delta_nu_rtn,tau_rtn,areatau_rtn,r_rtn
     real(kind=8) :: shape, kappa1, delTb_bol, bol_abs_nu
     real(kind=8) :: X1(8), neutr_fraction, delOmega, bol_absorp
     !real(kind=8) :: lgtau(0:100),area_tau0(0:100), tau_current
@@ -139,14 +139,14 @@ contains
     rho0 = zeta_t**3/3./Mttil*Delta_c*rho_crit_z
     sigma_V = sqrt(4.*pi*grav_const*rho0*r0**2)
 
-    T_k = amass/boltzk*sigma_V**2 !assuming fully neutral
+    T_k = mu*amass/boltzk*sigma_V**2 !assuming fully neutral
 
     neutr_fraction = nH
-    delta_nu=sqrt(2.*mu*pi)*nu0*sigma_V/c !thermal width of the 21-cm line  
+    delta_nu=sqrt(2.*mu)*nu0*sigma_V/c !thermal width of the 21-cm line  
 
     T_CMB_z = 2.73d0*(1.0d0+zcoll)    
     kappa1 = 3.0d0*c**2./32./pi*A10*T_star
-    kappa_coeff = kappa1/nu0**2./delta_nu
+    !kappa_coeff = kappa1/nu0**2./delta_nu
     do i = 0,n
        n_HI(i)=neutr_fraction*Omega_b/Omega_0*rho(i)*rho0/amass
        y_H = 7.345d-5*n_HI(i)*T_k**(8.781-4.7755*log10(T_k) &        
@@ -157,7 +157,7 @@ contains
     end do
     delTb_bol =0.0d0
     do i = 0,n    
-       f(i)=kappa1/delta_nu*n_HI(i)/nu0**2/T_S(i)
+       f(i)=kappa1/sqrt(pi)/delta_nu*n_HI(i)/nu0**2/T_S(i)
     end do
     allocate(tau(0:max_size,-max_size:max_size))
     tau(n,n)   = 0.0d0
@@ -197,7 +197,10 @@ contains
     end do
     areatau0 =  areatau0/zeta_t**2
 
-
+    delta_nu_rtn = delta_nu
+    tau_rtn = tau0
+    areatau_rtn = areatau0
+    r_rtn = r_t
     !print*,T_k,exp(-1*tau0)
     !absorption = 1.0d0 - exp(-1.d0*tau0)
 
