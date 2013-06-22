@@ -322,7 +322,21 @@ subroutine makeobservedlines_rg(z)
 #endif
   
   call n_cal(z,n,r,rho)
-
+#ifdef RR
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.025/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.012/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank)))
+#else
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.025/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.012/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank)))
+#endif
   if(rank==0) call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/')
   if(rank==0) call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat')
   if(rank==0) open(unit=53,file=trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat',STATUS = 'NEW')
@@ -386,10 +400,12 @@ subroutine makeobservedlines_rg(z)
         !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
         
         !@ next halo
-
+        goto 312
         curHalo = linelinkedlist(curHalo)
      end do
+312  continue
   end do
+
   if(rank==0) close(53)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   deallocate(halodata,online,toline,direction,lineid,haloid,distorted_dist,comov_dist,undistorted_dist,linelinkedlist,headofline)
