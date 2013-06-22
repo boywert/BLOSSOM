@@ -73,6 +73,7 @@ clean:
 	rm -f $(MICLIB)/*
 	rm -f *.o
 	rm -f *.exe
+git:
 	git add .
 	git commit -am "make `date +%F-%T`"
 	git push 
