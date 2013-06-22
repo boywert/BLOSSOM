@@ -31,6 +31,8 @@ line_length_factor	2		#length of a line of sight (Boxsize)
 #REALISATIONS
 MassiveNumber		50		#  number of halos pointed
 Max_l			100	#number of LOS per halo per node
+first_l			1		# first line to use
+last_l			1		# last line to use
 MaxSourceSize		0.4		#  comoving Mpc/h
 
 #TIS PARAMETERS

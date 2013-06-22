@@ -5,40 +5,47 @@ module absorptiontools
 contains
   subroutine n_cal(zcoll,n,r,rho)
     implicit none
-    integer :: i,n
+    integer :: i,n,readnumber
     real(kind=8) :: rho(0:max_size), r(0:max_size)
     real(kind=8) :: Delta_c, Delta_tophat,rho_crit_z,rho0,volume,mass,den_bar,Mxtil,zeta_x,zcoll
+    print*, "Start NCAL"
+    readnumber = 24
 #ifdef USERHO178
     Delta_tophat = 18.*pi**2 
     rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
          +(1.-lambda0-Omega_0)*(1.+zcoll)**2.)
     Delta_c = (etaSUS/etaTIS)**3.*Delta_tophat
     rho0 = 6.*pi**2.*(b_T/5.)**3. * Mttil**2. * rho_crit_z
+    print*,'opening',trim(den_profile_file)
 
-    open(3,file=trim(den_profile_file)) !contains dimensionless TIS density
+    open(readnumber,file=trim(den_profile_file),status='old') !contains dimensionless TIS density
+    print*, "Guess what"
     ! profile in the first 2 columns     
     i = 1
     r(0) = 0.0 
     rho(0) = 1.0d0
     !read the TIS profile in
-
+    print*, "zeta_t =",zeta_t
     do while(r(i-1) .le. zeta_t)
-       read(3,*) r(i), rho(i)
+       print*,i
+       read(readnumber,*) r(i), rho(i)
+       print*,i,r(i),rho(i)
        i = i + 1
     enddo
     n = i-1
-    close(3)
+    close(readnumber)
 
     mass = 0.
     volume = 0.
 
     do i= 1,n
+       print*,i
        volume = 4./3.*pi*r(i)**3.
        mass = mass + rho0*(rho(i)+rho(i-1))/2. * 4./3.*pi*(r(i)**3.-r(i-1)**3.)
        den_bar = mass/volume/rho_crit_z
-       if(den_bar <= Delta_tophat) goto 128
+       if(den_bar <= Delta_tophat) goto 472
     end do
- 128   n=i
+472 n=i
     zeta_x = r(n)
     Mxtil = (Delta_tophat/Delta_c)*(Mttil/zeta_t**3.)*zeta_x**3. 
     !set new values 
@@ -46,12 +53,11 @@ contains
     zeta_t = zeta_x
     if(rank==0) print*, "MXtil:",Mttil,"zeta_X:",zeta_t
 #endif
+    
+    
 
-
-
-
-
-    open(3,file=trim(den_profile_file)) !contains dimensionless TIS density
+    open(30,file=trim(den_profile_file),status='old') !contains dimensionless TIS density
+    print*, 'succeed open file'
     ! profile in the first 2 columns     
     i = 1
     r(0) = 0.0 
@@ -59,14 +65,45 @@ contains
     !read the TIS profile in
 
     do while(r(i-1) .le. zeta_t)
-       read(3,*) r(i), rho(i)
+       print*, i
+       read(30,*) r(i), rho(i)
        i = i + 1
     enddo
     n = i-1
-    close(3)
+    close(30)
+
+    print*, "finish NCAL"
     return
   end subroutine n_cal
   
+  subroutine make_spherecut(n,r,rho,out)
+    implicit none
+    real(kind=8) :: rho(0:max_size), r(0:max_size), out(0:10)
+    integer :: n,i,j
+    real(kind=8) :: mass,cutmass,x,costheta,radius
+    mass = 0.d0
+    do i= 1,n
+       mass = mass + (rho(i)+rho(i-1))/2. * 4./3.*pi*(r(i)**3.-r(i-1)**3.)
+    end do
+    out(0:10) = 0.
+    do i=1,5
+       cutmass = 0.
+       x = zeta_t - zeta_t/5.
+       j=n-1
+       do while (r(j) > x) 
+          radius = (r(j)+r(j+1))/2.
+          costheta = x/radius
+          cutmass = cutmass + 2.*pi*radius**2.*(1-costheta)
+          j=j-1
+       end do
+       out(i) = cutmass
+    end do
+    do i=6,10
+       out(i) = out(5)*2. - out(10-i) 
+    end do
+    out(0:10) = out(0:10)/mass 
+  end subroutine make_spherecut
+
   function find_T_k(M0,zcoll)
     implicit none
     real(kind=8) :: rho_crit_z, Delta_c,nu_z

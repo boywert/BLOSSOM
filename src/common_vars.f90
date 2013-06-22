@@ -75,6 +75,8 @@ module common_vars
   real(kind=8), target :: co_boxwidth 
   integer(kind=4), target :: MassiveNumber 
   integer(kind=4), target ::  max_l
+  integer(kind=4), target ::  first_l
+  integer(kind=4), target ::  last_l
   integer(kind=8), target  :: particle_per_dim   
 
   !#######################################################################
@@ -106,6 +108,9 @@ module common_vars
   !@ subcell_perdim list
   integer(kind=4) :: subcell_perdim_list(SUBCELLLIST_MAXSIZE)
   integer, parameter :: min_particle_cell = 0
+  !#######################################################################
+  !@ Timing
+  real(kind=8) :: std_cputime
 
 #define common_var
 end module common_vars

@@ -323,9 +323,22 @@ subroutine makeobservedlines_rg(z)
   
   call n_cal(z,n,r,rho)
 
-  if(rank==0) call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/')
-  if(rank==0) call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat')
-  if(rank==0) open(unit=53,file=trim(result_path)//z_s(1:len_trim(z_s))//'/'//'out.dat',STATUS = 'NEW')
+#ifdef RR
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.025/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.012/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank)))
+#else
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.025/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.012/'//trim(adjustl(str_rank)))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank)))
+#endif
+
   !@ use openmp in tau_cal instead since it's troublesome 
   !@ to set up multiple arrays to collect information
   
@@ -398,4 +411,43 @@ subroutine makeobservedlines_rg(z)
 end subroutine makeobservedlines_rr
 #else
 end subroutine makeobservedlines_rg
+#endif
+
+#ifndef GETCHECKLINE
+#define GETCHECKLINE
+function get_checkline(z)
+  use mpi
+  use mpitools
+  use common_vars
+  implicit none
+  logical :: file_e
+  real(kind=8) :: z
+  integer :: get_checkline
+  character(len=100) :: z_s,str_rank
+  
+  write(z_s,'(f10.3)') z
+  z_s = adjustl(z_s)
+  write(str_rank,'(f10.3)') rank
+  str_rank = adjustl(str_rank)
+#ifdef RR
+  inquire(file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/status.'//str_rank(1:len_trim(str_rank)), exist=file_e )
+#else
+  inquire(file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/status.'//str_rank(1:len_trim(str_rank)), exist=file_e )
+#endif
+  if(file_e == .False.) then
+     print*, "Status file ",rank,"does not exist"
+     get_checkline = first_l
+  else
+     print*, "Status file ",rank,"exists open the file"
+#ifdef RR
+     open(29,file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/status.'//str_rank(1:len_trim(str_rank)), status='old')
+#else
+     open(29,file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/status.'//str_rank(1:len_trim(str_rank)), status='old')
+#endif
+    read(29,*) get_checkline
+    close(29)
+  end if
+  get_checkline = max(get_checkline,first_l)
+  return
+end function get_checkline
 #endif
