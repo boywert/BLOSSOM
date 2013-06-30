@@ -1,4 +1,7 @@
 #INPUT FILE
+
+#do not use d for scientific notation, use e instead
+
 zlist_file		/home1/01937/cs390/BLOSSOM/inputs/z8.dat
 den_profile_file	/home1/01937/cs390/BLOSSOM/inputs/TIS_profile.dat
 subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_20mpc.dat
@@ -8,7 +11,7 @@ subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_20mpc.dat
 Omega_0			0.27
 Lambda0			0.73
 h			0.7
-rho_crit_0 		1.879d-29	# g/cm^3/h^2
+rho_crit_0 		1.879e-29	# g/cm^3/h^2
 Omega_b			0.023		# Omega_b*h^2
 
 #CUBEP3M PARAMETERS
@@ -31,6 +34,8 @@ line_length_factor	2		#length of a line of sight (Boxsize)
 #REALISATIONS
 MassiveNumber		50		#  number of halos pointed
 Max_l			100	#number of LOS per halo per node
+first_l			1
+last_l			48
 MaxSourceSize		0.4		#  comoving Mpc/h
 
 #TIS PARAMETERS
@@ -39,12 +44,12 @@ Mttil			61.48
 etaTIS			0.5544		
 etaSUS			0.5
 zeta_t			29.4005325
-A10			2.85d-15 	#1/s
-nu0			1420.40575d6	#Hz
+A10			2.85e-15 	#1/s
+nu0			1420.40575e+6	#Hz
 T_star			0.0681		#K
-grav_const		6.672d-8	#cm^3/g/s^2
-AMASS			2.041d-24	#g
-boltzk			1.38d-16	#erg/K
+grav_const		6.672e-8	#cm^3/g/s^2
+AMASS			2.041e-24	#g
+boltzk			1.38e-16	#erg/K
 nH			0.926
 nHe			0.074		#1-nH
 mu			1.222
@@ -53,6 +58,6 @@ b_T			2.16		#T_TIS/T_SUS
 m_tis			1000
 max_size		1500
 
-c			2.9979d+10		#cm/s
-Mpc			3.08567758d24		#cm
+c			2.9979e+10		#cm/s
+Mpc			3.08567758e+24		#cm
 M_sol			1.989e33		#g

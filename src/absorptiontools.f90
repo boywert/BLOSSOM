@@ -8,6 +8,7 @@ contains
     integer :: i,n
     real(kind=8) :: rho(0:max_size), r(0:max_size)
     real(kind=8) :: Delta_c, Delta_tophat,rho_crit_z,rho0,volume,mass,den_bar,Mxtil,zeta_x,zcoll
+
 #ifdef USERHO178
     Delta_tophat = 18.*pi**2 
     rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
@@ -96,6 +97,140 @@ contains
     find_T_k = amass/boltzk*sigma_V**2 !assuming fully neutral
     return
   end function find_T_k
+
+  subroutine make_spherecut(n,r,rho,out)
+    implicit none
+    real(kind=8) :: rho(0:max_size), r(0:max_size), out(0:10)
+    integer :: n,i,j
+    real(kind=8) :: mass,cutmass,x,costheta,radius
+    mass = 0.d0
+    if(rank==0) print*, 'n',n,'zeta_t',zeta_t
+    do i= 1,n
+       mass = mass + (rho(i)+rho(i-1))/2. * 4./3.*pi*(r(i)**3.-r(i-1)**3.)
+    end do
+    out(0) = 0.
+    out(5) = 0.5*mass
+    do i=1,4
+       cutmass = 0.
+       x = zeta_t - zeta_t*0.2*i
+       !if(rank==0) print*,"i",i,"x",x/zeta_t
+       j=n-1
+       do while (r(j) > x) 
+          radius = (r(j)+r(j+1))/2.
+          costheta = x/radius
+          !print*,'j',j,radius,costheta
+          cutmass = cutmass + 2.*pi*radius**2.*(1-costheta)*(r(j+1)-r(j))*(rho(j)+rho(j+1))/2.
+          j=j-1
+       end do
+       out(i) = cutmass
+       !if(rank==0) print*,"mass",cutmass/mass
+    end do
+    do i=6,10
+       out(i) = out(5)*2. - out(10-i) 
+    end do
+    out(0:10) = out(0:10)/mass 
+    if(rank==0) print*, out
+
+  end subroutine make_spherecut
+
+
+  subroutine cache_tau_table(M0,zcoll,n,r,rho,delta_nu_rtn,tau_tot,areatau_rtn)
+    use omp_lib
+    implicit none
+    integer :: size
+    real(kind=8) :: rho(0:max_size), r(0:max_size), n_HI(0:max_size)
+    real(kind=8) :: T_S(0:max_size), y_c(0:max_size), y_H, y_e, ne
+    real(kind=8) :: f(0:max_size)
+    real(kind=8) :: tau_tot(0:max_size), check, D_A, V_A, theta, omegabh2
+    real(kind=8) :: rho_crit_z
+    real(kind=8) :: diff, x, T_CMB_z
+    real(kind=8) :: delta_nu, nu_z, kappa_coeff
+    real(kind=8) :: r_t, r0, rho0, sigma_V, T_k, M0, zcoll, dnum, M_J
+    real(kind=8) :: Delta_c,tau0,areatau0,absorption,impact_param
+    real(kind=8) :: delta_nu_rtn,tau_rtn,areatau_rtn,r_rtn
+    real(kind=8) :: shape, kappa1, delTb_bol, bol_abs_nu
+    real(kind=8) :: X1(8), neutr_fraction, delOmega, bol_absorp
+    !real(kind=8) :: lgtau(0:100),area_tau0(0:100), tau_current
+    real(kind=8),allocatable :: tau(:,:)
+    real(kind=4) :: start_time, stop_time
+    integer :: area_flag
+    integer :: i, n, j, q, niter, k, upper_r
+
+    call cpu_time(start_time)
+    nu_z = nu0/(1.d0+zcoll)
+    Delta_c = 18.*pi**2 
+
+    rho_crit_z = rho_crit_0*(lambda0+Omega_0*(zcoll+1.)**3. &    
+         +(1.-lambda0-Omega_0)*(1.+zcoll)**2.)
+#ifndef USERHO178
+    Delta_c = (etaSUS/etaTIS)**3.*Delta_c
+#endif
+
+    M_J = 5.7d3*(Omega_0*h**2/0.15)**(-0.5)* &     
+         (Omega_b*h**2/0.02)**(-0.6)*((1.0d0+zcoll)/10.)**1.5 !M_J in M_sol 
+
+    r_t  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.) 
+    
+    r0  = r_t/zeta_t
+    rho0 = zeta_t**3/3./Mttil*Delta_c*rho_crit_z
+    sigma_V = sqrt(4.*pi*grav_const*rho0*r0**2)
+
+    T_k = mu*amass/boltzk*sigma_V**2 !assuming fully neutral
+
+    neutr_fraction = nH
+    delta_nu=sqrt(2.*mu)*nu0*sigma_V/c !thermal width of the 21-cm line  
+
+    T_CMB_z = 2.73d0*(1.0d0+zcoll)    
+    kappa1 = 3.0d0*c**2./32./pi*A10*T_star
+    !kappa_coeff = kappa1/nu0**2./delta_nu
+    do i = 0,n
+       n_HI(i)=neutr_fraction*Omega_b/Omega_0*rho(i)*rho0/amass
+       y_H = 7.345d-5*n_HI(i)*T_k**(8.781-4.7755*log10(T_k) &        
+            +1.075*(log10(T_k))**2-0.091*log10(T_k)**3) !combined fit
+       y_e =0.0d0
+       y_c(i) = y_H+y_e
+       T_S(i) = (T_CMB_z+y_c(i)*T_k)/(1.0d0+y_c(i))
+    end do
+    delTb_bol =0.0d0
+    do i = 0,n    
+       f(i)=kappa1/sqrt(pi)/delta_nu*n_HI(i)/nu0**2/T_S(i)
+    end do
+    allocate(tau(0:max_size,-max_size:max_size))
+    tau_tot(0:max_size) = 0.d0
+    tau(n,n)   = 0.0d0
+    tau_tot(n) = tau(n,n)
+    
+    !$omp parallel private(j,diff) 
+    !$omp do
+    do i=n-1,0,-1
+       tau(i,-n)=0.0d0
+       do j=-n,-i-1
+          !Trapezoidal rule
+          diff = sqrt(r(-j)*r(-j)-r(i)*r(i)) &
+               - sqrt(r(-j-1)*r(-j-1)-r(i)*r(i))
+          tau(i,j+1) = tau(i,j) + (f(-j)+f(-j-1))*diff/2.0d0
+       enddo
+       tau(i,i) = tau(i,-i)
+       do j=i+1,n 
+          tau(i,j)=2.0d0*tau(i,i) - tau(i,-j)
+       end do
+       tau_tot(i) = 2.0d0*tau(i,i)*r0 !total optical depth at r_i
+    enddo
+    !$omp end do
+    !$omp end parallel
+    deallocate(tau)
+
+    areatau0=0.0d0
+    do i=1,n
+       areatau0 = areatau0 + (tau_tot(i-1)*r(i-1)+tau_tot(i)*r(i)) * (r(i)-r(i-1))
+    end do
+    areatau0 =  areatau0/zeta_t**2
+    delta_nu_rtn = delta_nu
+    areatau_rtn = areatau0
+
+    return
+  end subroutine cache_tau_table
+
 
 
   subroutine tau_cal(M0,zcoll,impact_param,n,r,rho,r_rtn,delta_nu_rtn,tau_rtn,areatau_rtn)
