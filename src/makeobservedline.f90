@@ -19,7 +19,7 @@ subroutine makeobservedlines_rg(z)
 
 
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
-  integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid,fh_record(100)
+  integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid,fh_record(21)
   integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
   integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
@@ -41,7 +41,7 @@ subroutine makeobservedlines_rg(z)
   integer(kind=4) :: n,firstline,lastline,overlap_index
   real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size),spherepart(0:10)
   real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source,source_radius,source_diameter,block_area,block_ratio
-  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,this_absorp_extend
+  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,this_absorp_extend,point_distance
  
 #ifdef DEBUG
   if(rank ==0) call system('free')
@@ -413,7 +413,7 @@ subroutine makeobservedlines_rg(z)
 
 
   firstline = firstline
-  lastline = last_l
+  lastline = 4 !last_l
 
 
   
@@ -436,8 +436,8 @@ subroutine makeobservedlines_rg(z)
 
 
 
-  !$omp parallel private(std_cputime,str_line,fh_record,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta)
-  !$omp do
+  !@!$omp parallel private(std_cputime,str_line,fh_record,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta)
+  !@!$omp do
   do i=firstline,lastline
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
@@ -1001,19 +1001,22 @@ subroutine makeobservedlines_rg(z)
            source_diameter = 0.003
            source_radius = convert_length2physical(source_diameter/co_boxwidth*boxsize/2 ,z)
            if(impact_param < (radius + source_radius)) then
-!               point_distance = 
-!               do r_index=1,n
-!                  if(impact_param/r0 < r(r_index)) then
-!                     goto 228
-!                  endif
-!               end do
-! 228           continue
-!               tau = tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
-!               this_absorp = 1.d0 - exp(-1.*tau)
-
+              tau = 0.d0
               !find average
+              do k=-10,10
+                 point_distance = impact_param + k*0.1*radius
+                 do r_index=1,n
+                    if(point_distance/r0 < r(r_index)) then
+                       goto 228
+                    endif
+                 end do
+228              continue
+                 tau = tau+tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+                 
               
-
+              end do
+              tau = tau/21.
+              this_absorp = 1.d0 - exp(-1.*tau)
               ! if(rank == 0) then
               !    print*,"index",overlap_index
               !    print*,"area index",block_area/(pi*radius**2.)
@@ -1028,7 +1031,7 @@ subroutine makeobservedlines_rg(z)
               call MPI_FILE_WRITE(fh_record(19), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19), extend_absorp*block_ratio, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_record(19), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
 #else
               !source far away, los pass through cluster
@@ -1037,7 +1040,7 @@ subroutine makeobservedlines_rg(z)
               call MPI_FILE_WRITE(fh_record(19), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19), extend_absorp*block_ratio, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              call MPI_FILE_WRITE(fh_record(19), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               call MPI_FILE_WRITE(fh_record(19), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
 
               !source in cluster
@@ -1046,7 +1049,7 @@ subroutine makeobservedlines_rg(z)
                  call MPI_FILE_WRITE(fh_record(20), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(20), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(20), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20), extend_absorp*block_ratio, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 call MPI_FILE_WRITE(fh_record(20), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(20), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               else
 
@@ -1054,7 +1057,7 @@ subroutine makeobservedlines_rg(z)
                  call MPI_FILE_WRITE(fh_record(21), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(21), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(21), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21), extend_absorp*block_ratio, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 call MPI_FILE_WRITE(fh_record(21), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
                  call MPI_FILE_WRITE(fh_record(21), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               endif
 
@@ -1077,8 +1080,8 @@ subroutine makeobservedlines_rg(z)
      end do
      print*, 'close files'
   end do
-  !$omp end do
-  !$omp end parallel
+  !@!$omp end do
+  !@!$omp end parallel
 
   print*,'rank',rank,'complete all lines'
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
