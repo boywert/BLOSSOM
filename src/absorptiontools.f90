@@ -295,6 +295,7 @@ contains
        f(i)=kappa1/sqrt(pi)/delta_nu*n_HI(i)/nu0**2/T_S(i)
     end do
     allocate(tau(0:max_size,-max_size:max_size))
+    tau_tot(0:max_size) = 0.d0
     tau(n,n)   = 0.0d0
     tau_tot(n) = tau(n,n)
     
@@ -322,10 +323,12 @@ contains
           goto 127
        endif
     end do
-
+    tau0 = 0.d0
+    goto 129
 127 tau0 = (tau_tot(i)-tau_tot(i-1))/(r(i) - r(i-1))*(impact_param/r0-r(i-1)) + tau_tot(i-1) 
-
-
+    !if(rank==0) print*,'interpolate index',i,i-1
+    !if(rank==0) print*,'interpolate tau',tau_tot(i),tau0,tau_tot(i-1)
+129 continue
     areatau0=0.0d0
     do i=1,n
        areatau0 = areatau0 + (tau_tot(i-1)*r(i-1)+tau_tot(i)*r(i)) * (r(i)-r(i-1))
@@ -351,6 +354,7 @@ contains
     !111    continue
     ! end do
     return
+    
   end subroutine tau_cal
 
 
