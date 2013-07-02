@@ -46,7 +46,7 @@ subroutine makeobservedlines_rg(z)
 #ifdef DEBUG
   if(rank ==0) call system('free')
 #endif
-  n_cache = 1000
+  n_cache = 100000
   Halfbox = real(BoxSize,8)/2.d0
   line_centre = real(Boxsize*line_length_factor,8)/2.d0
 
@@ -415,13 +415,13 @@ subroutine makeobservedlines_rg(z)
 
 
   firstline = first_l
-  lastline = 4 !last_l
+  lastline = last_l 
 
 
   
   rho_crit_z = rho_crit_0*(lambda0+Omega_0*(z+1.)**3. &    
        +(1.-lambda0-Omega_0)*(1.+z)**2.)
-  Delta_c = 18.*pi**2
+  Delta_c = 18.*pi**2 
 
 
 #ifndef USERHO178
