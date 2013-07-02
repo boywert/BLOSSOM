@@ -41,7 +41,7 @@ subroutine makeobservedlines_rg(z)
   integer(kind=4) :: n,firstline,lastline,overlap_index
   real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size),spherepart(0:10)
   real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source,source_radius,source_diameter,block_area,block_ratio
-  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,this_absorp_extend,point_distance
+  real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,tmp_tau,this_absorp_extend,point_distance
  
 #ifdef DEBUG
   if(rank ==0) call system('free')
@@ -395,6 +395,7 @@ subroutine makeobservedlines_rg(z)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 #ifdef RR
   print*,"mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank)))
@@ -403,6 +404,7 @@ subroutine makeobservedlines_rg(z)
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank)))
 #else
   print*,"mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))
+  call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank)))
   call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank)))
@@ -412,7 +414,7 @@ subroutine makeobservedlines_rg(z)
 #endif
 
 
-  firstline = firstline
+  firstline = first_l
   lastline = 4 !last_l
 
 
@@ -1001,21 +1003,20 @@ subroutine makeobservedlines_rg(z)
            source_diameter = 0.003
            source_radius = convert_length2physical(source_diameter/co_boxwidth*boxsize/2 ,z)
            if(impact_param < (radius + source_radius)) then
-              tau = 0.d0
+              tmp_tau = 0.d0
               !find average
               do k=-10,10
-                 point_distance = impact_param + k*0.1*radius
+                 point_distance = abs(impact_param + k*0.1*source_radius)
                  do r_index=1,n
                     if(point_distance/r0 < r(r_index)) then
                        goto 228
                     endif
                  end do
 228              continue
-                 tau = tau+tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
-                 
-              
+                 tmp_tau = tmp_tau + tau_cache(r_index-1,mass_index) + (point_distance/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+                             
               end do
-              tau = tau/21.
+              tau = tmp_tau/21.
               this_absorp = 1.d0 - exp(-1.*tau)
               ! if(rank == 0) then
               !    print*,"index",overlap_index

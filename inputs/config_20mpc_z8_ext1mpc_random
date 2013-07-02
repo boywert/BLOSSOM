@@ -20,7 +20,7 @@ co_boxwidth		20.		#Mpc/h
 #FOLDERS
 los_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/LOS/ext1mpc/
 halo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/DATA/
-result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/RESULT/
+result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/RESULT/ext1mpc/
 subcellden_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/postprocessing/
 databin_path		/home1/01937/cs390/BLOSSOM/inputs/bin_info/
 randomhalo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/DATA/
@@ -31,6 +31,8 @@ line_length_factor	2		#length of a line of sight (Boxsize)
 #REALISATIONS
 MassiveNumber		50		#  number of halos pointed
 Max_l			100	#number of LOS per halo per node
+first_l			1
+last_l			100
 MaxSourceSize		0.4		#  comoving Mpc/h
 
 #TIS PARAMETERS

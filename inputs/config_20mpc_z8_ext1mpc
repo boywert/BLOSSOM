@@ -23,7 +23,7 @@ co_boxwidth		20.		#Mpc/h
 #FOLDERS
 los_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/LOS/ext1mpc/
 halo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/DATA/
-result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/
+result_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/
 subcellden_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/postprocessing/
 databin_path		/home1/01937/cs390/BLOSSOM/inputs/bin_info/
 randomhalo_path		/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc_RANDOM/DATA/
