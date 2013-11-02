@@ -1225,7 +1225,6 @@ end function unshift_blockID
 #define FINDMASSIVE
 subroutine findmassive (pos_in, mass, row, n, pos)
   use conversiontools
-  use 
   implicit none
   integer(kind=4) :: row,n
   real (kind=4) :: pos_in(1:3,1:row),mass(1:row)
