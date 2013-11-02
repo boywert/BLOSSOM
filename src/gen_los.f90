@@ -11,6 +11,7 @@ subroutine gen_los_rg(z)
   use mpi
   use mpitools
   use io_tools
+  use conversiontools
   implicit none   
   !integer(kind=4) , parameter :: line_length_factor = 2
   integer (kind = 4)   :: n_threads, omp_thread
@@ -183,7 +184,7 @@ subroutine gen_los_rg(z)
         NumBlock = block_dummy(1)*GridLines**2 + &
              block_dummy(2)*GridLines + &
              block_dummy(3)
-        print*, "massive", i, NumBlock
+        print*, "massive", i, convert_mass2physical(real(mass(i),8))/M_sol
      end do
      !put halos in small cells
      write(*,*) 'Putting halos in cells'
