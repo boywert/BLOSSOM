@@ -184,7 +184,6 @@ subroutine gen_los_rg(z)
         NumBlock = block_dummy(1)*GridLines**2 + &
              block_dummy(2)*GridLines + &
              block_dummy(3)
-        print*, "massive", i, convert_mass2physical(real(mass(i),8))/M_sol
      end do
      deallocate(mass)
      !put halos in small cells
@@ -1220,4 +1219,32 @@ function unshift_blockID(id,PrGridlines,GridLines)
 
   return
 end function unshift_blockID
+#endif
+
+#ifndef FINDMASSIVE
+#define FINDMASSIVE
+subroutine findmassive (pos_in, mass, row, n, pos)
+  use conversiontools
+  use 
+  implicit none
+  integer(kind=4) :: row,n
+  real (kind=4) :: pos_in(1:3,1:row),mass(1:row)
+  real (kind=4) :: pos(1:3,1:n)
+  integer (kind=4)  :: i,j, reforder
+  real (kind=4) :: refmass
+  do j=1,n
+     refmass = 0.
+     reforder = 0
+     do i=1,row
+        if(refmass < mass(i)) then
+           refmass = mass(i)
+           pos(1:3,j) = pos_in(1:3,i)
+           reforder = i
+        end if
+     end do
+     print*, "massive", j, convert_mass2physical(real(mass(reforder),8))/M_sol
+     mass(reforder) = 1.0e-32
+  end do
+  return
+end subroutine findmassive
 #endif
