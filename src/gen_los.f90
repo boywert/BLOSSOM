@@ -138,7 +138,7 @@ subroutine gen_los_rg(z)
      !find top 100 massive halos
 
      call findmassive(positions, mass, halonumber, MassiveNumber, MassivePos)
-     deallocate(mass)
+
 #ifndef USEMAXSOURCESIZE
      max_radius = 0.
      do i=1,halonumber
@@ -186,6 +186,7 @@ subroutine gen_los_rg(z)
              block_dummy(3)
         print*, "massive", i, convert_mass2physical(real(mass(i),8))/M_sol
      end do
+     deallocate(mass)
      !put halos in small cells
      write(*,*) 'Putting halos in cells'
      do i=1,halonumber 
