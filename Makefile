@@ -32,7 +32,7 @@ all: $(BIN)/genrandom #$(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/g
 
 $(BIN)/genrandom: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
 	mkdir -p $(BIN)
-	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genrandom -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+	$(CF) -DGENRANDOM $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genrandom -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
 
 $(LIB)/read_parameters.a: $(LIB)/libcommon_vars.a
 	$(CF) $(CFFLAGS) -c $(SRC)/read_parameters.f90 -o $(LIB)/libread_parameters.a  -lcommon_vars
