@@ -2,7 +2,7 @@ THIS = $(CURDIR)
 SRC = $(THIS)/src
 LIB = $(THIS)/lib
 MICLIB = $(THIS)/miclib
-
+BIN = $(THIS)/bin
 CF = mpif90
 MICCF = mpif90
 
@@ -20,18 +20,19 @@ OPT += -DUSERHO178
 #OPT = -DCALCORR_RR -DCALCORR_RG -DGENLOS_RR -DGENLOS_RG -DAPSORBTION -DSUBCELL  -DTEST -DDEBUG 
 #OPT += -DCALCORR_RR -DCALCORR_RG 
 #OPT += -DSUBCELL
-OPT += -DGENLOS_RG #-DDEBUG
-OPT += -DGENLOS_RR #-DDEBUG
+#OPT += -DGENLOS_RG #-DDEBUG
+#OPT += -DGENLOS_RR #-DDEBUG
 #OPT += -DABSORPTION_RG #-DDEBUG
 #OPT += -DABSORPTION_RR
 #OPT += -DGENRANDOM
 CFFLAGS += $(OPT)
 MICCFFLAGS += $(OPT)
 
-all: main.exe 
+all: $(BIN)/genrandom #$(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/genrandom $(BIN)/absorption_rg  $(BIN)/absorption_rr 
 
-main.exe: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
-	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o main.exe -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+$(BIN)/genrandom: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genrandom -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
 
 $(LIB)/read_parameters.a: $(LIB)/libcommon_vars.a
 	$(CF) $(CFFLAGS) -c $(SRC)/read_parameters.f90 -o $(LIB)/libread_parameters.a  -lcommon_vars
