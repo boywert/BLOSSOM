@@ -17,18 +17,31 @@ OPT += -DUSEMAXSOURCESIZE
 #OPT += -DINCLUDEPROTOGALACTIC 
 #OPT += -DDEBUG 
 OPT += -DUSERHO178
-#OPT = -DCALCORR_RR -DCALCORR_RG -DGENLOS_RR -DGENLOS_RG -DAPSORBTION -DSUBCELL  -DTEST -DDEBUG 
-#OPT += -DCALCORR_RR -DCALCORR_RG 
-#OPT += -DSUBCELL
-#OPT += -DGENLOS_RG #-DDEBUG
-#OPT += -DGENLOS_RR #-DDEBUG
-#OPT += -DABSORPTION_RG #-DDEBUG
-#OPT += -DABSORPTION_RR
-#OPT += -DGENRANDOM
+
 CFFLAGS += $(OPT)
 MICCFFLAGS += $(OPT)
 
-all: $(BIN)/genrandom #$(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/genrandom $(BIN)/absorption_rg  $(BIN)/absorption_rr 
+all: $(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/genrandom $(BIN)/absorption_rg  $(BIN)/absorption_rr 
+
+$(BIN)/absorption_rg: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DABSORPTION_RG $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/absorption_rg -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/absorption_rr: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DABSORPTION_RR $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/absorption_rr -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/subcell: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DSUBCELL $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/subcell -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/genlos_rr: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DGENLOS_RR $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genlos_rr -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/genlos_rg: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DGENLOS_RG $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genlos_rg -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
 
 $(BIN)/genrandom: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
 	mkdir -p $(BIN)
