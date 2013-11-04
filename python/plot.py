@@ -52,4 +52,10 @@ def plotline(freq,absorp,width,z):
     plt.savefig('test.pdf')
     return yarray
     
+def nu2Mpc(nu):
+    H0 = 2.268545503707487E-018
+    c = 29979000000.0
+    nu0 = 1420405750.00000
+    Mpc = 3.085677580000000E+024
+    return c/H0*(1-(nu/nu0)**2.)/(1+(nu/nu0)**2.)/Mpc
     
