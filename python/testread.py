@@ -13,6 +13,6 @@ for i in range(1,101):
     for halo in line:
         dist = plot.nu2Mpc(halo[2])
         undist = plot.nu2Mpc(halo[3])
-        print dist-undist
+        print dist,undist
 
 #plot.plotline(line[:,3],line[:,4],line[:,5],'0.000.pdf')
