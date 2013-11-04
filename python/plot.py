@@ -7,7 +7,7 @@ from math import *
 class parameters(object):
     z = 8.064
     binfields = 6
-    max_resolve = 10.
+    max_resolve = 1.
     config = {}
     
 def readconfig(configfile):
@@ -67,7 +67,7 @@ def PrepFFT(freq,absorp,width):
     print "N_freq",len(nuarray)
     for i in range(len(freq)):
         realwidth = width[i]/parameters.config['nu0']*freq[i]
-        yarray *= (1.-absorp[i])/numpy.sqrt(2.*numpy.pi)/realwidth*numpy.exp(-0.5*((nuarray-freq[i])/realwidth)**2)
+        yarray *= 1.-(1.-absorp[i])/numpy.sqrt(2.*numpy.pi)/realwidth*numpy.exp(-0.5*((nuarray-freq[i])/realwidth)**2)
         
     for i in range(len(yarray)):
         yarray[i] = max(0.,yarray[i])
