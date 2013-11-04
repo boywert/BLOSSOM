@@ -7,7 +7,7 @@ from math import *
 class parameters(object):
     z = 8.064
     binfields = 6
-    max_resolve = 10.
+    max_resolve = 1000.
     config = {}
     
 def readconfig(configfile):
