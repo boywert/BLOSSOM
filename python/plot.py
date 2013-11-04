@@ -36,7 +36,7 @@ def readline_binary(filename):
     line.shape = (n,parameters.binfields)
     return line
 
-def plotline(freq,absorp,width,z):
+def plotline(freq,absorp,width,output):
     minfreq = min(freq)
     maxfreq = max(freq)
     xarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
@@ -49,13 +49,26 @@ def plotline(freq,absorp,width,z):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(xarray,yarray)
-    plt.savefig('test.pdf')
+    plt.savefig(output)
     return yarray
-    
+
 def nu2Mpc(nu):
     H0 = 2.268545503707487E-018
     c = 29979000000.0
     nu0 = 1420405750.00000
     Mpc = 3.085677580000000E+024
     return c/H0*(1-(nu/nu0)**2.)/(1+(nu/nu0)**2.)/Mpc
+
+def PrepFFT(freq,absorp,width):
+    minfreq = min(freq)
+    maxfreq = max(freq)
+    nuarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
+    yarray = numpy.zeros(len(nuarray))
+    darray = numpy.zeros(len(nuarray))
+    for i in range(len(freq)):
+        realwidth = width[i]/parameters.config['nu0']*freq[i]
+        yarray += absorp[i]/numpy.sqrt(2.*numpy.pi)/realwidth*numpy.exp(-0.5*((xarray-freq[i])/realwidth)**2)
+    darray = nu2Mpc(nuarray)
+        
+
     
