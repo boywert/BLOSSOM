@@ -65,8 +65,8 @@ def PrepFFT(freq,absorp,width):
     nuarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
     yarray = numpy.zeros(len(nuarray))
     darray = numpy.zeros(len(nuarray))
+    print "N_freq",len(freq)
     for i in range(len(freq)):
-        print "freq",i
         realwidth = width[i]/parameters.config['nu0']*freq[i]
         yarray += absorp[i]/numpy.sqrt(2.*numpy.pi)/realwidth*numpy.exp(-0.5*((nuarray-freq[i])/realwidth)**2)
         
