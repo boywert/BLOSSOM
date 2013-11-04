@@ -11,4 +11,5 @@ for i in range(1,101):
     print i
     linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/RG/0.000/0/sout.%d' % (i)
     line = plot.readline_binary(linefile)
-    plot.plotline(line[:,3],line[:,4],line[:,5],"python/000.%d"%(i))
+    output = "python/000.%d" % (i)
+    plot.plotline(line[:,3],line[:,4],line[:,5],output)
