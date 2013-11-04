@@ -62,7 +62,7 @@ def nu2Mpc(nu):
 def PrepFFT(freq,absorp,width):
     minfreq = min(freq)
     maxfreq = max(freq)
-    nuarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
+    nuarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve*10)
     yarray = numpy.zeros(len(nuarray))
     darray = numpy.zeros(len(nuarray))
     print "N_freq",len(freq)
