@@ -7,6 +7,7 @@ plot.readconfig(configfile)
 
 
 for i in range(1,100):
+    print i
     linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/RG/0.000/0/sout.%d' % (i)
     line = plot.readline_binary(linefile)
     for eachline in line:
