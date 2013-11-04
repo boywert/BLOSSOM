@@ -81,10 +81,12 @@ $(LIB)/librunprocs.a: $(LIB)/libconversiontools.a $(LIB)/libabsorptiontools.a $(
 	$(CF) $(CFFLAGS) -c $(SRC)/runprocs.f90 -o $(LIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial 
 
 clean:
+	mkdir -p $(LIB)
 	rm -f $(THIS)/*.mod
 	rm -f $(SRC)/*.o
 	rm -f $(LIB)/*
 	rm -f $(MICLIB)/*
+	rm -f $(BIN)/*
 	rm -f *.o
 	rm -f *.exe
 git:
