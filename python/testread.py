@@ -2,7 +2,7 @@ import numpy
 #import matplotlib.pyplot as plt
 import plot
 
-configfile = '../inputs/config_20mpc_z8_ext1mpc'
+configfile = '/home1/01937/cs390/BLOSSOM/inputs/config_20mpc_z8_ext1mpc'
 plot.readconfig(configfile)
 
 
