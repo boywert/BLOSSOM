@@ -8,10 +8,11 @@ plot.readconfig(configfile)
 
 for i in range(1,101):
     print i
-    linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/RG/0.000/0/sout.%d' % (i)
+    linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/RG/0.400/0/sout.%d' % (i)
     line = plot.readline_binary(linefile)
     for eachline in line:
         for lineel in eachline:
-            print eachline
+            if(lineel < 0.):
+                print eachline
 
 #plot.plotline(line[:,3],line[:,4],line[:,5],'0.000.pdf')
