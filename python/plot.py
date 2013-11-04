@@ -44,7 +44,7 @@ def plotline(freq,absorp,width,output):
 
     for i in range(len(freq)):
         realwidth = width[i]/parameters.config['nu0']*freq[i]
-        yarray *= 1.-(1.-absorp[i])*numpy.exp(-0.5*((xarray-freq[i])/realwidth)**2)
+        yarray *= 1.-absorp[i]*numpy.exp(-0.5*((xarray-freq[i])/realwidth)**2)
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(xarray,yarray)
