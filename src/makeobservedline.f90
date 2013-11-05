@@ -457,7 +457,7 @@ subroutine makeobservedlines_rg(z)
 
 
 
-  !$omp parallel private(std_cputime,str_line,fh_record,ierr &
+  !$omp parallel private(std_cputime,str_line,fh_record,ierr, &
   !$omp& curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index, & 
   !$omp& radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu, &
   !$omp& this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
