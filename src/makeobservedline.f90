@@ -463,7 +463,6 @@ subroutine makeobservedlines_rg(z)
   !$omp& this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
   !$omp do
   do i=firstline,lastline
-     goto 1222
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
@@ -629,6 +628,7 @@ subroutine makeobservedlines_rg(z)
 #endif
 
      curHalo = headofline(i)
+     goto 1222
 #ifdef DEBUG
      print*,"#DEBUG: start curHalo loop from rank",rank,"omp",omp_get_thread_num()
 #endif
