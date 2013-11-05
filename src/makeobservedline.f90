@@ -472,7 +472,6 @@ subroutine makeobservedlines_rg(z)
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
-     allocate(fh_record(21))
 
      
 #ifdef DEBUG
@@ -613,7 +612,7 @@ subroutine makeobservedlines_rg(z)
 
 
 #endif
-     goto 1222
+
      curHalo = headofline(i)
 
 
@@ -989,6 +988,8 @@ subroutine makeobservedlines_rg(z)
   end do
   !$omp end do
   !$omp end parallel
+
+
   deallocate(fh_record)
   print*,'rank',rank,'complete all lines'
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
