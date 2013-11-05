@@ -658,7 +658,7 @@ subroutine makeobservedlines_rg(z)
 #ifdef DEBUG
            if(delta_nu < 0 .or. absorp < 0 .or. extend_absorp < 0) then
               print*, 'mass',M0
-              print*, 'tau',tau
+              print*, 'tau',tau_cache(r_index-1,mass_index),tau_cache(r_index,mass_index)
               print*, 'delta',delta_nu
               print*, 'absorp',absorp
               print*, 'area absorp',extend_absorp
