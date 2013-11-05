@@ -454,17 +454,25 @@ subroutine makeobservedlines_rg(z)
      print*, 'ref',1.e11,(3.*1.e11*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
   end if
 
+  !specify unit numbers used for OpenMP
+  allocate(fh_record(1:21,0:omp_get_num_threads()-1))
+  do k=0,omp_get_num_threads()-1
+     do i=1,21 
+        fh_record(i,k) = k*21+i+10
+     end do
+  end do
+
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
 
-  allocate(fh_record(1:21,0:omp_get_num_threads()-1))
-  !$omp parallel private(std_cputime,str_line,fh_record,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
+
+  !$omp parallel private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
   !$omp do
   do i=firstline,lastline
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
-
+     allocate(fh_record(21))
 
      
 #ifdef DEBUG
@@ -475,159 +483,140 @@ subroutine makeobservedlines_rg(z)
 
 #ifdef RR
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(1,omp_get_thread_num()),ierr)
+     open (unit=fh_record(1,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(4,omp_get_thread_num()),ierr)
+     open (unit=fh_record(4,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(7,omp_get_thread_num()),ierr)
+     open (unit=fh_record(7,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(10,omp_get_thread_num()),ierr)
+     open (unit=fh_record(10,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(13,omp_get_thread_num()),ierr)
+     open (unit=fh_record(13,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+
 
      !minihalo range
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(16,omp_get_thread_num()),ierr)
+     open (unit=fh_record(16,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
 
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(19,omp_get_thread_num()),ierr)
+     open (unit=fh_record(19,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+
 #else
      ! point source
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(1,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(2,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(3,omp_get_thread_num()),ierr)
+     open (unit=fh_record(1,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(2,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(3,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
+
 
      !0.4 diameter
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(4,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(5,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(6,omp_get_thread_num()),ierr)
+     open (unit=fh_record(4,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(5,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(6,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
+
 
      !0.2 diameter
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(7,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(8,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(9,omp_get_thread_num()),ierr)
+     open (unit=fh_record(7,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(8,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(9,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
+
 
      !0.1 diameter
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(10,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(11,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(12,omp_get_thread_num()),ierr)
+     open (unit=fh_record(10,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(11,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(12,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
      
      
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(13,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(14,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(15,omp_get_thread_num()),ierr)
+     open (unit=fh_record(13,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(14,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(15,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
 
 
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(16,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(17,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(18,omp_get_thread_num()),ierr)
+     open (unit=fh_record(16,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(17,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(18,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
+
 
 
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(19,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(20,omp_get_thread_num()),ierr)
-     call mpi_file_open(mpi_comm_self, &
-          trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
-          MPI_MODE_WRONLY + MPI_MODE_CREATE, &
-          mpi_info_null,fh_record(21,omp_get_thread_num()),ierr)
+     open (unit=fh_record(19,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     open (unit=fh_record(20,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.0', &
+          form='binary')
+     open (unit=fh_record(21,omp_get_thread_num()), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          form='binary')
+
+
 #endif
+     goto 1222
      curHalo = headofline(i)
 
-     goto 1222
+
 #ifdef DEBUG
      print*,"#DEBUG: start curHalo loop from rank",rank,"omp",omp_get_thread_num()
 #endif
@@ -703,38 +692,18 @@ subroutine makeobservedlines_rg(z)
 
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(1,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 #else
               !source far away, los pass through cluster
-              
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(1,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(1,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(2,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(2,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
               else
-                 
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(3,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(3,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
               
 #endif
@@ -766,38 +735,17 @@ subroutine makeobservedlines_rg(z)
               ! end if
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(4,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 #else
               !source far away, los pass through cluster
-
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(4,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(4,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(5,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(5,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
               else
-
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(6,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(6,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
 
 #endif
@@ -829,38 +777,19 @@ subroutine makeobservedlines_rg(z)
               ! end if
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(7,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 #else
               !source far away, los pass through cluster
+              write(fh_record(7,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(7,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(8,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(8,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+ 
               else
+                 write(fh_record(9,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(9,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
               endif
 
 #endif
@@ -891,38 +820,16 @@ subroutine makeobservedlines_rg(z)
               ! end if
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(10,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 #else
               !source far away, los pass through cluster
-
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(10,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(10,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(11,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(11,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
               else
-
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(12,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(12,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
 
 #endif
@@ -952,38 +859,17 @@ subroutine makeobservedlines_rg(z)
               ! end if
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(13,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 #else
               !source far away, los pass through cluster
-
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(13,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(13,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(14,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(14,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
               else
-
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(15,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(15,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
 
 #endif
@@ -1013,38 +899,17 @@ subroutine makeobservedlines_rg(z)
               ! end if
 #ifdef RR
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(16,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 #else
               !source far away, los pass through cluster
-
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(16,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(16,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(17,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(17,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
               else
-
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(18,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+                 write(fh_record(18,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
 
 #endif
@@ -1083,38 +948,18 @@ subroutine makeobservedlines_rg(z)
                  print*,'delta_nu',delta_nu
               end if
               !source far away, pass random lines
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(19,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
+
 #else
               !source far away, los pass through cluster
-
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              call MPI_FILE_WRITE(fh_record(19,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              write(fh_record(19,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), d_to_nu(rev_distorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), d_to_nu(rev_undistorted_dist(curhalo)), 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(20,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-              else
+                 write(fh_record(20,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
 
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), M0, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), impact_param/Mpc, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), nu_dist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), nu_undist, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), this_absorp, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
-                 call MPI_FILE_WRITE(fh_record(21,omp_get_thread_num()), delta_nu, 1, MPI_REAL8, MPI_STATUS_IGNORE, ierr)
+              else
+                 write(fh_record(21,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
 
 #endif
@@ -1130,12 +975,13 @@ subroutine makeobservedlines_rg(z)
         
         curHalo = linelinkedlist(curHalo)
      end do
-
+     
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
      !call system("free")
-     1222 continue
-     do k=1,21
-        call MPI_FILE_CLOSE(fh_record(k,omp_get_thread_num()), ierr)
+     do k=0,omp_get_num_threads()-1
+        do j=1,21 
+           close(fh_record(j,k))
+        end do
      end do
 
 
