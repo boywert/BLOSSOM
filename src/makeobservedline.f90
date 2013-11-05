@@ -472,7 +472,7 @@ subroutine makeobservedlines_rg(z)
         print*, 'line =',i
      end if
 #endif
-
+     goto 1222
 #ifdef RR
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      call mpi_file_open(mpi_comm_self, &
@@ -625,7 +625,6 @@ subroutine makeobservedlines_rg(z)
           MPI_MODE_WRONLY + MPI_MODE_CREATE, &
           mpi_info_null,fh_record(21),ierr)
 #endif
-     goto 1222
      curHalo = headofline(i)
 
 
@@ -1131,12 +1130,13 @@ subroutine makeobservedlines_rg(z)
         
         curHalo = linelinkedlist(curHalo)
      end do
-     1222 continue
+
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
      !call system("free")
      do k=1,21
         call MPI_FILE_CLOSE(fh_record(k), ierr)
      end do
+     1222 continue
      deallocate(fh_record)
      print*, 'close files'
   end do
