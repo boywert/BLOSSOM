@@ -19,7 +19,8 @@ subroutine makeobservedlines_rg(z)
 
 
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
-  integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid,fh_record(21)
+  integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid
+  integer(kind=4), allocatable :: fh_record(:)
   integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
   integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
@@ -466,6 +467,7 @@ subroutine makeobservedlines_rg(z)
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
+     allocate(fh_record(1:21))
 
      
 #ifdef DEBUG
@@ -1136,6 +1138,7 @@ subroutine makeobservedlines_rg(z)
      do k=1,21
         call MPI_FILE_CLOSE(fh_record(k), ierr)
      end do
+     deallocate(fh_record)
      print*, 'close files'
      1222 continue
   end do
