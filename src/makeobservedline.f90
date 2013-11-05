@@ -21,7 +21,6 @@ subroutine makeobservedlines_rg(z)
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
   integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid
   integer(kind=4), dimension(:), allocatable :: fh_record
-  !!$omp threadprivate(fh_record)
   integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
   integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
@@ -626,7 +625,7 @@ subroutine makeobservedlines_rg(z)
           MPI_MODE_WRONLY + MPI_MODE_CREATE, &
           mpi_info_null,fh_record(21),ierr)
 #endif
-
+     goto 1222
      curHalo = headofline(i)
 
 
@@ -1132,6 +1131,7 @@ subroutine makeobservedlines_rg(z)
         
         curHalo = linelinkedlist(curHalo)
      end do
+     1222 continue
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
      !call system("free")
      do k=1,21
