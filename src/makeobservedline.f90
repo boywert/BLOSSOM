@@ -21,6 +21,7 @@ subroutine makeobservedlines_rg(z)
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
   integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid
   integer(kind=4), dimension(:), allocatable :: fh_record
+  !!$omp threadprivate(fh_record)
   integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
   integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
@@ -43,7 +44,7 @@ subroutine makeobservedlines_rg(z)
   real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size),spherepart(0:10)
   real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source,source_radius,source_diameter,block_area,block_ratio
   real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,tmp_tau,this_absorp_extend,point_distance
-  !$omp threadprivate(fh_record)
+
 #ifdef DEBUG
   if(rank ==0) call system('free')
 #endif
