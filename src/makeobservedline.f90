@@ -628,6 +628,9 @@ subroutine makeobservedlines_rg(z)
 #endif
 
      curHalo = headofline(i)
+#ifdef DEBUG
+     print*,"#DEBUG: start curHalo loop from rank",rank,"omp",omp_get_thread_num()
+#endif
      do while(curHalo /= 0)
         curHaloid = haloid(curHalo)
         nu_dist = d_to_nu(distorted_dist(curhalo))
