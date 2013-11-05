@@ -20,7 +20,7 @@ subroutine makeobservedlines_rg(z)
 
   integer(kind=8) :: i,j,k,n_point,totalbin,totalpoint,omp_thread
   integer(kind=4) :: fh_hitpoint,fh_direction,fh_haloid
-  integer(kind=4), allocatable :: fh_record(:)
+  integer(kind=4), dimension(:), allocatable :: fh_record
   integer(kind=4) :: fh_lineid,fh_online,fh_toline, line_with_max_halo, max_halo_so_far
   integer(kind=8) :: curHalo,curHaloid,innerHalo,block
   integer(kind=mpi_offset_kind) :: filesize
