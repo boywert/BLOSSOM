@@ -457,23 +457,16 @@ subroutine makeobservedlines_rg(z)
 
 
 
-  !$omp parallel private(std_cputime,str_line,fh_record,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
+  !$omp parallel private(std_cputime,str_line,fh_record,ierr &
+  !$omp& curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index, & 
+  !$omp& radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu, &
+  !$omp& this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
   !$omp do
   do i=firstline,lastline
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
-! #ifdef RR
-!      print*,"rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/status.'//str_rank(1:len_trim(str_rank))
-!      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/status.'//str_rank(1:len_trim(str_rank)))
-!      open(29,file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/status.'//str_rank(1:len_trim(str_rank)), status='new')
-! #else
-!      print*,"rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/status.'//str_rank(1:len_trim(str_rank))
-!      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/status.'//str_rank(1:len_trim(str_rank)))
-!      open(29,file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/status.'//str_rank(1:len_trim(str_rank)), status='new')
-! #endif
-!      write(29,*) i
-!      close(29)   
+
      
 #ifdef DEBUG
      if(rank==0) then
