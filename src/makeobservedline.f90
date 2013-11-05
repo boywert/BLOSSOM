@@ -463,6 +463,7 @@ subroutine makeobservedlines_rg(z)
   !$omp& this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
   !$omp do
   do i=firstline,lastline
+     goto 1222
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
@@ -637,7 +638,6 @@ subroutine makeobservedlines_rg(z)
         nu_undist = d_to_nu(undistorted_dist(curhalo))
         M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
         impact_param = convert_length2physical(real(toline(curHalo),8),z)
-        goto 1222
         if(M0 > 1.e5 .and. M0 < 1.e8) then
 
            ! call tau_cal(M0,z,impact_param,n,r,rho,radius,delta_nu,tau,area_tau)
@@ -667,6 +667,8 @@ subroutine makeobservedlines_rg(z)
            area_tau = areatau_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(areatau_cache(mass_index+1)-areatau_cache(mass_index))
            extend_absorp =  1.d0 - exp(-1*area_tau)
            delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
+
+#ifdef DEBUG
            if(delta_nu < 0 .or. absorp < 0 .or. extend_absorp < 0) then
               print*,'rank',rank
               print*, 'mass',M0
@@ -674,6 +676,7 @@ subroutine makeobservedlines_rg(z)
               print*, 'absorp',absorp
               print*, 'area absorp',extend_absorp
            end if
+#endif
            ! if(rank==0) then
 
            !    print*,'cache'
@@ -1125,7 +1128,7 @@ subroutine makeobservedlines_rg(z)
         !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
         
         !@ next halo
-        1222 continue
+        
         curHalo = linelinkedlist(curHalo)
      end do
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
@@ -1134,6 +1137,7 @@ subroutine makeobservedlines_rg(z)
         call MPI_FILE_CLOSE(fh_record(k), ierr)
      end do
      print*, 'close files'
+     1222 continue
   end do
   !$omp end do
   !$omp end parallel
