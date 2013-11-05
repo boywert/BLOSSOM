@@ -458,16 +458,13 @@ subroutine makeobservedlines_rg(z)
 
 
 
-  !$omp parallel private(std_cputime,str_line,fh_record,ierr, &
-  !$omp& curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index, & 
-  !$omp& radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu, &
-  !$omp& this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k)
+  !$omp parallel private(std_cputime,str_line,fh_record,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
   !$omp do
   do i=firstline,lastline
      std_cputime = omp_get_wtime()
      write(str_line,'(i10)') i
      str_line = adjustl(str_line)
-     allocate(fh_record(1:21))
+     allocate(fh_record(21))
 
      
 #ifdef DEBUG
