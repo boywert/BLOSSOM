@@ -659,6 +659,7 @@ subroutine makeobservedlines_rg(z)
            if(delta_nu < 0 .or. absorp < 0 .or. extend_absorp < 0) then
               print*,'rank',rank
               print*, 'mass',M0
+              print*, 'tau',tau
               print*, 'delta',delta_nu
               print*, 'absorp',absorp
               print*, 'area absorp',extend_absorp
