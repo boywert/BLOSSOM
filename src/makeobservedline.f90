@@ -43,7 +43,7 @@ subroutine makeobservedlines_rg(z)
   real(kind=8) :: tau, area_tau,absorp,extend_absorp, r(0:max_size), rho(0:max_size),spherepart(0:10)
   real(kind=8) :: max_observe, min_observe, nu_min, nu_max, d_source,nu_source,source_radius,source_diameter,block_area,block_ratio
   real(kind=8) :: M0,impact_param,sigma_V,gaussian_sd,delta_nu,theta,this_absorp,tmp_tau,this_absorp_extend,point_distance
- 
+  !$omp threadprivate(fh_record)
 #ifdef DEBUG
   if(rank ==0) call system('free')
 #endif
@@ -627,7 +627,8 @@ subroutine makeobservedlines_rg(z)
 #endif
 
      curHalo = headofline(i)
-     goto 1222
+
+
 #ifdef DEBUG
      print*,"#DEBUG: start curHalo loop from rank",rank,"omp",omp_get_thread_num()
 #endif
@@ -1137,7 +1138,6 @@ subroutine makeobservedlines_rg(z)
      end do
      deallocate(fh_record)
      print*, 'close files'
-     1222 continue
   end do
   !$omp end do
   !$omp end parallel
