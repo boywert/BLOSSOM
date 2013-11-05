@@ -637,7 +637,7 @@ subroutine makeobservedlines_rg(z)
         nu_undist = d_to_nu(undistorted_dist(curhalo))
         M0 = convert_mass2physical(real(halodata(4,curHaloid),8))/M_sol
         impact_param = convert_length2physical(real(toline(curHalo),8),z)
-        
+        goto 1222
         if(M0 > 1.e5 .and. M0 < 1.e8) then
 
            ! call tau_cal(M0,z,impact_param,n,r,rho,radius,delta_nu,tau,area_tau)
@@ -1125,6 +1125,7 @@ subroutine makeobservedlines_rg(z)
         !if(rank==0) write(53,*) int(i), real(nu_undist), real(absorp),real(extend_absorp),real(gaussian_sd)
         
         !@ next halo
+        1222 continue
         curHalo = linelinkedlist(curHalo)
      end do
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
