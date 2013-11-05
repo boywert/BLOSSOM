@@ -977,12 +977,10 @@ subroutine makeobservedlines_rg(z)
      
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
      !call system("free")
-     do k=0,omp_get_num_threads()-1
-        do j=1,21 
-           close(fh_record(j,k))
-        end do
-     end do
 
+     do k=1,21 
+        close(fh_record(omp_get_thread_num(),k))
+     end do
 
      print*, 'close files'
   end do
