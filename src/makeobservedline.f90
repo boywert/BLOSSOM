@@ -460,7 +460,7 @@ subroutine makeobservedlines_rg(z)
   do k=0,omp_get_max_threads()-1
      do i=1,21 
         fh_record(i,k) = k*21+i+10
-        print*,rank,"fh_record",i,k,"=",fh_record(i,k)
+        if(rank==0) print*,rank,"fh_record",i,k,"=",fh_record(i,k)
      end do
   end do
 
@@ -982,7 +982,7 @@ subroutine makeobservedlines_rg(z)
      !call system("free")
 
      do k=1,21 
-        close(fh_record(omp_get_thread_num(),k))
+        close(fh_record(k,omp_get_thread_num()))
      end do
 
      print*, 'close files'
@@ -990,7 +990,7 @@ subroutine makeobservedlines_rg(z)
   !$omp end do
   !$omp end parallel
 
-
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   deallocate(fh_record)
   print*,'rank',rank,'complete all lines'
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
