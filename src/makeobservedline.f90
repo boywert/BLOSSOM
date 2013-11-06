@@ -455,6 +455,7 @@ subroutine makeobservedlines_rg(z)
   end if
 
   !specify unit numbers used for OpenMP
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   allocate(fh_record(1:21,0:omp_get_num_threads()-1))
 
   do k=0,omp_get_max_threads()-1
