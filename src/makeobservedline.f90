@@ -456,9 +456,11 @@ subroutine makeobservedlines_rg(z)
 
   !specify unit numbers used for OpenMP
   allocate(fh_record(1:21,0:omp_get_num_threads()-1))
+
   do k=0,omp_get_num_threads()-1
      do i=1,21 
         fh_record(i,k) = k*21+i+10
+        print*,"fh_record",i,k,"=",fh_record(i,k)
      end do
   end do
 
@@ -466,7 +468,7 @@ subroutine makeobservedlines_rg(z)
 
 
 
-  !$omp parallel private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
+  !$omp parallel default(shared) private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
   !$omp do
   do i=firstline,lastline
      std_cputime = omp_get_wtime()
