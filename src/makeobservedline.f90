@@ -980,13 +980,10 @@ subroutine makeobservedlines_rg(z)
      end do
      
      print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
-     !call system("free")
-
      do k=1,21 
         close(fh_record(k,omp_get_thread_num()))
      end do
-
-     print*, 'close files'
+     call system("free")
   end do
   !$omp end do
   !$omp end parallel
@@ -1000,6 +997,7 @@ subroutine makeobservedlines_rg(z)
        linelinkedlist,headofline)
   deallocate(tau_cache,delta_nu_cache,areatau_cache)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+
 #ifdef RR
 end subroutine makeobservedlines_rr
 #else
