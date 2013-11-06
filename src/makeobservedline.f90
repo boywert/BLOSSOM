@@ -461,13 +461,18 @@ subroutine makeobservedlines_rg(z)
   do k=0,omp_get_max_threads()-1
      do i=1,21 
         fh_record(i,k) = k*21+i+10
-        if(rank==0) print*,rank,"fh_record",i,k,"=",fh_record(i,k)
      end do
   end do
 
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
-
+  do k=0,nodes_returned-1
+     if(rank==k) then
+        print*,"rank",rank
+        print*,fh_record
+     end if
+     call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+  end do
 
   !$omp parallel default(shared) private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
   !$omp do
@@ -983,7 +988,7 @@ subroutine makeobservedlines_rg(z)
      do k=1,21 
         close(fh_record(k,omp_get_thread_num()))
      end do
-     call system("free")
+     !call system("free")
   end do
   !$omp end do
   !$omp end parallel
