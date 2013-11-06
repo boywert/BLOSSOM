@@ -984,7 +984,7 @@ subroutine makeobservedlines_rg(z)
         curHalo = linelinkedlist(curHalo)
      end do
      
-     print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
+     !print*, 'rank',rank, 'line',i,omp_get_wtime() - std_cputime, 's' 
      do k=1,21 
         close(fh_record(k,omp_get_thread_num()))
      end do
