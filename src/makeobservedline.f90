@@ -991,7 +991,6 @@ subroutine makeobservedlines_rg(z)
   !$omp end do
   !$omp end parallel
 
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   deallocate(fh_record)
   print*,'rank',rank,'complete all lines'
  
