@@ -6,6 +6,9 @@ zlist_file		/home1/01937/cs390/BLOSSOM/inputs/z8.dat
 den_profile_file	/home1/01937/cs390/BLOSSOM/inputs/TIS_profile.dat
 subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_20mpc.dat
 
+#OBSERVATION PARAMETERS
+obsfreqresolution	1000.0	#Hz
+
 #COSMOLOGICAL PARAMETERS WMAP5
 
 Omega_0			0.27

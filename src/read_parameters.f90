@@ -195,6 +195,10 @@ contains
     var_type(n) = 1
     var_pointer(n)%int4 => last_l
 
+    n=n+1
+    tag(n) = 'obsfreqresolution'
+    var_type(n) = 4
+    var_pointer(n)%real8 => obsfreqresolution
 
     n=n+1
     tag(n) = 'Mttil'

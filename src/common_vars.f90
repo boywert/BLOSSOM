@@ -45,6 +45,10 @@ module common_vars
   integer, target :: max_size 
 
   !#######################################################################
+  !@ Observation parameters
+  real(kind=8), target :: obsfreqresolution
+
+  !#######################################################################
   !@ Cosmological parameters
   real(kind=8), target :: Omega_0 
   real(kind=8), target :: lambda0 
@@ -61,7 +65,6 @@ module common_vars
   !@ cubep3m parameter
 
   character(len=STRINGLEN), target :: los_path 
-  logical , target :: rr
   character(len=STRINGLEN), target :: halo_path 
   character(len=STRINGLEN), target :: result_path 
   character(len=STRINGLEN), target :: subcellden_path
@@ -100,6 +103,7 @@ module common_vars
   !@ for LOSs
   integer :: max_line
   integer :: line_use_to_save
+  logical , target :: rr
   integer, target :: line_length_factor
   real(kind=8), target :: MaxSourceSize
   !#######################################################################
