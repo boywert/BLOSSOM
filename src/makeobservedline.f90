@@ -457,7 +457,7 @@ subroutine makeobservedlines_rg(z)
   !specify unit numbers used for OpenMP
   allocate(fh_record(1:21,0:omp_get_num_threads()-1))
 
-  do k=0,omp_get_num_threads()-1
+  do k=0,omp_get_max_threads()-1
      do i=1,21 
         fh_record(i,k) = k*21+i+10
         print*,rank,"fh_record",i,k,"=",fh_record(i,k)
