@@ -16,7 +16,7 @@ OPT += -DCLEARTEMP
 OPT += -DUSEMAXSOURCESIZE 
 #OPT += -DINCLUDEPROTOGALACTIC 
 OPT += -DDEBUG 
-#OPT += -DUSERHO178
+OPT += -DUSERHO178    #enable if halo catalogue uses top hat mass
 
 CFFLAGS += $(OPT)
 MICCFFLAGS += $(OPT)
