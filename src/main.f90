@@ -2,13 +2,14 @@ program test
   use common_vars
   use read_parameters
   use runprocs
+  use omp_lib
   implicit none
   character(len=STRINGLEN) :: filename
   integer :: i
-  
+  real(kind=8) :: main_start,main_stop
   call mpi_initialize
   call get_mpi_rank_nodes
-
+  if(rank==0) main_start = omp_get_wtime() 
   !filename = 'inputs/Config'
   call getarg(1,filename)
   !print*, iargc(), filename
@@ -47,7 +48,15 @@ program test
 
      end if
   end do
-
+  if(rank==0) then
+     main_stop = omp_get_wtime() 
+     print*,"#####################################################"
+     print*,"This process used", main_stop-main_start,"s"
+     print*,"This process used", nodes_returned*omp_get_max_threads(main_stop-main_start)/3600.,"SUs"
+     print*, "Terminate process"
+     print*,"#####################################################"
+     
+  end if
   call mpi_end_process
 end program test
 
