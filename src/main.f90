@@ -52,7 +52,7 @@ program test
      main_stop = omp_get_wtime() 
      print*,"#####################################################"
      print*,"This process used", main_stop-main_start,"s"
-     print*,"This process used", nodes_returned*omp_get_max_threads(main_stop-main_start)/3600.,"SUs"
+     print*,"This process used", nodes_returned*omp_get_max_threads()*(main_stop-main_start)/3600.,"SUs"
      print*, "Terminate process"
      print*,"#####################################################"
      
