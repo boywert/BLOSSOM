@@ -683,8 +683,8 @@ subroutine makeobservedlines_rg(z)
            if(impact_param < radius) then
               ! not include z-distortion
 #ifdef DEBUG
-              print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
-              print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)
+              !print*, int(i), real(nu_undist), real(absorp),real(gaussian_sd)
+              !print*, int(i), real(nu_dist), real(absorp),real(gaussian_sd)
 #endif
               this_absorp = absorp
 
@@ -994,13 +994,13 @@ subroutine makeobservedlines_rg(z)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   deallocate(fh_record)
   print*,'rank',rank,'complete all lines'
-  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+ 
   deallocate(halodata,online,toline, &
        lineid,haloid,distorted_dist,rev_distorted_dist, &
        comov_dist,undistorted_dist,rev_undistorted_dist, &
        linelinkedlist,headofline)
   deallocate(tau_cache,delta_nu_cache,areatau_cache)
-call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 #ifdef RR
 end subroutine makeobservedlines_rr
 #else
