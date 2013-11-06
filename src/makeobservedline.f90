@@ -460,7 +460,7 @@ subroutine makeobservedlines_rg(z)
   do k=0,omp_get_num_threads()-1
      do i=1,21 
         fh_record(i,k) = k*21+i+10
-        print*,"fh_record",i,k,"=",fh_record(i,k)
+        print*,rank,"fh_record",i,k,"=",fh_record(i,k)
      end do
   end do
 
