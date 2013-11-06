@@ -9,10 +9,11 @@ program test
   real(kind=8) :: main_start,main_stop
   call mpi_initialize
   call get_mpi_rank_nodes
+
   if(rank==0) main_start = omp_get_wtime() 
-  !filename = 'inputs/Config'
+
   call getarg(1,filename)
-  !print*, iargc(), filename
+
   call read_config(filename)
   call read_zlist
 
@@ -55,8 +56,8 @@ program test
      print*,"This process used", nodes_returned*omp_get_max_threads()*(main_stop-main_start)/3600.,"SUs"
      print*, "Terminate process"
      print*,"#####################################################"
-     
   end if
+  
   call mpi_end_process
 end program test
 
