@@ -70,6 +70,14 @@ subroutine makeobservedlines_rg(z)
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank)))
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank)))
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank)))
+
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//"/*")
 #else
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank)))
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank)))
@@ -78,6 +86,14 @@ subroutine makeobservedlines_rg(z)
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank)))
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank)))
         call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank)))
+
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//"/*")
+        call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//"/*")
 #endif
 
      endif
@@ -288,12 +304,16 @@ subroutine makeobservedlines_rg(z)
   endif
 
   allocate(distorted_dist(1:n_point))
-  allocate(rev_undistorted_dist(1:n_point))
-  allocate(rev_distorted_dist(1:n_point))
   allocate(comov_dist(1:n_point))
   allocate(undistorted_dist(1:n_point))
   allocate(linelinkedlist(1:n_point))
   allocate(headofline(1:max_line))
+
+#ifdef DOUBLELINE 
+  allocate(rev_undistorted_dist(1:n_point))
+  allocate(rev_distorted_dist(1:n_point))
+#endif
+
   !allocate(haloperline(1:max_line))
 #ifdef DEBUG
   if(rank ==0) call system('free')
@@ -320,10 +340,12 @@ subroutine makeobservedlines_rg(z)
      distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(direction(1:3,i),halodata(1:3,curHaloid)),8),z)/c
      distorted_dist(i) = z_to_d(distorted_z)
 
+#ifdef DOUBLELINE
      rev_undistorted_dist(i) = d0+convert_length2physical(real(Boxsize*line_length_factor-online(i),8),z) - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z)
      rev_undistorted_z = d_to_z(rev_undistorted_dist(i))
      rev_distorted_z = undistorted_z+convert_vel2physical(real(dotproduct(direction(1:3,i)*-1.,halodata(1:3,curHaloid)),8),z)/c
      rev_distorted_dist(i) = z_to_d(rev_distorted_z)
+#endif
      !nu_dist = d_to_nu(distorted_dist(i))
      !nu_undist = d_to_nu(undistorted_dist(i))
 
@@ -361,8 +383,13 @@ subroutine makeobservedlines_rg(z)
   
   call n_cal(z,n,r,rho)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+
+  if(rank==0) print*,"Calculating cutting sphere"
   call make_spherecut(n,r,rho,spherepart)
+
   if(rank==0) call system('free')
+  
+  if(rank==0) print*,"Start calculate optical depth(tau) and make caches"
   allocate(tau_cache(0:max_size,1:n_cache))
   allocate(areatau_cache(1:n_cache))
   allocate(delta_nu_cache(1:n_cache))
@@ -378,12 +405,14 @@ subroutine makeobservedlines_rg(z)
      call cache_tau_table(M0,z,n,r,rho,delta_nu_cache(i),tau_cache(0:max_size,i),areatau_cache(i))
   end do
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-
+  if(rank==0) print*,"Exchange cache between MPIs"
   do i=1,nodes_returned-1
      tag = i
      
      if (rank == 0) then
+#ifdef DEBUG
         print*,'tranfering tau from',i
+#endif
         call mpi_recv(tau_cache(0:max_size,i*n_cache/nodes_returned+1:(i+1)*n_cache/nodes_returned),(max_size+1)*(n_cache/nodes_returned),mpi_real8, &
              i,tag,mpi_comm_world,status,ierr)
      elseif (rank == i) then
@@ -393,7 +422,9 @@ subroutine makeobservedlines_rg(z)
      call mpi_barrier(mpi_comm_world,ierr)
 
      if (rank == 0) then
+#ifdef DEBUG
         print*,'tranfering area tau from',i
+#endif
         call mpi_recv(areatau_cache(i*n_cache/nodes_returned+1:(i+1)*n_cache/nodes_returned),(n_cache/nodes_returned),mpi_real8, &
              i,tag,mpi_comm_world,status,ierr)
      elseif (rank == i) then
@@ -426,10 +457,14 @@ subroutine makeobservedlines_rg(z)
      if(i==rank) then
         do j=1,n_cache
            if(delta_nu_cache(j) < 0) then
+#ifdef DEBUG
               print*,'mass',j,delta_nu_cache(j)
+#endif
            end if
         end do
+#ifdef DEBUG
         print*,'finish checking rank',i
+#endif
      end if
      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
      
@@ -465,7 +500,9 @@ subroutine makeobservedlines_rg(z)
   end do
 
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+  if(rank==0) call system('free')
 
+#ifdef DEBUG
   do k=0,nodes_returned-1
      if(rank==k) then
         print*,"rank",rank
@@ -473,7 +510,9 @@ subroutine makeobservedlines_rg(z)
      end if
      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   end do
-
+#endif
+  if(rank==0) print*,"Start calculating absorption for LOS's"
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   !$omp parallel default(shared) private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
   !$omp do
   do i=firstline,lastline
@@ -489,43 +528,41 @@ subroutine makeobservedlines_rg(z)
 #endif
 
 #ifdef RR
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(1,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(4,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(7,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(10,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(13,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
 
 
      !minihalo range
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
      open (unit=fh_record(16,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
 
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
+
      open (unit=fh_record(19,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RR/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
 
 #else
      ! point source
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
+
      open (unit=fh_record(1,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -538,8 +575,7 @@ subroutine makeobservedlines_rg(z)
 
 
      !0.4 diameter
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
+
      open (unit=fh_record(4,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -552,8 +588,7 @@ subroutine makeobservedlines_rg(z)
 
 
      !0.2 diameter
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
+
      open (unit=fh_record(7,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.200/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -566,8 +601,7 @@ subroutine makeobservedlines_rg(z)
 
 
      !0.1 diameter
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
+
      open (unit=fh_record(10,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.100/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -579,8 +613,6 @@ subroutine makeobservedlines_rg(z)
           form='binary')
      
      
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
      open (unit=fh_record(13,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.050/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -592,8 +624,6 @@ subroutine makeobservedlines_rg(z)
           form='binary')
 
 
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
      open (unit=fh_record(16,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -605,9 +635,6 @@ subroutine makeobservedlines_rg(z)
           form='binary')
 
 
-
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)) )
-     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.*' )
      open (unit=fh_record(19,omp_get_thread_num()), &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.003/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
@@ -709,7 +736,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(2,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+#endif
               else
                  write(fh_record(3,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -751,7 +780,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(5,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+#endif
               else
                  write(fh_record(6,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -793,8 +824,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(8,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
- 
+#endif
               else
                  write(fh_record(9,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
 
@@ -835,7 +867,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(11,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+#endif
               else
                  write(fh_record(12,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -875,7 +909,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(14,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+#endif
               else
                  write(fh_record(15,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -915,7 +951,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(17,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
+#endif
               else
                  write(fh_record(18,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -964,8 +1002,9 @@ subroutine makeobservedlines_rg(z)
 
               !source in cluster
               if(online(curHalo) > line_length_factor/2.*Boxsize ) then
+#ifdef DOUBLELINE
                  write(fh_record(20,omp_get_thread_num())) M0,impact_param/radius, d_to_nu(rev_distorted_dist(curhalo)),d_to_nu(rev_undistorted_dist(curhalo)),this_absorp,delta_nu
-
+#endif
               else
                  write(fh_record(21,omp_get_thread_num())) M0,impact_param/radius,nu_dist,nu_undist,this_absorp,delta_nu
               endif
@@ -994,12 +1033,16 @@ subroutine makeobservedlines_rg(z)
   !$omp end parallel
 
   deallocate(fh_record)
-  print*,'rank',rank,'complete all lines'
+  call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+  if(rank==0) print*,'complete all lines'
  
   deallocate(halodata,online,toline, &
-       lineid,haloid,distorted_dist,rev_distorted_dist, &
-       comov_dist,undistorted_dist,rev_undistorted_dist, &
+       lineid,haloid,distorted_dist, &
+       comov_dist,undistorted_dist, &
        linelinkedlist,headofline)
+#ifdef DOUBLELINE
+  deallocate(rev_distorted_dist,rev_undistorted_dist)
+#endif
   deallocate(tau_cache,delta_nu_cache,areatau_cache)
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
