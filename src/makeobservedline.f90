@@ -368,7 +368,7 @@ subroutine makeobservedlines_rg(z)
   nu_min = d_to_nu(max_observe)
   min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_max = d_to_nu(min_observe)
-  print*, 'nu_max=',nu_max,'numin=',nu_min
+  !print*, 'nu_max=',nu_max,'numin=',nu_min
 
 #ifndef RR
   d_source = d0 + convert_length2physical(real(Boxsize*(real(line_length_factor)-0.5),8),z) 
@@ -434,7 +434,9 @@ subroutine makeobservedlines_rg(z)
      call mpi_barrier(mpi_comm_world,ierr)
 
      if (rank == 0) then
+#ifdef DEBUG
         print*,'tranfering delta nu from',i
+#ifdef DEBUG
         call mpi_recv(delta_nu_cache(i*n_cache/nodes_returned+1:(i+1)*n_cache/nodes_returned),(n_cache/nodes_returned),mpi_real8, &
              i,tag,mpi_comm_world,status,ierr)
      elseif (rank == i) then
@@ -614,7 +616,6 @@ subroutine makeobservedlines_rg(z)
      close(10)
   end if !end making line profiles
 
-  return
 
   if(rank==0) print*,"Start calculating absorption for LOS's"
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
