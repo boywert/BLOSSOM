@@ -42,7 +42,7 @@ output = "python/sample_1e8_p.pdf"
 for eachline in line:
     print eachline
     plot.plotline_sample(line[:,2],line[:,4],line[:,5],output)
-linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e5_extenend'
+linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e5_extended'
 line = plot.readline_binary(linefile)
 output = "python/sample_1e5_p.pdf" 
 for eachline in line:
