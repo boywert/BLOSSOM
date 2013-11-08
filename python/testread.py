@@ -20,7 +20,25 @@ plot.readconfig(configfile)
 #     plot.plotline(line[:,3],line[:,4],line[:,5],output)
 linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e5_point'
 line = plot.readline_binary(linefile)
-output = "python/sample.pdf" 
+output = "python/sample_1e5.pdf" 
+for eachline in line:
+    print eachline
+    plot.plotline(line[:,2],line[:,4],line[:,5],output)
+linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e6_point'
+line = plot.readline_binary(linefile)
+output = "python/sample_1e6.pdf" 
+for eachline in line:
+    print eachline
+    plot.plotline(line[:,2],line[:,4],line[:,5],output)
+linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e7_point'
+line = plot.readline_binary(linefile)
+output = "python/sample_1e7.pdf" 
+for eachline in line:
+    print eachline
+    plot.plotline(line[:,2],line[:,4],line[:,5],output)
+linefile = '/scratch/01937/cs390/outputs/cubepm_090610_14_5488_20Mpc/RESULT/ext1mpc/8.064/Samples/Sample_1e8_point'
+line = plot.readline_binary(linefile)
+output = "python/sample_1e8.pdf" 
 for eachline in line:
     print eachline
     plot.plotline(line[:,2],line[:,4],line[:,5],output)
