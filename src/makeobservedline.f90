@@ -511,6 +511,111 @@ subroutine makeobservedlines_rg(z)
      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   end do
 #endif
+
+  ! Make sample line profiles
+  if(rank==0) then
+     call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/Samples')
+     call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/*')
+     ! point source 1e5 M_sol
+     M0 =1.0001d5.
+     nu_dist = d_to_nu(d0)
+     mass_index = int(M0/(1.d8/n_cache)) 
+     radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
+     r0 = radius/zeta_t
+     r_index = 1
+     tau = tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+     absorp = 1.d0 - exp(-1.*tau)
+     area_tau = areatau_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(areatau_cache(mass_index+1)-areatau_cache(mass_index))
+     extend_absorp =  1.d0 - exp(-1*area_tau)
+     delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
+     this_absorp = absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_point'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     this_absorp = extend_absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_extended'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     ! point source 1e6 M_sol
+     M0 =1.0d6.
+     nu_dist = d_to_nu(d0)
+     mass_index = int(M0/(1.d8/n_cache)) 
+     radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
+     r0 = radius/zeta_t
+     r_index = 1
+     tau = tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+     absorp = 1.d0 - exp(-1.*tau)
+     area_tau = areatau_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(areatau_cache(mass_index+1)-areatau_cache(mass_index))
+     extend_absorp =  1.d0 - exp(-1*area_tau)
+     delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
+     this_absorp = absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_point'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     this_absorp = extend_absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_extended'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     ! point source 1e7 M_sol
+     M0 =1.000d7.
+     nu_dist = d_to_nu(d0)
+     mass_index = int(M0/(1.d8/n_cache)) 
+     radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
+     r0 = radius/zeta_t
+     r_index = 1
+     tau = tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+     absorp = 1.d0 - exp(-1.*tau)
+     area_tau = areatau_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(areatau_cache(mass_index+1)-areatau_cache(mass_index))
+     extend_absorp =  1.d0 - exp(-1*area_tau)
+     delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
+     this_absorp = absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_point'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     this_absorp = extend_absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_extended'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     ! point source 1e8 M_sol
+     M0 =9.999d7.
+     nu_dist = d_to_nu(d0)
+     mass_index = int(M0/(1.d8/n_cache)) 
+     radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
+     r0 = radius/zeta_t
+     r_index = 1
+     tau = tau_cache(r_index-1,mass_index) + ( impact_param/r0 - r(r_index-1) )/(r(r_index)-r(r_index-1)) * (tau_cache(r_index,mass_index) - tau_cache(r_index-1,mass_index))
+     absorp = 1.d0 - exp(-1.*tau)
+     area_tau = areatau_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(areatau_cache(mass_index+1)-areatau_cache(mass_index))
+     extend_absorp =  1.d0 - exp(-1*area_tau)
+     delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
+     this_absorp = absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_point'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+     this_absorp = extend_absorp
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_extended'), &
+          form='binary')
+     write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
+     close(10)
+  end if
+
+  return
+
   if(rank==0) print*,"Start calculating absorption for LOS's"
   call MPI_BARRIER(MPI_COMM_WORLD,ierr)
   !$omp parallel default(shared) private(std_cputime,str_line,ierr,curHalo,curhaloid,nu_dist,nu_undist,M0,impact_param,mass_index,radius,r0,r_index,tau,absorp,area_tau,extend_absorp,delta_nu,this_absorp,source_diameter,source_radius,block_ratio,block_area,overlap_index,theta,k,i)
