@@ -37,8 +37,8 @@ def readline_binary(filename):
     return line
 
 def plotline(freq,absorp,width,output):
-    minfreq = min(freq)
-    maxfreq = max(freq)
+    minfreq = min(freq) - 8000.
+    maxfreq = max(freq) + 8000.
     xarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
     yarray = numpy.ones(len(xarray))
 
