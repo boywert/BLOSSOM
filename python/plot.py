@@ -55,7 +55,7 @@ def plotline(freq,absorp,width,output):
     return yarray
 
 def plotline_sample(freq,absorp,width,output):
-    minfreq = min(freq) - width[0]*3..
+    minfreq = min(freq) - width[0]*3.
     maxfreq = max(freq) + width[0]*3.
     xarray = numpy.arange(minfreq,maxfreq,parameters.max_resolve)
     yarray = numpy.ones(len(xarray))
