@@ -436,7 +436,7 @@ subroutine makeobservedlines_rg(z)
      if (rank == 0) then
 #ifdef DEBUG
         print*,'tranfering delta nu from',i
-#ifdef DEBUG
+#endif
         call mpi_recv(delta_nu_cache(i*n_cache/nodes_returned+1:(i+1)*n_cache/nodes_returned),(n_cache/nodes_returned),mpi_real8, &
              i,tag,mpi_comm_world,status,ierr)
      elseif (rank == i) then
