@@ -63,7 +63,7 @@ def plotline_sample(freq,absorp,width,output):
         yarray *= 1.-absorp[i]*numpy.exp(-0.5*((xarray-freq[i])/realwidth)**2)
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    for i in range(len(freq)):
+    for i in range(len(xarray)):
         xarray[i] -= freq[0]
     xarray /= 1e3
     ax.plot(xarray,yarray)
