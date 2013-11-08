@@ -3,6 +3,8 @@ import matplotlib
 matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as plt
 
+plt.rc('text', usetex=True)
+
 from math import *
 class parameters(object):
     z = 8.064
@@ -67,6 +69,7 @@ def plotline_sample(freq,absorp,width,output):
         xarray[i] -= freq[0]
     xarray /= 1e3
     ax.plot(xarray,yarray)
+    ax.xlable(r"$\nu$ kHz")
     plt.savefig(output)
     return yarray
 
