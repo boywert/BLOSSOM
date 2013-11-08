@@ -530,13 +530,13 @@ subroutine makeobservedlines_rg(z)
      delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
      this_absorp = absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_point'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_point', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      this_absorp = extend_absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_extended'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e5_extended', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
@@ -554,13 +554,13 @@ subroutine makeobservedlines_rg(z)
      delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
      this_absorp = absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_point'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_point', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      this_absorp = extend_absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_extended'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e6_extended', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
@@ -578,13 +578,13 @@ subroutine makeobservedlines_rg(z)
      delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
      this_absorp = absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_point'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_point', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      this_absorp = extend_absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_extended'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e7_extended', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
@@ -602,17 +602,17 @@ subroutine makeobservedlines_rg(z)
      delta_nu = delta_nu_cache(mass_index) + (M0-(1.d8/n_cache)*mass_index)/(1.d8/n_cache)*(delta_nu_cache(mass_index+1)-delta_nu_cache(mass_index))
      this_absorp = absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_point'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_point', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      this_absorp = extend_absorp
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_extended'), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/Sample_1e8_extended', &
           form='binary')
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
-  end if
+  end if !end making line profiles
 
   return
 
