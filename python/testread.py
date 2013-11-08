@@ -23,4 +23,4 @@ line = plot.readline_binary(linefile)
 output = "python/sample.pdf" 
 for eachline in line:
     print eachline
-    plot.plotline(line[:,3],line[:,4],line[:,5],output)
+    plot.plotline(line[:,2],line[:,4],line[:,5],output)
