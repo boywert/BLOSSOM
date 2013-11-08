@@ -78,7 +78,7 @@ $(LIB)/libconversiontools.a: $(LIB)/libcommon_vars.a
 	$(CF) $(CFFLAGS) -c $(SRC)/conversiontools.f90 -o $(LIB)/libconversiontools.a -lcommon_vars
 
 $(LIB)/libmodsubcellcorr.a: $(LIB)/libconversiontools.a $(LIB)/libabsorptiontools.a $(LIB)/libdatatools.a $(LIB)/libarraytools.a $(LIB)/libvectortools.a  $(LIB)/libio_tools.a $(LIB)/libmpitools.a $(LIB)/libcommon_vars.a $(LIB)/libutilities_serial.a
-	$(CF) $(CFFLAGS) -c $(SRC)/mod_subcell_corr.f90 -o $(LIB)/libmodsubcellcorr.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial 
+	$(CF) $(CFFLAGS) -c $(SRC)/module_subcell_corr.f90 -o $(LIB)/libmodsubcellcorr.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial 
 
 $(LIB)/librunprocs.a: $(LIB)/libconversiontools.a $(LIB)/libabsorptiontools.a $(LIB)/libdatatools.a $(LIB)/libarraytools.a $(LIB)/libvectortools.a  $(LIB)/libio_tools.a $(LIB)/libmpitools.a $(LIB)/libcommon_vars.a $(LIB)/libutilities_serial.a $(LIB)/libmodsubcellcorr.a
 	$(CF) $(CFFLAGS) -c $(SRC)/runprocs.f90 -o $(LIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial -lmodsubcellcorr
