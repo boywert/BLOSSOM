@@ -1,5 +1,5 @@
 module runprocs
-  use mod_subcell_corr
+  use module_subcell_corr
   implicit none
 contains
 
