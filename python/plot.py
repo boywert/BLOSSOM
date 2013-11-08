@@ -69,7 +69,7 @@ def plotline_sample(freq,absorp,width,output):
         xarray[i] -= freq[0]
     xarray /= 1e3
     ax.plot(xarray,yarray)
-    ax.set_xlabel(r"$\nu$ kHz")
+    ax.set_xlabel(r"$\nu$ (kHz)")
     plt.savefig(output)
     return yarray
 
