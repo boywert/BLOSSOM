@@ -517,7 +517,7 @@ subroutine makeobservedlines_rg(z)
      call system("mkdir -p "//trim(result_path)//z_s(1:len_trim(z_s))//'/Samples')
      call system("rm -f "//trim(result_path)//z_s(1:len_trim(z_s))//'/Samples/*')
      ! point source 1e5 M_sol
-     M0 =1.0001d5.
+     M0 =1.0001d5
      nu_dist = d_to_nu(d0)
      mass_index = int(M0/(1.d8/n_cache)) 
      radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
@@ -541,7 +541,7 @@ subroutine makeobservedlines_rg(z)
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      ! point source 1e6 M_sol
-     M0 =1.0d6.
+     M0 =1.0d6
      nu_dist = d_to_nu(d0)
      mass_index = int(M0/(1.d8/n_cache)) 
      radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
@@ -565,7 +565,7 @@ subroutine makeobservedlines_rg(z)
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      ! point source 1e7 M_sol
-     M0 =1.000d7.
+     M0 =1.000d7
      nu_dist = d_to_nu(d0)
      mass_index = int(M0/(1.d8/n_cache)) 
      radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
@@ -589,7 +589,7 @@ subroutine makeobservedlines_rg(z)
      write(10) M0,real(0.,8),nu_dist,real(0.,8),this_absorp,delta_nu
      close(10)
      ! point source 1e8 M_sol
-     M0 =9.999d7.
+     M0 =9.999d7
      nu_dist = d_to_nu(d0)
      mass_index = int(M0/(1.d8/n_cache)) 
      radius  = (3.*M0*M_sol/(4.*pi*Delta_c*rho_crit_z))**(1./3.)
