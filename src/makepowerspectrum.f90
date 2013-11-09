@@ -8,8 +8,8 @@ subroutine makepowerspectrum_rg(z)
   use common_vars
   use omp_lib
   use io_tools
-  include "fftw3.f"
   implicit none
+  include "fftw3.f"
 
   double complex in, out
   dimension in(N), out(N)
