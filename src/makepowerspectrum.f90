@@ -22,7 +22,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   print*,""
   !$omp parallel do
-  do i=0,100
+  do i=0,10000
      call dfftw_plan_dft_r2c_1d(plan(omp_get_thread_num()),N,in(:,omp_get_thread_num()),out(:,omp_get_thread_num()),FFTW_ESTIMATE)
      call dfftw_execute(plan(omp_get_thread_num()))
      call dfftw_destroy_plan(plan(omp_get_thread_num()))
