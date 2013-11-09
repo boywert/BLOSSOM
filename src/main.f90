@@ -46,6 +46,12 @@ program test
 #ifdef ABSORPTION_RG
         call makeobservedlines_rg(zlist(i))
 #endif
+#ifdef POWERSP_RG
+        call makepowerspectrum_rg(zlist(i))
+#endif
+#ifdef POWERSP_RR
+        call makepowerspectrum_rr(zlist(i))
+#endif
 
      end if
   end do
