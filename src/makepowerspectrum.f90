@@ -13,7 +13,7 @@ subroutine makepowerspectrum_rg(z)
   
   real(kind=8) :: z
   double complex in, out
-  dimension in(N), out(N)
+  dimension in(10), out(10)
   integer*8 plan
 
   call dfftw_plan_dft_1d(plan,N,in,out,FFTW_FORWARD,FFTW_ESTIMATE)
