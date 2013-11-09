@@ -13,18 +13,19 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8) :: z
   integer, parameter :: N=1000
   integer(kind=8) :: plan
-  real(kind=8) :: in(N)
-  complex(kind=8) :: out(N/2+1)
+  real(kind=8) :: in(N,0:2)
+  complex(kind=8) :: out(N/2+1,0:2)
   integer :: i,j,iret
-  ! call dfftw_init_threads(iret)
-  ! call dfftw_plan_with_nthreads(omp_get_max_threads())
+
   do i=1,N
-     in(i) = real(i)**2.
+     in(i,0:2) = real(i)**2.
   end do
   print*,""
-  call dfftw_plan_dft_r2c_1d(plan,N,in,out,FFTW_ESTIMATE)
-  call dfftw_execute(plan)
-  call dfftw_destroy_plan(plan)
+  do i=0,2 
+     call dfftw_plan_dft_r2c_1d(plan(omp_get_thread_num()),N,in(:,omp_get_thread_num()),out(:,omp_get_thread_num()),FFTW_ESTIMATE)
+     call dfftw_execute(plan(omp_get_thread_num()))
+     call dfftw_destroy_plan(plan(omp_get_thread_num())
+  end do
   ! do i=1,N/2+1
   !    print*, real(in(i)), real(out(i))
   ! end do
