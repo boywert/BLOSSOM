@@ -11,7 +11,7 @@ subroutine makepowerspectrum_rg(z)
   implicit none
   include 'fftw3.f'
   real(kind=8) :: z
-  integer, parameter :: N=10
+  integer, parameter :: N=100
   integer(kind=8) :: plan
   real(kind=8) :: in(N)
   complex(kind=8) :: out(N/2+1)
