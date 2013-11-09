@@ -8,17 +8,25 @@ subroutine makepowerspectrum_rg(z)
   use common_vars
   use omp_lib
   use io_tools
+  use, intrinsic :: iso_c_binding
   implicit none
-  include "fftw3.f"
-  integer,parameter :: N=10
-  real(kind=8) :: z
-  double complex in, out
-  dimension in(N), out(N)
-  integer*8 plan
+  include 'fftw3.f'
+  integer, parameter :: N=10
+  integer(kind=8) :: plan
+  complex(kind=8) :: in(N)
+  complex(kind=8) :: out(N/2+1)
+  integer :: i,j
+  do i=1,N
+     in(i) = cmplx(real(i)**2.,0.)
+  end do
 
   call dfftw_plan_dft_1d(plan,N,in,out,FFTW_FORWARD,FFTW_ESTIMATE)
-  call dfftw_execute_dft(plan, in, out)
+  call dfftw_execute(plan)
   call dfftw_destroy_plan(plan)
+  do i=1,N/2+1
+     print*, real(in(i)), real(out(i))
+  end do
+
 
   
 #ifdef RR
