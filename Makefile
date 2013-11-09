@@ -11,7 +11,7 @@ MICCFFLAGS = -fpp -O3  -openmp  -mmic
 
 CFFLAGS += -L/$(LIB) -I/$(LIB)
 MICCFFLAGS += -L/$(MICLIB) -I/$(MICLIB)
-FFTW3TAGS = -I$(TACC_FFTW3_INC) -L$(TACC_FFTW3_LIB) -lfftw3 -lm -limf
+FFTW3TAGS = -I$(TACC_FFTW3_INC) -L$(TACC_FFTW3_LIB) -lfftw3  -limf
 OPT  = 
 OPT += -DCLEARTEMP 
 OPT += -DUSEMAXSOURCESIZE 
@@ -81,7 +81,7 @@ $(LIB)/libconversiontools.a: $(LIB)/libcommon_vars.a
 
 
 $(LIB)/librunprocs.a: $(LIB)/libconversiontools.a $(LIB)/libabsorptiontools.a $(LIB)/libdatatools.a $(LIB)/libarraytools.a $(LIB)/libvectortools.a  $(LIB)/libio_tools.a $(LIB)/libmpitools.a $(LIB)/libcommon_vars.a $(LIB)/libutilities_serial.a 
-	$(CF) $(CFFLAGS) -c $(SRC)/runprocs.f90 -o $(LIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial $(FFTW3TAGS)
+	$(CF) $(CFFLAGS) -c $(SRC)/runprocs.f90 -o $(LIB)/librunprocs.a -lconversiontools -ldatatools -larraytools -lvectortools -lio_tools -lmpitools -lcommon_vars -lutilities_serial 
 
 clean:
 	mkdir -p $(LIB)
