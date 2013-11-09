@@ -6,7 +6,7 @@ BIN = $(THIS)/bin
 CF = mpif90
 MICCF = mpif90
 
-CFFLAGS = -fpp -openmp -O1 
+CFFLAGS = -fpp -openmp -O2
 MICCFFLAGS = -fpp -O3  -openmp  -mmic
 
 CFFLAGS += -L/$(LIB) -I/$(LIB)
