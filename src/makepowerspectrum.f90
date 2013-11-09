@@ -12,7 +12,7 @@ subroutine makepowerspectrum_rg(z)
   include 'fftw3.f'
   real(kind=8) :: z
   integer, parameter :: N=1000
-  integer(kind=8) :: plan
+  integer(kind=8) :: plan(0:2)
   real(kind=8) :: in(N,0:2)
   complex(kind=8) :: out(N/2+1,0:2)
   integer :: i,j,iret
