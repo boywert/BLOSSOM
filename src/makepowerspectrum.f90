@@ -10,7 +10,8 @@ subroutine makepowerspectrum_rg(z)
   use io_tools
   implicit none
   include "fftw3.f"
-
+  
+  real(kind=8) :: z
   double complex in, out
   dimension in(N), out(N)
   integer*8 plan
