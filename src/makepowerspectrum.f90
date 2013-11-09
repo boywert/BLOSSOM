@@ -11,11 +11,13 @@ subroutine makepowerspectrum_rg(z)
   implicit none
   include 'fftw3.f'
   real(kind=8) :: z
-  integer, parameter :: N=10
+  integer, parameter :: N=1000
   integer(kind=8) :: plan
   real(kind=8) :: in(N)
   real(kind=8) :: out(N/2+1)
-  integer :: i,j
+  integer :: i,j,iret
+  call dfftw_init_threads(iret)
+  call dfftw_plan_with_nthreads(omp_get_max_threads())
   do i=1,N
      in(i) = real(i)**2.
   end do
