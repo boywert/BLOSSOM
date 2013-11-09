@@ -24,7 +24,7 @@ subroutine makepowerspectrum_rg(z)
   do i=0,2 
      call dfftw_plan_dft_r2c_1d(plan(omp_get_thread_num()),N,in(:,omp_get_thread_num()),out(:,omp_get_thread_num()),FFTW_ESTIMATE)
      call dfftw_execute(plan(omp_get_thread_num()))
-     call dfftw_destroy_plan(plan(omp_get_thread_num())
+     call dfftw_destroy_plan(plan(omp_get_thread_num()))
   end do
   ! do i=1,N/2+1
   !    print*, real(in(i)), real(out(i))
