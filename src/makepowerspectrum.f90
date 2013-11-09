@@ -13,14 +13,14 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8) :: z
   integer, parameter :: N=10
   integer(kind=8) :: plan
-  complex(kind=8) :: in(N)
-  complex(kind=8) :: out(N/2+1)
+  real(kind=8) :: in(N)
+  real(kind=8) :: out(N/2+1)
   integer :: i,j
   do i=1,N
-     in(i) = cmplx(real(i)**2.,0.)
+     in(i) = real(i)**2.
   end do
   print*,""
-  call dfftw_plan_dft_1d(plan,N,in,out,FFTW_FORWARD,FFTW_ESTIMATE)
+  call dfftw_plan_dft_r2r_1d(plan,N,in,out,FFTW_ESTIMATE)
   call dfftw_execute(plan)
   call dfftw_destroy_plan(plan)
   do i=1,N/2+1
