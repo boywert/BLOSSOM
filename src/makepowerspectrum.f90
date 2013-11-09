@@ -16,8 +16,8 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8) :: in(N)
   real(kind=8) :: out(N/2+1)
   integer :: i,j,iret
-  call dfftw_init_threads(iret)
-  call dfftw_plan_with_nthreads(omp_get_max_threads())
+  ! call dfftw_init_threads(iret)
+  ! call dfftw_plan_with_nthreads(omp_get_max_threads())
   do i=1,N
      in(i) = real(i)**2.
   end do
