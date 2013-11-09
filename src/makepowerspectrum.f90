@@ -10,10 +10,10 @@ subroutine makepowerspectrum_rg(z)
   use io_tools
   implicit none
   include "fftw3.f"
-  
+  integer,parameter :: N=10
   real(kind=8) :: z
   double complex in, out
-  dimension in(10), out(10)
+  dimension in(N), out(N)
   integer*8 plan
 
   call dfftw_plan_dft_1d(plan,N,in,out,FFTW_FORWARD,FFTW_ESTIMATE)
