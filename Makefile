@@ -23,7 +23,7 @@ OPT +=  $(FFTW3TAGS)
 CFFLAGS += $(OPT)
 MICCFFLAGS += $(OPT)
 
-all: $(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/genrandom $(BIN)/absorption_rg  $(BIN)/absorption_rr 
+all: $(BIN)/subcell $(BIN)/genlos_rg $(BIN)/genlos_rr $(BIN)/genrandom $(BIN)/absorption_rg  $(BIN)/absorption_rr $(BIN)/powerspec_rg $(BIN)/powerspec_rr
 
 $(BIN)/absorption_rg: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
 	mkdir -p $(BIN)
@@ -44,6 +44,14 @@ $(BIN)/genlos_rr: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librun
 $(BIN)/genlos_rg: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
 	mkdir -p $(BIN)
 	$(CF) -DGENLOS_RG $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genlos_rg -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/powerspec_rr: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DPOWERSP_RR $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genlos_rr -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
+
+$(BIN)/powerspec_rg: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
+	mkdir -p $(BIN)
+	$(CF) -DPOWERSP_RG $(CFFLAGS) $(SRC)/main.f90 -o $(BIN)/genlos_rg -lread_parameters -lcommon_vars -lrunprocs -lmpitools -lio_tools -lvectortools -larraytools -ldatatools -labsorptiontools -lconversiontools -lutilities_serial
 
 $(BIN)/genrandom: $(LIB)/read_parameters.a $(LIB)/libcommon_vars.a $(LIB)/librunprocs.a
 	mkdir -p $(BIN)
