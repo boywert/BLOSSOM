@@ -25,9 +25,9 @@ subroutine makepowerspectrum_rg(z)
   call dfftw_plan_dft_r2c_1d(plan,N,in,out,FFTW_ESTIMATE)
   call dfftw_execute(plan)
   call dfftw_destroy_plan(plan)
-  do i=1,N/2+1
-     print*, real(in(i)), real(out(i))
-  end do
+  ! do i=1,N/2+1
+  !    print*, real(in(i)), real(out(i))
+  ! end do
 
 
   
