@@ -54,11 +54,11 @@ contains
     j=1
     if(x_out(1) < x_in(1)) then
        print*,"x_out is out of range"
-       exit()
+       call exit()
     end if
-    if(x_out(N) > x_in(N)) then
+    if(x_out(N_out) > x_in(N_in)) then
        print*,"x_out is out of range"
-       exit()
+       call exit()
     end if
 
     do i=1,N_out
