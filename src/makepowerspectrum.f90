@@ -7,6 +7,7 @@ subroutine makepowerspectrum_rg(z)
   use mpitools
   use common_vars
   use conversiontools
+  use arraytools
   use omp_lib
   use io_tools
   implicit none
