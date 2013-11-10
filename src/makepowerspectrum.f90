@@ -28,7 +28,7 @@ subroutine makepowerspectrum_rg(z)
   nu_min = d_to_nu(max_observe)
   min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_max = d_to_nu(min_observe)
-  freq_nbins = ceiling((nu_max-nu_min)/maxfreqresolution)
+  freq_nbins = ceiling((nu_max-nu_min)/obsfreqresolution)
   
   !Allocate arrays
   allocate(frequency_value(0:freq_nbins))
