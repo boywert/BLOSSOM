@@ -30,6 +30,7 @@ contains
     enddo
 101 continue
   end function remove_dups
+  
   function remove_excess(input,N,PrGridLines)
     implicit none
     integer(kind=4) :: N
@@ -42,4 +43,30 @@ contains
     end do
     remove_excess(1:N) = input(1:N)
   end function remove_excess
+  
+  ! interpolate arrays, x_in,x_out must be increasing
+  subroutine array_intrpol(x_in,y_in,N_in,x_out,y_out,N_out)
+    implicit none
+    integer :: N_in, N_out
+    real(kind=8) :: x_in(1:N_in),y_in(1:N_in),x_out(1:N_out),y_out(1:N_out)
+    real(kind=8) :: ref_x
+    integer :: i,j
+    j=1
+    if(x_out(1) < x_in(1)) then
+       print*,"x_out is out of range"
+       exit()
+    end if
+    if(x_out(N) > x_in(N)) then
+       print*,"x_out is out of range"
+       exit()
+    end if
+
+    do i=1,N_out
+       ref_x = x_out(i)
+       do while (ref_x .le. x_in(j))
+          j = j+1
+       end do
+    end do
+
+  end subroutine array_intrpol
 end module arraytools
