@@ -38,7 +38,7 @@ subroutine makepowerspectrum_rg(z)
   do i=0,freq_nbins
      frequency_value(i) = nu_max - i*obsfreqresolution
      tmp_distance_value(i) = nu_to_d(frequency_value(i))
-     tmp_signal(i) = real(i,8)
+     tmp_signal(i) = real(i,8)+1.0
   end do
   do i=freq_nbins,1,-1
      tmp_distance_value(i) = (tmp_distance_value(i)-tmp_distance_value(0))/kpc
