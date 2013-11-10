@@ -51,7 +51,7 @@ contains
     real(kind=8) :: x_in(1:N_in),y_in(1:N_in),x_out(1:N_out),y_out(1:N_out)
     real(kind=8) :: ref_x
     integer :: i,j
-    j=1
+   
     if(x_out(1) < x_in(1)) then
        print*,"x_out is out of range"
        call exit()
@@ -61,12 +61,14 @@ contains
        call exit()
     end if
 
+    j = 1
     do i=1,N_out
        ref_x = x_out(i)
-       do while (ref_x .le. x_in(j))
+       do while (ref_x .ge. x_in(j))
           j = j+1
        end do
+       y_out(i) = y_in(j-1) + (y_in(j)-y_in(j-1))/(x_in(j) - x_in(j-1))*(ref_x - x_in(j-1))
     end do
-
+    return
   end subroutine array_intrpol
 end module arraytools
