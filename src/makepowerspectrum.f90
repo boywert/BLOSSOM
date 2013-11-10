@@ -25,6 +25,8 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8), allocatable :: x_array(:), y_array(:)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
+  complex, allocatable :: fft_result(:)
+  real(kind=8), allocatable :: 
   ! Prepare strings
   write(z_s,'(f10.3)') z
   z_s = adjustl(z_s)
@@ -57,6 +59,7 @@ subroutine makepowerspectrum_rg(z)
   x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
   allocate(x_array(0:x_nbins))
   allocate(y_array(0:x_nbins))
+  allocate(fft_result(0:x_nbins/2))
   do i=0,x_nbins
      x_array(i) = i*delta_x
   end do
@@ -77,14 +80,16 @@ subroutine makepowerspectrum_rg(z)
 327  close(10)
 
      call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
-     do i=0,x_nbins
-        print*,y_array(i)
+
+     call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
+     call dfftw_execute(plan)
+     call dfftw_destroy_plan(plan)
+     do i=0,x_nbins/2
+        print*,fft_result(i)
      end do
   end do
 
-  !    call dfftw_plan_dft_r2c_1d(plan(omp_get_thread_num()),N,in(:,omp_get_thread_num()),out(:,omp_get_thread_num()),FFTW_ESTIMATE)
-  !    call dfftw_execute(plan(omp_get_thread_num()))
-  !    call dfftw_destroy_plan(plan(omp_get_thread_num()))
+
 
      
   deallocate(frequency_value,tmp_distance_value)
