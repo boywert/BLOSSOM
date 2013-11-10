@@ -61,7 +61,11 @@ subroutine makepowerspectrum_rg(z)
      x_array(i) = i*delta_x
   end do
   
-  do j= first_l,last_l
+  do j= 1,1
+
+     write(str_line,'(i10)') j
+     str_line = adjustl(str_line)
+
      tmp_signal(:) = 1.0
      open (unit=10, &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
