@@ -47,7 +47,7 @@ subroutine makepowerspectrum_rg(z)
   
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
-  x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)
+  x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
   allocate(x_array(0:x_nbins))
   allocate(y_array(0:x_nbins))
   do i=0,x_nbins
