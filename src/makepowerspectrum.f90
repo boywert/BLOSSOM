@@ -23,6 +23,14 @@ subroutine makepowerspectrum_rg(z)
   integer :: freq_nbins,x_nbins
   real(kind=8), allocatable :: frequency_value(:),tmp_distance_value(:),tmp_signal(:)
   real(kind=8), allocatable :: x_array(:), y_array(:)
+  character(len=100) :: str_rank,z_s,str_line
+  real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
+  ! Prepare strings
+  write(z_s,'(f10.3)') z
+  z_s = adjustl(z_s)
+  write(str_rank,'(i10)') rank
+  str_rank = adjustl(str_rank)
+
   !Calculate frequency and distance range
   d0 = z_to_d(z)
   max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
@@ -38,7 +46,6 @@ subroutine makepowerspectrum_rg(z)
   do i=0,freq_nbins
      frequency_value(i) = nu_max - i*obsfreqresolution
      tmp_distance_value(i) = nu_to_d(frequency_value(i))
-     tmp_signal(i) = real(i,8)+1.0
   end do
   do i=freq_nbins,1,-1
      tmp_distance_value(i) = (tmp_distance_value(i)-tmp_distance_value(0))/kpc
@@ -53,16 +60,29 @@ subroutine makepowerspectrum_rg(z)
   do i=0,x_nbins
      x_array(i) = i*delta_x
   end do
-  call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
-  do i=0,x_nbins
-     print*,y_array(i)
-  end do
   
-  ! do j= first_l,last_l
+  do j= first_l,last_l
+     tmp_signal(:) = 1.0
+     open (unit=10, &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          form='binary')
+     do
+        read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
+        width_real = delta_nu/nu0*nu_dist
+        tmp_signal = tmp_signal * (10.-this_absorp* exp(-0.5*((nu_distfrequency_value)/width_real)**2.0))
+     end do
+327  close(10)
+
+     call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
+     do i=0,x_nbins
+        print*,y_array(i)
+     end do
+  end do
+
   !    call dfftw_plan_dft_r2c_1d(plan(omp_get_thread_num()),N,in(:,omp_get_thread_num()),out(:,omp_get_thread_num()),FFTW_ESTIMATE)
   !    call dfftw_execute(plan(omp_get_thread_num()))
   !    call dfftw_destroy_plan(plan(omp_get_thread_num()))
-  ! end do
+
      
   deallocate(frequency_value,tmp_distance_value)
   
