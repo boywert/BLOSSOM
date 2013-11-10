@@ -32,7 +32,7 @@ subroutine makepowerspectrum_rg(z)
   allocate(frequency_value(0:freq_nbins))
   allocate(tmp_distance_value(0:freq_nbins))
   do i=0,freq_nbins
-     frequency_value(i) = max_nu - i*maxfreqresolution
+     frequency_value(i) = nu_max - i*maxfreqresolution
      tmp_distance_value(i) = nu_to_d(frequency_value(i))
   end do
   do i=freq_nbins,1,-1
