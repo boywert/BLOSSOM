@@ -53,11 +53,11 @@ contains
     integer :: i,j
    
     if(x_out(1) < x_in(1)) then
-       print*,"x_out is out of range:",x_out(1),x_in(1))
+       print*,"x_out is out of range:",x_out(1),x_in(1)
        call exit()
     end if
     if(x_out(N_out) > x_in(N_in)) then
-       print*,"x_out is out of range",x_out(N_out),x_in(N_in))
+       print*,"x_out is out of range",x_out(N_out),x_in(N_in)
        call exit()
     end if
 
