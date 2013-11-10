@@ -44,7 +44,7 @@ contains
     remove_excess(1:N) = input(1:N)
   end function remove_excess
   
-  ! interpolate arrays, x_in,x_out must be increasing
+  ! interpolate arrays, x_in,x_out must be increasing series
   subroutine array_intrpol(x_in,y_in,N_in,x_out,y_out,N_out)
     implicit none
     integer :: N_in, N_out
