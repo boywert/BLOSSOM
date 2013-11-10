@@ -58,6 +58,7 @@ module common_vars
 
   real(kind=8), target :: Omega_b 
   real(kind=8), target :: Mpc 
+  real(kind=8) :: kpc
 
   real(kind=8) :: H0 
 

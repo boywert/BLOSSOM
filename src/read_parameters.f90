@@ -319,7 +319,7 @@ contains
     PrBoxSize = (2*line_length_factor+1)*BoxSize
 
     !@ unit convertion tools
-    
+    kpc = Mpc/1000.0
     
     dscale = omega_0*rho_crit_0 
     tscale = 2./(3.*sqrt(omega_0)*H0) ! s

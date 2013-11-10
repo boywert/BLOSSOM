@@ -38,7 +38,7 @@ subroutine makepowerspectrum_rg(z)
      tmp_distance_value(i) = nu_to_d(frequency_value(i))
   end do
   do i=freq_nbins,1,-1
-     tmp_distance_value(i) = (tmp_distance_value(i)-tmp_distance_value(i-1))/Mpc
+     tmp_distance_value(i) = (tmp_distance_value(i)-tmp_distance_value(i-1))/kpc
   end do
   tmp_distance_value(0) = 0.
   do i=0,freq_nbins
