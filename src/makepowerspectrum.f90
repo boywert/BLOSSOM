@@ -62,7 +62,6 @@ subroutine makepowerspectrum_rg(z)
   end do
   
   do j= 1,1
-
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -73,7 +72,7 @@ subroutine makepowerspectrum_rg(z)
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
         width_real = delta_nu/nu0*nu_dist
-        tmp_signal = tmp_signal * (10.-this_absorp* exp(-0.5*((nu_dist-frequency_value)/width_real)**2.0))
+        tmp_signal = tmp_signal * (1.-this_absorp* exp(-0.5*((nu_dist-frequency_value)/width_real)**2.0))
      end do
 327  close(10)
 
