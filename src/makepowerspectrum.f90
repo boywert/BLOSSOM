@@ -17,9 +17,11 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8),allocatable :: in(:,:)
   complex(kind=8),allocatable :: out(:,:)
   integer :: i,j,iret
+  real(kind=8) :: d0
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
   integer :: freq_nbins
   real(kind=8), allocatable :: frequency_value(:),tmp_distance_value(:)
+
   !Calculate frequency and distance range
   d0 = z_to_d(z)
   max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
