@@ -26,7 +26,7 @@ subroutine makepowerspectrum_rg(z)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
   complex, allocatable :: fft_result(:)
-  real(kind=8), allocatable :: 
+  real(kind=8), allocatable :: power_spect(:)
   ! Prepare strings
   write(z_s,'(f10.3)') z
   z_s = adjustl(z_s)
