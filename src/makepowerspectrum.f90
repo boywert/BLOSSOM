@@ -68,7 +68,7 @@ subroutine makepowerspectrum_rg(z)
      x_array(i) = (i)*delta_x
   end do
   sum_delta_sq(:) = 0.0
-  do j= first_l,last_l
+  do j= first_l,1 !last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -91,15 +91,16 @@ subroutine makepowerspectrum_rg(z)
  
      
      call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
+     y_array(:) = 1.0
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
-     sum_delta_sq = sum_delta_sq + real(fft_result,8)**2.
-     !print*,y_array
-     !print*,real(fft_result)
+     !sum_delta_sq = sum_delta_sq + real(fft_result,8)**2.
+     print*,y_array
+     print*,real(fft_result)
   end do
 
-     print*,sum_delta_sq/(last_l-first_l+1)
+     !print*,sum_delta_sq/(last_l-first_l+1)
 
 
   call exit
