@@ -24,7 +24,7 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8), allocatable :: x_array(:), y_array(:),y_tmp(:)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
-  complex, allocatable :: fft_result(:),fft_tmp(:)
+  double complex, allocatable :: fft_result(:),fft_tmp(:)
   real(kind=8), allocatable :: sum_delta_sq(:)
   ! Prepare strings
   write(z_s,'(f10.3)') z
