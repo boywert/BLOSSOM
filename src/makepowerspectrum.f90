@@ -16,6 +16,7 @@ subroutine makepowerspectrum_rg(z)
   integer, parameter :: N=1000
   integer(kind=8) :: plan,plan_rev
   integer :: i,j
+  real(kind=8) :: mean_den
   real(kind=8) :: d0,delta_x
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
   integer :: obs_freq_nbins, fine_freq_nbins, x_nbins, obs_to_fine
@@ -95,8 +96,8 @@ subroutine makepowerspectrum_rg(z)
      !    y_array(i) = real(i,8)
      ! end do
      y_array = 1. - y_array
-     
-     y_array(0:x_nbins-1) = y_array(0:x_nbins-1)/sum(y_array) -1.
+     mean_den = sum(y_array)
+     y_array(0:x_nbins-1) = y_array(0:x_nbins-1)/mean_den -1.
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
 
