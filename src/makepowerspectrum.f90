@@ -14,10 +14,8 @@ subroutine makepowerspectrum_rg(z)
   include 'fftw3.f'
   real(kind=8) :: z
   integer, parameter :: N=1000
-  integer(kind=8),allocatable :: plan(:)
-  real(kind=8),allocatable :: in(:,:)
-  complex(kind=8),allocatable :: out(:,:)
-  integer :: i,j,iret
+  integer(kind=8) :: plan
+  integer :: i,j
   real(kind=8) :: d0,delta_x
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
   integer :: freq_nbins,x_nbins
