@@ -94,6 +94,7 @@ subroutine makepowerspectrum_rg(z)
      ! do i=0,x_nbins-1
      !    y_array(i) = real(i,8)
      ! end do
+     y_array = 1. - y_array
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
 
