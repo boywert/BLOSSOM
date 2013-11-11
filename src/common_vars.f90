@@ -47,6 +47,7 @@ module common_vars
   !#######################################################################
   !@ Observation parameters
   real(kind=8), target :: obsfreqresolution
+  real(kind=8), target :: maxfreqresolution
 
   !#######################################################################
   !@ Cosmological parameters

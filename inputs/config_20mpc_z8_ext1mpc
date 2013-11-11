@@ -8,6 +8,7 @@ subcell_perdim_file	/home1/01937/cs390/BLOSSOM/inputs/subcell_perdim_20mpc.dat
 
 #OBSERVATION PARAMETERS
 obsfreqresolution	10000.0	#Hz
+maxfreqresolution	100.0	#Hz
 
 #COSMOLOGICAL PARAMETERS WMAP5
 

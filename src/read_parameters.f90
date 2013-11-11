@@ -201,6 +201,11 @@ contains
     var_pointer(n)%real8 => obsfreqresolution
 
     n=n+1
+    tag(n) = 'maxfreqresolution'
+    var_type(n) = 4
+    var_pointer(n)%real8 => maxfreqresolution
+
+    n=n+1
     tag(n) = 'Mttil'
     var_type(n) = 4
     var_pointer(n)%real8 => Mttil
@@ -320,6 +325,7 @@ contains
 
     !@ unit convertion tools
     kpc = Mpc/1000.0
+    
     
     dscale = omega_0*rho_crit_0 
     tscale = 2./(3.*sqrt(omega_0)*H0) ! s

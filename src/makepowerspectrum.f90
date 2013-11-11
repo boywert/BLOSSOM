@@ -18,8 +18,8 @@ subroutine makepowerspectrum_rg(z)
   integer :: i,j
   real(kind=8) :: d0,delta_x
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
-  integer :: freq_nbins,x_nbins
-  real(kind=8), allocatable :: frequency_value(:),tmp_distance_value(:),tmp_signal(:)
+  integer :: obs_freq_nbins, fine_freq_nbins, x_nbins, obs_to_fine
+  real(kind=8), allocatable :: obs_frequency_value(:),fine_frequency_value(:),tmp_distance_value(:),tmp_signal_fine(:),tmp_signal_obs(:)
   real(kind=8), allocatable :: x_array(:), y_array(:)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
@@ -34,32 +34,37 @@ subroutine makepowerspectrum_rg(z)
   !Calculate frequency and distance range
   d0 = z_to_d(z)
   max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
-  nu_min = d_to_nu(max_observe)
+  nu_min = d_to_nu(max_observe)-obsfreqresolution !add buffer space
   min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
-  nu_max = d_to_nu(min_observe)
-  freq_nbins = ceiling((nu_max-nu_min)/obsfreqresolution)
-  
+  nu_max = d_to_nu(min_observe)+obsfreqresolution !add buffer space
+  obs_freq_nbins = ceiling((nu_max-nu_min)/obsfreqresolution)
+  fine_freq_nbins = ceiling((nu_max-nu_min)/maxfreqresolution)
+  obs_to_fine = int((obsfreqresolution+0.001)/maxfreqresolution)
+
   !Allocate arrays
-  allocate(frequency_value(0:freq_nbins))
-  allocate(tmp_distance_value(0:freq_nbins))
-  allocate(tmp_signal(0:freq_nbins))
-  do i=0,freq_nbins
-     frequency_value(i) = nu_max - i*obsfreqresolution
-     tmp_distance_value(i) = nu_to_d(frequency_value(i))
+  allocate(fine_frequency_value(0:fine_freq_nbins),obs_frequency_value(0:obs_freq_nbins))
+  allocate(tmp_distance_value(0:obs_freq_nbins))
+  allocate(tmp_signal_obs(0:obs_freq_nbins),tmp_signal_fine(0:fine_freq_nbins))
+  do i=0,obs_freq_nbins
+     obs_frequency_value(i) = nu_max - i*obsfreqresolution
+     tmp_distance_value(i) = nu_to_d(obs_frequency_value(i))
   end do
-  do i=freq_nbins,1,-1
+  do i=0,fine_freq_nbins
+     fine_frequency_value(i) = nu_max - i*maxfreqresolution
+  end do
+  do i=obs_freq_nbins,1,-1
      tmp_distance_value(i) = (tmp_distance_value(i)-tmp_distance_value(0))/kpc
   end do
   tmp_distance_value(0) = 0.
   
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
-  x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
-  allocate(x_array(0:x_nbins))
-  allocate(y_array(0:x_nbins))
-  allocate(fft_result(0:(x_nbins+1)/2))
-  allocate(sum_delta_sq(0:(x_nbins+1)/2))
-  do i=0,x_nbins
+  x_nbins = ceiling(tmp_distance_value(obs_freq_nbins)/delta_x)-1
+  allocate(x_array(0:x_nbins-1))
+  allocate(y_array(0:x_nbins-1))
+  allocate(fft_result(0:(x_nbins)/2))
+  allocate(sum_delta_sq(0:(x_nbins)/2))
+  do i=0,x_nbins-1
      x_array(i) = (i)*delta_x
   end do
   sum_delta_sq(:) = 0.0
@@ -67,25 +72,30 @@ subroutine makepowerspectrum_rg(z)
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
-     tmp_signal(:) = 1.0
+     tmp_signal_fine(:) = 1.0
+     tmp_signal_obs(:) = 0.0
      open (unit=10, &
           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
         width_real = delta_nu/nu0*nu_dist
-        tmp_signal = tmp_signal * (1.-this_absorp* exp(-0.5*((nu_dist-frequency_value)/width_real)**2.0))
+        tmp_signal_fine = tmp_signal_fine * (1.-this_absorp* exp(-0.5*((nu_dist-fine_frequency_value)/width_real)**2.0))
      end do
 327  close(10)
+     do i=0,fine_freq_nbins-1
+        tmp_signal_obs(i/obs_to_fine) = tmp_signal_obs(i/obs_to_fine) + tmp_signal_fine(i)
+     end do
+     
+     tmp_signal_obs = tmp_signal_obs/obs_to_fine
+ 
+     
+     call array_intrpol(tmp_distance_value(0:freq_nbins-1),tmp_signal_obs(0:freq_nbins-1),freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
 
-     call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
-
-     call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
+     call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array(),fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
-     do i=0,(x_nbins+1)
-        print*, y_array(i)
-     end do
+
      do i=0,(x_nbins+1)/2
         print*, real(fft_result(i),8)**2.
         !sum_delta_sq(i) = sum_delta_sq(i) + real(fft_result(i),8)**2.
