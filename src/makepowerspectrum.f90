@@ -69,7 +69,7 @@ subroutine makepowerspectrum_rg(z)
 
      tmp_signal(:) = 1.0
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
@@ -85,7 +85,7 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_destroy_plan(plan)
 
      do i=0,(x_nbins+1)/2
-        print*, fft_result(i)
+        print*, real(fft_result(i),8)**2.
         !sum_delta_sq(i) = sum_delta_sq(i) + real(fft_result(i),8)**2.
      end do
   end do
