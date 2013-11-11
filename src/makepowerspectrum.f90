@@ -91,7 +91,7 @@ subroutine makepowerspectrum_rg(z)
      print*,sum_delta_sq(i)/(last_l-first_l+1)
   end do
 
-
+  call exit
      
   deallocate(frequency_value,tmp_distance_value)
   
