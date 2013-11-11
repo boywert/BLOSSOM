@@ -107,7 +107,7 @@ subroutine makepowerspectrum_rg(z)
 
   call exit
      
-  deallocate(frequency_value,tmp_distance_value)
+  !deallocate(frequency_value,tmp_distance_value)
   
 #ifdef RR
 end subroutine makepowerspectrum_rr
