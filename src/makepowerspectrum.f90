@@ -84,8 +84,9 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
 
-     sum_delta_sq = sum_delta_sq + real(fft_result,8)
-
+     do i=0,(x_nbins+1)/2
+        sum_delta_sq(i) = sum_delta_sq(i) + real(fft_result(i),8)**2.
+     end do
   end do
   do i=0,(x_nbins+1)/2
      print*,sum_delta_sq(i)/(last_l-first_l+1)
