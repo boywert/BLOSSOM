@@ -21,10 +21,10 @@ subroutine makepowerspectrum_rg(z)
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
   integer :: obs_freq_nbins, fine_freq_nbins, x_nbins, obs_to_fine
   real(kind=8), allocatable :: obs_frequency_value(:),fine_frequency_value(:),tmp_distance_value(:),tmp_signal_fine(:),tmp_signal_obs(:)
-  real(kind=8), allocatable :: x_array(:), y_array(:)
+  real(kind=8), allocatable :: x_array(:), y_array(:),y_tmp(:)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
-  complex, allocatable :: fft_result(:)
+  complex, allocatable :: fft_result(:),fft_tmp(:)
   real(kind=8), allocatable :: sum_delta_sq(:)
   ! Prepare strings
   write(z_s,'(f10.3)') z
@@ -63,6 +63,8 @@ subroutine makepowerspectrum_rg(z)
   x_nbins = ceiling(tmp_distance_value(obs_freq_nbins)/delta_x)-1
   allocate(x_array(0:x_nbins-1))
   allocate(y_array(0:x_nbins-1))
+  allocate(y_tmp(1:x_nbins))
+  allocate(fft_tmp(1:x_nbins/2+1))
   allocate(fft_result(0:(x_nbins)/2))
   allocate(sum_delta_sq(0:(x_nbins)/2))
   do i=0,x_nbins-1
@@ -99,8 +101,9 @@ subroutine makepowerspectrum_rg(z)
      ! mean_den = sum(y_array)/x_nbins
      ! y_array = y_array/mean_den -1.
      ! y_array
-     call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array(0:x_nbins-1),fft_result(0:x_nbins/2),FFTW_ESTIMATE)
-     call dfftw_execute_dft_r2c(plan,y_array(0:x_nbins-1),fft_result(0:x_nbins/2))
+     y_tmp(1:x_nbins) = y_array(0:x_nbins-1)
+     call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_tmp,fft_tmp,FFTW_ESTIMATE)
+     call dfftw_execute_dft_r2c(plan,y_tmp,fft_tmp)
 
      ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
      ! call dfftw_execute(plan_rev)
@@ -109,6 +112,7 @@ subroutine makepowerspectrum_rg(z)
      do i=0,x_nbins-1
         print*,y_array(i)
      end do
+     fft_result(0:x_nbins/2) = fft_result(1:x_nbins/2+1)
      do i=0,x_nbins/2
         print*,fft_result(i)
      end do
