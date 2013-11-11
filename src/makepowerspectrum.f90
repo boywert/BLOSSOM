@@ -109,7 +109,7 @@ subroutine makepowerspectrum_rg(z)
      do i=0,x_nbins-1
         print*,y_array(i)
      end do
-
+     print*,""
      do i=0,x_nbins/2
         print*,real(fft_result(i))
      end do
