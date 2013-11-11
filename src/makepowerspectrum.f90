@@ -60,7 +60,7 @@ subroutine makepowerspectrum_rg(z)
   allocate(fft_result(1:(x_nbins+1)/2+1))
   allocate(sum_delta_sq(1:(x_nbins+1)/2+1))
   do i=1,x_nbins+1
-     x_array(i) = (i)*delta_x
+     x_array(i) = (i-1)*delta_x
   end do
   sum_delta_sq(:) = 0.0
   do j= first_l,last_l
