@@ -83,7 +83,7 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
-     do i=0,(x_nbins+1)/
+     do i=0,(x_nbins+1)
         print*, y_array(i)
      end do
      do i=0,(x_nbins+1)/2
