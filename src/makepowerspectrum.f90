@@ -90,7 +90,7 @@ subroutine makepowerspectrum_rg(z)
      tmp_signal_obs = tmp_signal_obs/obs_to_fine
  
      
-     call array_intrpol(tmp_distance_value(0:freq_nbins-1),tmp_signal_obs(0:freq_nbins-1),freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
+     call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
 
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
