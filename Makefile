@@ -11,7 +11,7 @@ MICCFFLAGS = -fpp -O3  -openmp  -mmic
 
 CFFLAGS += -L/$(LIB) -I/$(LIB)
 MICCFFLAGS += -L/$(MICLIB) -I/$(MICLIB)
-FFTW3TAGS = -I$(TACC_FFTW3_INC) -L$(TACC_FFTW3_LIB) -lfftw3_threads -lfftw3  -limf
+FFTW3TAGS = -I$(TACC_FFTW3_INC) -L$(TACC_FFTW3_LIB) -lfftw3  -limf #-lfftw3_threads 
 OPT  = 
 OPT += -DCLEARTEMP    #should be enabled all the time
 OPT += -DUSEMAXSOURCESIZE  # for gen_los to compute the sub-grid size by itself
