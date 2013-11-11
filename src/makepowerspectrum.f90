@@ -57,11 +57,11 @@ subroutine makepowerspectrum_rg(z)
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
   x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
-  allocate(x_array(0:x_nbins))
-  allocate(y_array(0:x_nbins))
-  allocate(fft_result(0:x_nbins/2))
-  do i=0,x_nbins
-     x_array(i) = i*delta_x
+  allocate(x_array(1:x_nbins+1))
+  allocate(y_array(1:x_nbins+1))
+  allocate(fft_result(1:x_nbins/2+1))
+  do i=1,x_nbins+1
+     x_array(i) = (i-1)*delta_x
   end do
   
   do j= 1,1
@@ -81,12 +81,12 @@ subroutine makepowerspectrum_rg(z)
 
      call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
 
-     ! call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
-     ! call dfftw_execute(plan)
-     ! call dfftw_destroy_plan(plan)
-     ! do i=0,x_nbins/2
-     !    print*,fft_result(i)
-     ! end do
+     call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
+     call dfftw_execute(plan)
+     call dfftw_destroy_plan(plan)
+     do i=1,x_nbins/2+1
+        print*,fft_result(i)
+     end do
   end do
 
 
