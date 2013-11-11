@@ -55,12 +55,12 @@ subroutine makepowerspectrum_rg(z)
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
   x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
-  allocate(x_array(1:x_nbins+1))
-  allocate(y_array(1:x_nbins+1))
-  allocate(fft_result(1:(x_nbins+1)/2+1))
-  allocate(sum_delta_sq(1:(x_nbins+1)/2+1))
-  do i=1,x_nbins+1
-     x_array(i) = (i-1)*delta_x
+  allocate(x_array(0:x_nbins))
+  allocate(y_array(0:x_nbins))
+  allocate(fft_result(0:(x_nbins+1)/2))
+  allocate(sum_delta_sq(0:(x_nbins+1)/2))
+  do i=0,x_nbins
+     x_array(i) = (i)*delta_x
   end do
   sum_delta_sq(:) = 0.0
   do j= first_l,last_l
@@ -69,7 +69,7 @@ subroutine makepowerspectrum_rg(z)
 
      tmp_signal(:) = 1.0
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.400/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
@@ -84,12 +84,12 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
 
-     do i=1,(x_nbins+1)/2+1
+     do i=0,(x_nbins+1)/2
         print*, fft_result(i)
         !sum_delta_sq(i) = sum_delta_sq(i) + real(fft_result(i),8)**2.
      end do
   end do
-  do i=1,(x_nbins+1)/2+1
+  do i=0,(x_nbins+1)/2
      !print*,sum_delta_sq(i)/(last_l-first_l+1)
   end do
 
