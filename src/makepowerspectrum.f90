@@ -81,12 +81,12 @@ subroutine makepowerspectrum_rg(z)
 
      call array_intrpol(tmp_distance_value,tmp_signal,freq_nbins+1,x_array,y_array,x_nbins+1)
 
-     call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
-     call dfftw_execute(plan)
-     call dfftw_destroy_plan(plan)
-     do i=0,x_nbins/2
-        print*,fft_result(i)
-     end do
+     ! call dfftw_plan_dft_r2c_1d(plan,x_nbins+1,y_array,fft_result,FFTW_ESTIMATE)
+     ! call dfftw_execute(plan)
+     ! call dfftw_destroy_plan(plan)
+     ! do i=0,x_nbins/2
+     !    print*,fft_result(i)
+     ! end do
   end do
 
 
