@@ -93,7 +93,7 @@ subroutine makepowerspectrum_rg(z)
      
      call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
      do i=0,x_nbins-1
-         y_array(i) = exp(-1.*(real(i)-200.)**2./5.**2.)
+         y_array(i) = exp(-1.*(real(i,8))**2./50.**2.)
       end do
      ! y_array = 1. - y_array
      ! mean_den = sum(y_array)/x_nbins
