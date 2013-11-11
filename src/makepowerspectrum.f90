@@ -115,6 +115,7 @@ subroutine makepowerspectrum_rg(z)
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(1./delta_x)*2.*pi/(real(i,8)/delta_x)
      print*,ps_3d(i)
   end do
+  print*,"delta_x",delta_x
   call exit
      
   !deallocate(frequency_value,tmp_distance_value)
