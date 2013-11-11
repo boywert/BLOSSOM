@@ -100,7 +100,7 @@ subroutine makepowerspectrum_rg(z)
      ! y_array = y_array/mean_den -1.
      ! y_array
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
-     call dfftw_execute_dft_r2c(plan)
+     call dfftw_execute_dft_r2c(plan,y_array,fft_result)
 
      ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
      ! call dfftw_execute(plan_rev)
