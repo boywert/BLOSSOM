@@ -55,11 +55,11 @@ subroutine makepowerspectrum_rg(z)
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
   x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
-  allocate(x_array(0:x_nbins))
-  allocate(y_array(0:x_nbins))
-  allocate(fft_result(0:(x_nbins+1)/2))
-  allocate(sum_delta_sq(0:(x_nbins+1)/2))
-  do i=0,x_nbins
+  allocate(x_array(1:x_nbins+1))
+  allocate(y_array(1:x_nbins+1))
+  allocate(fft_result(1:(x_nbins+1)/2+1))
+  allocate(sum_delta_sq(1:(x_nbins+1)/2+1))
+  do i=1,x_nbins+1
      x_array(i) = (i)*delta_x
   end do
   sum_delta_sq(:) = 0.0
@@ -84,12 +84,12 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_execute(plan)
      call dfftw_destroy_plan(plan)
 
-     do i=0,(x_nbins+1)/2
+     do i=1,(x_nbins+1)/2+1
         print*, fft_result(i)
         !sum_delta_sq(i) = sum_delta_sq(i) + real(fft_result(i),8)**2.
      end do
   end do
-  do i=0,(x_nbins+1)/2
+  do i=1,(x_nbins+1)/2+1
      !print*,sum_delta_sq(i)/(last_l-first_l+1)
   end do
 
