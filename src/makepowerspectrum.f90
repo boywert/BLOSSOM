@@ -111,7 +111,7 @@ subroutine makepowerspectrum_rg(z)
      end do
 
      do i=0,x_nbins/2
-        print*,fft_result(i)
+        print*,real(fft_result(i))
      end do
      ! call dfftw_destroy_plan(plan_rev)
      call dfftw_destroy_plan(plan)
