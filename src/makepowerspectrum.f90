@@ -97,14 +97,17 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
 
-     call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
-     call dfftw_execute(plan_rev)
+     ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
+     ! call dfftw_execute(plan_rev)
 
      !sum_delta_sq = sum_delta_sq + real(fft_result,8)**2.
      do i=0,x_nbins-1
-        print*,y_array(i),x_array(i)/x_nbins
+        print*,y_array(i)
      end do
-     call dfftw_destroy_plan(plan_rev)
+     do i=0,x_nbins/2
+        print*,fft_result(i)
+     end do
+     ! call dfftw_destroy_plan(plan_rev)
      call dfftw_destroy_plan(plan)
   end do
 
