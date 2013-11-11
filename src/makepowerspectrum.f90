@@ -25,7 +25,7 @@ subroutine makepowerspectrum_rg(z)
   character(len=100) :: str_rank,z_s,str_line
   real(kind=8) :: M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu,width_real
   complex(kind=8), allocatable :: fft_result(:)
-  real(kind=8), allocatable :: sum_delta_sq(:)
+  real(kind=8), allocatable :: sum_delta_sq(:),ps_3D(:),ps_1D(:),k_1D(:),k_3D(:)
   ! Prepare strings
   write(z_s,'(f10.3)') z
   z_s = adjustl(z_s)
@@ -69,7 +69,7 @@ subroutine makepowerspectrum_rg(z)
      x_array(i) = (i)*delta_x
   end do
   sum_delta_sq(:) = 0.0
-  do j= first_l,1 !last_l
+  do j= first_l,last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -108,10 +108,13 @@ subroutine makepowerspectrum_rg(z)
      ! call dfftw_destroy_plan(plan_rev)
      call dfftw_destroy_plan(plan)
   end do
-
-  print*,sum_delta_sq/real(last_l-first_l+1,8)
-
-
+  allocate(ps_1D(0:x_nbins-1))
+  allocate(ps_3D(1:x_nbins-1))
+  ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
+  do i=1,x_nbins-1
+     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(1./delta_x)*2.*pi/(real(i,8)/delta_x)
+     print*,ps_3d(i)
+  end do
   call exit
      
   !deallocate(frequency_value,tmp_distance_value)
