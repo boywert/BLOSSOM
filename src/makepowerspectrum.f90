@@ -14,7 +14,7 @@ subroutine makepowerspectrum_rg(z)
   include 'fftw3.f'
   real(kind=8) :: z
   integer, parameter :: N=1000
-  integer(kind=8) :: plan
+  integer(kind=8) :: plan,plan_rev
   integer :: i,j
   real(kind=8) :: d0,delta_x
   real(kind=8) :: nu_max,nu_min,max_observe,min_observe
@@ -95,10 +95,15 @@ subroutine makepowerspectrum_rg(z)
      y_array(4) = 1000.
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute(plan)
-     call dfftw_destroy_plan(plan)
+
+     call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
+     call dfftw_execute(plan_rev)
+
      !sum_delta_sq = sum_delta_sq + real(fft_result,8)**2.
      print*,y_array
-     print*,real(fft_result)
+     print*,x_array
+     call dfftw_destroy_plan(plan_rev)
+     call dfftw_destroy_plan(plan)
   end do
 
      !print*,sum_delta_sq/(last_l-first_l+1)
