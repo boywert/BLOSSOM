@@ -59,7 +59,7 @@ subroutine makepowerspectrum_rg(z)
   x_nbins = ceiling(tmp_distance_value(freq_nbins)/delta_x)-1
   allocate(x_array(1:x_nbins+1))
   allocate(y_array(1:x_nbins+1))
-  allocate(fft_result(1:x_nbins/2+1))
+  allocate(fft_result(1:(x_nbins+1)/2+1))
   do i=1,x_nbins+1
      x_array(i) = (i-1)*delta_x
   end do
