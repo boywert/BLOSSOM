@@ -112,7 +112,7 @@ subroutine makepowerspectrum_rg(z)
   allocate(ps_3D(1:x_nbins-1))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
   do i=1,x_nbins-1
-     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(1./delta_x)*2.*pi/(real(i,8)/delta_x)
+     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(delta_x)*2.*pi/(real(i,8)*delta_x)
      print*,ps_3d(i)
   end do
   print*,"delta_x",delta_x
