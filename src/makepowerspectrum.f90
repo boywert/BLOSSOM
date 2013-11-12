@@ -80,9 +80,9 @@ subroutine makepowerspectrum_rg(z)
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
-        tmp_signal_fine(int((nu_dist-nu_min)/maxfreqresolution)) = tmp_signal_fine(int((nu_dist-nu_min)/maxfreqresolution)) + 1.
-        ! width_real = delta_nu/nu0*nu_dist
-        ! tmp_signal_fine = tmp_signal_fine * (1.-this_absorp* exp(-0.5*((nu_dist-fine_frequency_value)/width_real)**2.0))
+        !tmp_signal_fine(int((nu_dist-nu_min)/maxfreqresolution)) = tmp_signal_fine(int((nu_dist-nu_min)/maxfreqresolution)) + 1.
+         width_real = delta_nu/nu0*nu_dist
+         tmp_signal_fine = tmp_signal_fine * (1.-this_absorp* exp(-0.5*((nu_dist-fine_frequency_value)/width_real)**2.0))
      end do
 327  close(10)
      do i=0,fine_freq_nbins-1
