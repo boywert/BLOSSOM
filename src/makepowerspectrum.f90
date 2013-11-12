@@ -108,15 +108,15 @@ subroutine makepowerspectrum_rg(z)
      ! call dfftw_destroy_plan(plan_rev)
      call dfftw_destroy_plan(plan)
   end do
-  allocate(ps_1D(0:x_nbins-1))
-  allocate(ps_3D(1:x_nbins-1))
-  allocate(k_1D(0:x_nbins-1))
-  allocate(k_3D(1:x_nbins-1))
+  allocate(ps_1D(0:x_nbins/2))
+  allocate(ps_3D(1:x_nbins/2))
+  allocate(k_1D(0:x_nbins/2))
+  allocate(k_3D(1:x_nbins/2))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
-  do i=0,x_nbins-1
+  do i=0,x_nbins/2
      k_1D(i) = i*(1./delta_x)
   end do
-  do i=1,x_nbins-1
+  do i=1,x_nbins/2
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
      print*,k_1D(i),ps_3d(i),ps_1D(i)
   end do
