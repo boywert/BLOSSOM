@@ -98,8 +98,8 @@ subroutine makepowerspectrum_rg(z)
      ! y_array = y_array/mean_den -1.
      y_array(:) = 0.
      do i=0,x_nbins-1
-        if(mod(i,10) == 0) y_array(i) = y_array(i) + 100.
-        if(mod(i,3) == 0) y_array(i) = y_array(i) + 50.
+        if(mod(i,10) == 0) y_array(i) = y_array(i) + 50.
+        if(mod(i,3) == 0) y_array(i) = y_array(i) + 100.
      end do
      mean_den = sum(y_array)/x_nbins
      y_array = y_array/mean_den -1.
