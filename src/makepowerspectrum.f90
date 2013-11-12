@@ -75,23 +75,23 @@ subroutine makepowerspectrum_rg(z)
 
      tmp_signal_fine(:) = 1.0
      tmp_signal_obs(:) = 0.0
-     open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
-          form='binary')
-     do
-        read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
-        width_real = delta_nu/nu0*nu_dist
-        tmp_signal_fine = tmp_signal_fine * (1.-this_absorp* exp(-0.5*((nu_dist-fine_frequency_value)/width_real)**2.0))
-     end do
-327  close(10)
-     do i=0,fine_freq_nbins-1
-        tmp_signal_obs(i/obs_to_fine) = tmp_signal_obs(i/obs_to_fine) + tmp_signal_fine(i)
-     end do
+!      open (unit=10, &
+!           file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+!           form='binary')
+!      do
+!         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
+!         width_real = delta_nu/nu0*nu_dist
+!         tmp_signal_fine = tmp_signal_fine * (1.-this_absorp* exp(-0.5*((nu_dist-fine_frequency_value)/width_real)**2.0))
+!      end do
+! 327  close(10)
+!      do i=0,fine_freq_nbins-1
+!         tmp_signal_obs(i/obs_to_fine) = tmp_signal_obs(i/obs_to_fine) + tmp_signal_fine(i)
+!      end do
      
-     tmp_signal_obs = tmp_signal_obs/obs_to_fine
+!      tmp_signal_obs = tmp_signal_obs/obs_to_fine
  
      
-     call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
+!      call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
 
      ! y_array = 1./y_array - 1.
      ! mean_den = sum(y_array)/x_nbins
