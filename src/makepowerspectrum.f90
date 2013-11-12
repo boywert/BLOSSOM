@@ -118,7 +118,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   do i=1,x_nbins-1
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
-     print*,k_1D(i),ps_3d(i)
+     print*,k_1D(i),ps_3d(i),ps_1D(i)
   end do
   call exit
      
