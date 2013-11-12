@@ -110,12 +110,16 @@ subroutine makepowerspectrum_rg(z)
   end do
   allocate(ps_1D(0:x_nbins-1))
   allocate(ps_3D(1:x_nbins-1))
+  allocate(k_1D(0:x_nbins-1))
+  allocate(k_3D(1:x_nbins-1))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
-  do i=1,x_nbins-1
-     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(delta_x)*2.*pi/(real(i,8)*delta_x)
-     print*,ps_3d(i)
+  do i=0,x_nbins-1
+     k_1D(i) = i*(1./delta_x)
   end do
-  print*,"delta_x",delta_x
+  do i=1,x_nbins-1
+     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i)/delta_x)
+     print*,k_1D(i),ps_3d(i)
+  end do
   call exit
      
   !deallocate(frequency_value,tmp_distance_value)
