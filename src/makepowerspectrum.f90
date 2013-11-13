@@ -106,7 +106,7 @@ subroutine makepowerspectrum_rg(z)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
 
      do i=0,x_nbins/2
-        print*,y_array(i),real(fft_result(i)),exp(-1*(real(i)*pi)**2.)
+        print*,y_array(i),real(fft_result(i))/real(x_nbins),exp(-1*(real(i)*pi)**2.)
      end do     
      ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
      ! call dfftw_execute(plan_rev)
