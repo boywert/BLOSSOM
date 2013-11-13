@@ -18,7 +18,7 @@ subroutine makepowerspectrum_rg(z)
   integer :: i,j
   real(kind=8) :: mean_den
   real(kind=8) :: d0,delta_x
-  real(kind=8) :: nu_max,nu_min,max_observe,min_observe
+  real(kind=8) :: nu_max,nu_min,max_observe,min_observe,max_box
   integer :: obs_freq_nbins, fine_freq_nbins, x_nbins, obs_to_fine
   real(kind=8), allocatable :: obs_frequency_value(:),fine_frequency_value(:),tmp_distance_value(:),tmp_signal_fine(:),tmp_signal_obs(:)
   real(kind=8), allocatable :: x_array(:), y_array(:),y_tmp(:)
@@ -60,6 +60,7 @@ subroutine makepowerspectrum_rg(z)
   
   !Set up new x arrays
   delta_x = tmp_distance_value(1)              !high frequency has higher delta_x
+  
   x_nbins = ceiling(tmp_distance_value(obs_freq_nbins)/delta_x)-1
   allocate(x_array(0:x_nbins-1))
   allocate(y_array(0:x_nbins-1))
@@ -68,6 +69,7 @@ subroutine makepowerspectrum_rg(z)
   do i=0,x_nbins-1
      x_array(i) = (i)*delta_x
   end do
+  max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
   do j= first_l,last_l
      write(str_line,'(i10)') j
@@ -114,7 +116,7 @@ subroutine makepowerspectrum_rg(z)
   allocate(k_3D(1:x_nbins/2))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
   do i=0,x_nbins/2
-     k_1D(i) = i*(1./delta_x)
+     k_1D(i) = 2.*pi*i/max_box
   end do
   do i=1,x_nbins/2
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
