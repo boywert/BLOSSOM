@@ -95,9 +95,9 @@ subroutine makepowerspectrum_rg(z)
      
      call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
 
-     ! y_array = 1.- y_array 
-     ! mean_den = sum(y_array)/x_nbins
-     ! y_array = y_array/mean_den -1.
+     y_array = 1.- y_array 
+     mean_den = sum(y_array)/x_nbins
+     y_array = y_array/mean_den -1.
 
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
