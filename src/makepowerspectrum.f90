@@ -71,7 +71,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
-  do j= first_l, last_l
+  do j= first_l, 1!last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -98,10 +98,12 @@ subroutine makepowerspectrum_rg(z)
      y_array = 1.- y_array 
      mean_den = sum(y_array)/x_nbins
      y_array = y_array/mean_den -1.
-
+     do i=0,x_nbins/2
+        print*,real(fft_result)
+     end do`
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
-
+     
      ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
      ! call dfftw_execute(plan_rev)
 
