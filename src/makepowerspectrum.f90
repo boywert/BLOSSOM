@@ -100,7 +100,7 @@ subroutine makepowerspectrum_rg(z)
      y_array = y_array/mean_den -1.
      
      do i=0,x_nbins-1
-        y_array(i) = exp(-1*(real(i)/10.)**2.)
+        y_array(i) = exp(-1*(real(i)/100.)**2.)
      end do
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
