@@ -99,7 +99,7 @@ subroutine makepowerspectrum_rg(z)
      mean_den = sum(y_array)/x_nbins
      y_array = y_array/mean_den -1.
      do i=0,x_nbins/2
-        print*,real(fft_result)
+        print*,real(fft_result(i))
      end do
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
