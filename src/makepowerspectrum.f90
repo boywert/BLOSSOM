@@ -99,15 +99,11 @@ subroutine makepowerspectrum_rg(z)
      mean_den = sum(y_array)/x_nbins
      y_array = y_array/mean_den -1.
      
-     do i=0,x_nbins-1
-        y_array(i) = exp(-1*real(i)**2.)
-     end do
+
      call dfftw_plan_dft_r2c_1d(plan,x_nbins,y_array,fft_result,FFTW_ESTIMATE)
      call dfftw_execute_dft_r2c(plan,y_array,fft_result)
 
-     do i=0,x_nbins/2
-        print*,y_array(i),real(fft_result(i))/real(x_nbins),exp(-1*(real(i)*pi)**2.)
-     end do     
+  
      ! call dfftw_plan_dft_c2r_1d(plan_rev,x_nbins,fft_result,x_array,FFTW_ESTIMATE)
      ! call dfftw_execute(plan_rev)
 
@@ -122,11 +118,11 @@ subroutine makepowerspectrum_rg(z)
   allocate(k_3D(1:x_nbins/2))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
   do i=0,x_nbins/2
-     k_1D(i) = 2.*pi*i/max_box
+     k_1D(i) = real(i)/max_box
   end do
   do i=1,x_nbins/2
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
-     !print*,k_1D(i),ps_3d(i),ps_1D(i)
+     print*,k_1D(i),ps_3d(i),ps_1D(i)
   end do
   call exit
      
