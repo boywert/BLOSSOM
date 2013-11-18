@@ -71,7 +71,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
-  do j= first_l, 1! last_l
+  do j= first_l, last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -122,7 +122,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   do i=1,x_nbins/2
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
-     print*,k_1D(i),ps_3d(i),abs(fft_result(i))**2.
+     print*,k_1D(i),ps_3d(i),ps_1D(i)
   end do
   call exit
      
