@@ -71,7 +71,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
-  do j= first_l, 2!last_l
+  do j= first_l, 1!last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
