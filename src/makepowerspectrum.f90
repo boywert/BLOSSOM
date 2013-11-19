@@ -71,7 +71,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
-  do j= first_l, 1 !last_l
+  do j= first_l, last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
@@ -95,9 +95,7 @@ subroutine makepowerspectrum_rg(z)
      
      call array_intrpol(tmp_distance_value(0:obs_freq_nbins-1),tmp_signal_obs(0:obs_freq_nbins-1),obs_freq_nbins,x_array(0:x_nbins-1),y_array(0:x_nbins-1),x_nbins)
 
-     do i=0,x_nbins-1
-        y_array(i) = exp(-1.*real(i-100.)**2./100.) + 0.5*exp(-1.*real(i-200.)**2./100.) + 2.*exp(-1.*real(i-300.)**2./100.)
-     end do
+
      y_array = 1.- y_array 
      mean_den = sum(y_array)/x_nbins
      y_array = y_array/mean_den -1.
@@ -125,7 +123,7 @@ subroutine makepowerspectrum_rg(z)
   end do
   do i=1,x_nbins/2
      ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
-     print*,k_1D(i),ps_1D(i),abs(fft_result(i))/real(x_nbins,8)
+     print*,k_1D(i),ps_1D(i),ps_3D(i)
   end do
   call exit
      
