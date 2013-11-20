@@ -34,9 +34,9 @@ subroutine makepowerspectrum_rg(z)
 
   !Calculate frequency and distance range
   d0 = z_to_d(z)
-  max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
+  max_observe = d0 !+ convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_min = d_to_nu(max_observe)-obsfreqresolution !add buffer space
-  min_observe = d0 !- convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
+  min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_max = d_to_nu(min_observe)+obsfreqresolution !add buffer space
   obs_freq_nbins = ceiling((nu_max-nu_min)/obsfreqresolution)
   fine_freq_nbins = ceiling((nu_max-nu_min)/maxfreqresolution)
