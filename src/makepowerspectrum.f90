@@ -36,7 +36,7 @@ subroutine makepowerspectrum_rg(z)
   d0 = z_to_d(z)
   max_observe = d0 + convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_min = d_to_nu(max_observe)-obsfreqresolution !add buffer space
-  min_observe = d0 - convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
+  min_observe = d0 !- convert_length2physical(real(Boxsize*line_length_factor/2.,8),z) 
   nu_max = d_to_nu(min_observe)+obsfreqresolution !add buffer space
   obs_freq_nbins = ceiling((nu_max-nu_min)/obsfreqresolution)
   fine_freq_nbins = ceiling((nu_max-nu_min)/maxfreqresolution)
@@ -71,14 +71,14 @@ subroutine makepowerspectrum_rg(z)
   end do
   max_box = x_array(x_nbins-1)
   sum_delta_sq(:) = 0.0
-  do j= first_l, 1!last_l
+  do j= first_l, last_l
      write(str_line,'(i10)') j
      str_line = adjustl(str_line)
 
      tmp_signal_fine(:) = 1.0
      tmp_signal_obs(:) = 0.0
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)), &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sout.'//trim(adjustl(str_line)//".0"), &
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
