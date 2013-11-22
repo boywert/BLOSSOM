@@ -117,13 +117,13 @@ subroutine makepowerspectrum_rg(z)
   allocate(ps_1D(0:x_nbins/2))
   allocate(ps_3D(1:x_nbins/2))
   allocate(k_1D(0:x_nbins/2))
-  allocate(k_3D(1:x_nbins/2))
+  allocate(k_3D(2:x_nbins/2-2))
   ps_1D = sum_delta_sq/real(last_l-first_l+1,8)
   do i=0,x_nbins/2
      k_1D(i) = real(i)/max_box
   end do
-  do i=1,x_nbins/2
-     ps_3d(i) = -1.* (ps_1D(i)-ps_1D(i-1))/(k_1D(i)-k_1D(i-1))*2.*pi/(k_1D(i))
+  do i=2,x_nbins/2-2
+     ps_3d(i) = -2.*pi/(k_1D(i)) * (ps_1D(i-2) - ps_1D(i+2) + 8.*ps_1D(i+1) - 8.*ps_1D(i-1))/(12.*(k_1D(1)-k_1D(0)))
      print*,k_1D(i),ps_1D(i),ps_3D(i)
   end do
   call exit
