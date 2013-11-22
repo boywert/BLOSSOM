@@ -77,9 +77,9 @@ subroutine makepowerspectrum_rg(z)
 
      tmp_signal_fine(:) = 1.0
      tmp_signal_obs(:) = 0.0
-     print*, trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1'
+     !print*, trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1'
      open (unit=10, &
-          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.000/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
+          file=trim(result_path)//z_s(1:len_trim(z_s))//'/RG/0.030/'//trim(adjustl(str_rank))//'/sins.'//trim(adjustl(str_line))//'.1', &
           form='binary')
      do
         read(10,end=327) M0,impact_param,nu_dist,nu_undist,this_absorp,delta_nu
